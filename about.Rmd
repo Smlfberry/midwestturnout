@@ -1,0 +1,79 @@
+---
+title: "About"
+output:
+  html_document:
+    theme: null
+    css: custom.css
+    highlight: null
+    toc: false
+---
+
+<span class="section-label">About This Project</span>
+
+## Research Overview
+
+This project examines county-level voter turnout inequality across five Midwest states — Illinois, Indiana, Ohio, Wisconsin, and Michigan — using a predictive modeling approach to identify counties that perform above or below their structural expectations. The analysis pairs quantitative modeling with qualitative case-study investigation to generate hypotheses about the civic, institutional, and historical factors that drive participation beyond what demographics predict.
+
+The work builds on practicum research conducted with the **Chicago Lawyers' Committee for Civil Rights (CLC)**, which uses quantitative analysis of turnout data to inform voting rights advocacy across the region.
+
+---
+
+<span class="section-label">Methods Summary</span>
+
+## Methodology
+
+**Turnout rates** are calculated using Citizen Voting Age Population (CVAP) denominators from ACS Special Tabulation estimates. CVAP is the appropriate denominator for voting rights research because it accounts for the legally eligible electorate rather than all residents or all adults.
+
+**Structural predictors** are drawn from the 2020 ACS 5-Year Estimates and retrieved via the `tidycensus` R package. The five predictors — educational attainment, internet access, limited English proficiency, disability status, and poverty — represent well-documented correlates of voter participation in the political science and public administration literature.
+
+**Case selection** follows a purposive residual-based logic: two counties from the top of the residual distribution (over-performers), two near zero (near-expected), and two from the bottom (under-performers). Selection was also guided by geographic diversity across states.
+
+**Qualitative analysis** draws on [list sources — local news archives, election commission reports, organizational documents, etc.].
+
+---
+
+<span class="section-label">Data Sources</span>
+
+## Data & Code
+
+| Source | Description |
+|--------|-------------|
+| U.S. Census Bureau, ACS 2020 5-Year | Educational attainment, internet access, LEP, disability, poverty |
+| ACS CVAP Special Tabulation, 2020 | Eligible electorate denominators |
+| IL State Board of Elections | 2020 general election vote totals |
+| IN Secretary of State | 2020 general election vote totals |
+| OH Secretary of State | 2020 general election vote totals |
+| WI Elections Commission | 2020 general election vote totals |
+| MI Department of State | 2020 general election vote totals |
+
+All data processing and analysis were conducted in **R** using the `tidyverse`, `tidycensus`, `broom`, and `kableExtra` packages. Interactive visualizations use `shiny`, `plotly`, and `shinylive`.
+
+Full replication code is available on [GitHub →](https://github.com/[your-repo]).
+
+---
+
+<span class="section-label">About the Researcher</span>
+
+## [Your Name]
+
+[Your Name] is a master's student in the [Program] at the University of Chicago, graduating in [Month Year]. Their research focuses on voter participation, electoral inequality, and quantitative methods in public policy. 
+
+Prior to graduate school, [he/she/they] worked on [brief note about campaign experience or California background]. During their master's program, they conducted practicum research with the Chicago Lawyers' Committee for Civil Rights, leading quantitative analysis of county-level voter turnout patterns across the Midwest.
+
+**Contact:** [your-email@uchicago.edu]  
+**GitHub:** [github.com/your-handle]  
+**LinkedIn:** [linkedin.com/in/your-profile]
+
+---
+
+<span class="section-label">Acknowledgments</span>
+
+## Acknowledgments
+
+This project was developed in partial fulfillment of practicum requirements at the University of Chicago Crown Family School of Social Work, Policy, and Practice. The author thanks [advisor name] for guidance on research design, and the Chicago Lawyers' Committee for Civil Rights for the opportunity to conduct applied voting rights research.
+
+---
+
+<div class="site-footer">
+Site built with R Markdown and deployed via GitHub Pages. Last updated `r format(Sys.Date(), "%B %Y")`.
+</div>

@@ -1,0 +1,282 @@
+---
+title: "The Model"
+output:
+  html_document:
+    theme: null
+    css: custom.css
+    highlight: pygments
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
+                      fig.width = 8, fig.height = 5, dpi = 150)
+library(tidyverse)
+library(tidycensus)
+library(knitr)
+library(kableExtra)
+
+# ── Data Prep ──────────────────────────────────────────────────────────────
+df_pct <- readRDS("data/df_pct.rds")
+
+poverty_data <- get_acs(
+  geography = "county",
+  variables = c(poverty = "B17001_002", total = "B17001_001"),
+  year = 2024, survey = "acs5"
+)
+
+poverty_pct <- poverty_data %>%
+  select(GEOID, variable, estimate) %>%
+  pivot_wider(names_from = variable, values_from = estimate) %>%
+  mutate(pct_poverty = poverty / total * 100)
+
+df_pct <- df_pct %>%
+  left_join(poverty_pct %>% select(GEOID, pct_poverty),
+            by = c("geoid" = "GEOID"))
+
+# ── Model ──────────────────────────────────────────────────────────────────
+model1 <- lm(
+  turnout_rate ~
+    pct_bachelors +
+    pct_households_internet +
+    pct_limited_english +
+    pct_disability_total +
+    pct_poverty,
+  data = df_pct
+)
+
+df_pct$predicted <- predict(model1)
+df_pct$residual  <- df_pct$turnout_rate - df_pct$predicted
+
+# Case study counties
+selected <- df_pct %>%
+  filter(county %in% c("Montmorency", "Trempealeau",
+                        "Brown", "Vanderburgh",
+                        "Clinton", "DeKalb"))
+
+# Palette
+pal <- c(over = "#2e7d52", middle = "#888580", under = "#c0392b")
+```
+
+<span class="section-label">Methodology</span>
+
+## Model Specification
+
+This analysis uses **Ordinary Least Squares (OLS) regression** to model county-level voter turnout rates as a function of five structural predictors from the American Community Survey. The unit of analysis is the county; the outcome variable is the county-level turnout rate calculated using CVAP denominators.
+
+The model takes the form:
+
+$$\text{Turnout}_i = \beta_0 + \beta_1(\text{Bachelor's}_i) + \beta_2(\text{Internet}_i) + \beta_3(\text{LEP}_i) + \beta_4(\text{Disability}_i) + \beta_5(\text{Poverty}_i) + \varepsilon_i$$
+
+where $i$ indexes counties and $\varepsilon_i$ is the residual — the quantity of primary analytic interest.
+
+<div class="callout">
+<strong>Why OLS?</strong>
+The goal of this model is not prediction accuracy per se, but residual interpretation. OLS produces easily interpretable residuals in the original units (percentage points of turnout) and makes assumptions transparent. The model is intentionally parsimonious — omitted variable bias is expected, and its signature in the residuals is the point of the qualitative analysis.
+</div>
+
+---
+
+<span class="section-label">Model Results</span>
+
+## Coefficient Estimates
+
+```{r coef-table}
+# Tidy coefficient table
+coef_df <- broom::tidy(model1, conf.int = TRUE) %>%
+  filter(term != "(Intercept)") %>%
+  mutate(
+    term = case_when(
+      term == "pct_bachelors"          ~ "% Bachelor's Degree or Higher",
+      term == "pct_households_internet" ~ "% Households with Internet",
+      term == "pct_limited_english"     ~ "% Limited English Proficiency",
+      term == "pct_disability_total"    ~ "% Population with a Disability",
+      term == "pct_poverty"             ~ "% Below Poverty Line",
+      TRUE ~ term
+    ),
+    sig = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01  ~ "**",
+      p.value < 0.05  ~ "*",
+      p.value < 0.1   ~ "†",
+      TRUE            ~ ""
+    )
+  )
+
+coef_df %>%
+  select(Predictor = term, Estimate = estimate,
+         `Std. Error` = std.error, `95% CI Low` = conf.low,
+         `95% CI High` = conf.high, `p-value` = p.value, ` ` = sig) %>%
+  kable(digits = 3, align = c("l","r","r","r","r","r","l"),
+        caption = "OLS regression coefficients. Outcome: county-level turnout rate (CVAP denominator). N = counties across IL, IN, OH, WI, MI.") %>%
+  kable_styling(bootstrap_options = c("striped","hover"),
+                full_width = TRUE, font_size = 13) %>%
+  column_spec(1, bold = FALSE) %>%
+  footnote(general = "† p < .10  * p < .05  ** p < .01  *** p < .001",
+           general_title = "Significance: ")
+```
+
+```{r model-fit}
+s <- summary(model1)
+```
+
+**Model fit:** R² = `r round(s$r.squared, 3)`, Adjusted R² = `r round(s$adj.r.squared, 3)`, RMSE = `r round(sqrt(mean(residuals(model1)^2)), 2)` percentage points. The model explains approximately `r round(s$r.squared * 100, 1)`% of variance in county-level turnout rates.
+
+---
+
+## Coefficient Plot
+
+```{r coef-plot, fig.cap="Point estimates and 95% confidence intervals. Estimates represent percentage-point change in turnout rate per one-unit change in predictor."}
+coef_df %>%
+  mutate(term = fct_reorder(Predictor, estimate)) %>%
+  ggplot(aes(x = estimate, y = term)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "#888580", linewidth = 0.5) +
+  geom_segment(aes(x = conf.low, xend = conf.high,
+                   y = term, yend = term),
+               color = "#1a4a8a", linewidth = 0.8, alpha = 0.5) +
+  geom_point(aes(color = estimate > 0), size = 3.5) +
+  scale_color_manual(values = c(`TRUE` = "#2e7d52", `FALSE` = "#c0392b"),
+                     guide = "none") +
+  labs(x = "Coefficient estimate (percentage points)", y = NULL,
+       caption = "95% confidence intervals shown. N = counties across 5 Midwest states.") +
+  theme_minimal(base_family = "sans", base_size = 12) +
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor   = element_blank(),
+    axis.text.y        = element_text(size = 11),
+    plot.caption       = element_text(size = 9, color = "#888580", margin = margin(t = 8)),
+    plot.background    = element_rect(fill = "white", color = NA)
+  )
+```
+
+---
+
+<span class="section-label">Residuals</span>
+
+## Residual Distribution
+
+The distribution of residuals reveals whether the model systematically over- or under-predicts for any subset of counties. A well-behaved residual distribution should be approximately normal with mean zero.
+
+```{r residual-hist, fig.cap="Distribution of model residuals (actual − predicted turnout rate, in percentage points). Counties selected as case studies are marked."}
+# Assign tier labels
+df_pct <- df_pct %>%
+  mutate(tier = case_when(
+    county %in% c("Montmorency", "Trempealeau") ~ "Over-Performer",
+    county %in% c("Brown", "Vanderburgh")        ~ "Near-Expected",
+    county %in% c("Clinton", "DeKalb")           ~ "Under-Performer",
+    TRUE ~ "Other"
+  ))
+
+ggplot(df_pct, aes(x = residual)) +
+  geom_histogram(binwidth = 1, fill = "#d8d4ce", color = "white", linewidth = 0.3) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "#1a4a8a", linewidth = 0.7) +
+  geom_point(
+    data = filter(df_pct, tier != "Other"),
+    aes(x = residual, y = 1, color = tier),
+    size = 3, shape = 17, alpha = 0.9
+  ) +
+  scale_color_manual(
+    values = c("Over-Performer" = "#2e7d52",
+               "Near-Expected"  = "#888580",
+               "Under-Performer"= "#c0392b")
+  ) +
+  labs(
+    x = "Residual (percentage points)",
+    y = "Number of counties",
+    color = NULL,
+    caption = "Triangle markers indicate the six case-study counties."
+  ) +
+  theme_minimal(base_family = "sans", base_size = 12) +
+  theme(
+    legend.position   = "top",
+    panel.grid.minor  = element_blank(),
+    plot.caption      = element_text(size = 9, color = "#888580", margin = margin(t = 8)),
+    plot.background   = element_rect(fill = "white", color = NA)
+  )
+```
+
+---
+
+## Predicted vs. Actual Turnout
+
+```{r pred-actual, fig.cap="Each point is a county. The dashed line represents perfect prediction (residual = 0). Points above the line over-performed; points below under-performed."}
+ggplot(df_pct, aes(x = predicted, y = turnout_rate)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed",
+              color = "#888580", linewidth = 0.6) +
+  geom_point(data = filter(df_pct, tier == "Other"),
+             color = "#d8d4ce", size = 2, alpha = 0.6) +
+  geom_point(data = filter(df_pct, tier != "Other"),
+             aes(color = tier), size = 3.5, alpha = 0.95) +
+  ggrepel::geom_text_repel(
+    data = filter(df_pct, tier != "Other"),
+    aes(label = county, color = tier),
+    size = 3, family = "sans", show.legend = FALSE,
+    box.padding = 0.4, max.overlaps = 20
+  ) +
+  scale_color_manual(
+    values = c("Over-Performer" = "#2e7d52",
+               "Near-Expected"  = "#888580",
+               "Under-Performer"= "#c0392b")
+  ) +
+  labs(
+    x = "Predicted turnout rate (%)",
+    y = "Actual turnout rate (%)",
+    color = NULL,
+    caption = "Gray points: all other counties. Colored points: case-study counties. Labels added via ggrepel."
+  ) +
+  theme_minimal(base_family = "sans", base_size = 12) +
+  theme(
+    legend.position  = "top",
+    panel.grid.minor = element_blank(),
+    plot.caption     = element_text(size = 9, color = "#888580", margin = margin(t = 8)),
+    plot.background  = element_rect(fill = "white", color = NA)
+  )
+```
+
+---
+
+<span class="section-label">Case Selection</span>
+
+## Selected Counties: Full Statistics
+
+```{r selected-table}
+selected %>%
+  arrange(desc(residual)) %>%
+  mutate(
+    Tier = case_when(
+      residual > 1  ~ "Over-Performer",
+      residual < -1 ~ "Under-Performer",
+      TRUE          ~ "Near-Expected"
+    ),
+    across(c(turnout_rate, predicted, residual), ~ round(.x, 2))
+  ) %>%
+  select(County = county, State = state_name, Tier,
+         `Actual (%)` = turnout_rate,
+         `Predicted (%)` = predicted,
+         `Residual (pp)` = residual) %>%
+  kable(align = c("l","l","l","r","r","r"),
+        caption = "The six case-study counties with model-derived statistics. Residuals in percentage points.") %>%
+  kable_styling(bootstrap_options = c("striped","hover"),
+                full_width = TRUE, font_size = 13) %>%
+  row_spec(which(selected %>% arrange(desc(residual)) %>% pull(residual) > 1),
+           background = "#eef5f1") %>%
+  row_spec(which(selected %>% arrange(desc(residual)) %>% pull(residual) < -1),
+           background = "#fdf2f1")
+```
+
+---
+
+<div class="callout">
+<strong>Limitations</strong>
+This model is cross-sectional and observational. Coefficients should not be interpreted as causal effects. OLS assumes linearity, homoscedasticity, and no perfect multicollinearity; these assumptions are assessed but not guaranteed to hold across all counties. The model uses 2024 ACS data as a proxy for 2020 structural conditions; temporal mismatch may introduce measurement error for rapidly changing counties.
+</div>
+
+---
+
+<div class="site-footer">
+Model estimated in R using base `lm()`. Confidence intervals via `broom::tidy()`. Visualizations with `ggplot2`. Full replication code on <a href="https://github.com/[your-repo]">GitHub</a>.
+</div>

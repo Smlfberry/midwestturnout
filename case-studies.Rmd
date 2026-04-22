@@ -1,0 +1,397 @@
+---
+title: "Case Studies"
+output:
+  html_document:
+    theme: null
+    css: custom.css
+    highlight: pygments
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
+                      fig.width = 7.5, fig.height = 4.2, dpi = 150)
+library(tidyverse)
+library(tidycensus)
+library(knitr)
+library(kableExtra)
+
+df_pct <- readRDS("data/df_pct.rds")
+
+poverty_data <- get_acs(
+  geography = "county",
+  variables = c(poverty = "B17001_002", total = "B17001_001"),
+  year = 2024, survey = "acs5"
+)
+poverty_pct <- poverty_data %>%
+  select(GEOID, variable, estimate) %>%
+  pivot_wider(names_from = variable, values_from = estimate) %>%
+  mutate(pct_poverty = poverty / total * 100)
+
+df_pct <- df_pct %>%
+  left_join(poverty_pct %>% select(GEOID, pct_poverty),
+            by = c("geoid" = "GEOID"))
+
+model1 <- lm(
+  turnout_rate ~
+    pct_bachelors +
+    pct_households_internet +
+    pct_limited_english +
+    pct_disability_total +
+    pct_poverty,
+  data = df_pct
+)
+df_pct$predicted <- predict(model1)
+df_pct$residual  <- df_pct$turnout_rate - df_pct$predicted
+
+# Helper: pull one county's stats cleanly
+county_row <- function(cname) {
+  df_pct %>% filter(county == cname) %>% slice(1)
+}
+
+# Predictor comparison helper
+predictor_bar <- function(cname, state_abbr) {
+  target <- df_pct %>% filter(county == cname) %>% slice(1)
+  state_avg <- df_pct %>%
+    filter(state_name == target$state_name) %>%
+    summarise(across(c(pct_bachelors, pct_households_internet,
+                       pct_limited_english, pct_disability_total, pct_poverty),
+                     mean, na.rm = TRUE)) %>%
+    mutate(county = paste0(target$state_name, " avg"), type = "State Avg")
+
+  vars <- c("pct_bachelors", "pct_households_internet",
+            "pct_limited_english", "pct_disability_total", "pct_poverty")
+  labels <- c("Bachelor's+", "Internet Access", "Limited English",
+              "Disability", "Poverty")
+
+  bind_rows(
+    target %>% select(county, all_of(vars)) %>% mutate(type = "County"),
+    state_avg %>% select(county, all_of(vars), type)
+  ) %>%
+    pivot_longer(all_of(vars), names_to = "variable", values_to = "value") %>%
+    mutate(variable = factor(variable, levels = vars, labels = labels))
+}
+```
+
+<span class="section-label">Case Studies</span>
+
+# Six Counties, Three Stories
+
+The six case-study counties represent three distinct patterns relative to model predictions. **Over-performers** suggest that something in the civic environment — local organizing, competitive elections, cultural norms — is mobilizing voters beyond what demographics alone would predict. **Near-expected** counties serve as a baseline. **Under-performers** raise questions about suppression, disengagement, or structural barriers not captured by the model.
+
+Each county profile includes:  
+(1) key statistics from the model,  
+(2) a comparison of predictors against the state average, and  
+(3) space for qualitative findings from document review, news archive analysis, or other sources.
+
+---
+
+# Over-Performers {.tabset}
+
+## Montmorency County, MI
+
+```{r montmorency-stats}
+r <- county_row("Montmorency")
+```
+
+<div class="county-card over" style="margin-bottom:1.5rem;">
+<div class="card-label">Over-Performer · Michigan</div>
+<div class="card-name">Montmorency County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
+<div class="card-residual">Residual: +`r round(r$residual, 2)` percentage points</div>
+</div>
+
+### Predictor Profile
+
+```{r montmorency-bar, fig.cap="County values vs. state average for all five model predictors.", fig.height=3.5}
+predictor_bar("Montmorency") %>%
+  ggplot(aes(x = value, y = variable, fill = type)) +
+  geom_col(position = "dodge", width = 0.65) +
+  scale_fill_manual(values = c("County" = "#2e7d52", "State Avg" = "#d8d4ce")) +
+  labs(x = "Percent (%)", y = NULL, fill = NULL) +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+### Qualitative Analysis
+
+> **[Placeholder — add your findings here]**
+
+*Suggested dimensions to investigate:*
+
+- **Civic infrastructure:** Are there active nonpartisan GOTV organizations? Strong union presence? Churches with voter mobilization history?
+- **Electoral competition:** Was there a particularly competitive local race in 2020 that drove turnout above what national-level enthusiasm alone would predict?
+- **Historical patterns:** Is over-performance consistent across election cycles, or is 2020 an anomaly?
+- **Community characteristics:** What do residents, local news, or community organizations say about civic participation?
+
+<div class="callout finding">
+<strong>Emerging Finding</strong>
+[Replace this with your key takeaway from qualitative research. What explains the gap between predicted and actual turnout?]
+</div>
+
+---
+
+## Trempealeau County, WI
+
+```{r trempealeau-stats}
+r <- county_row("Trempealeau")
+```
+
+<div class="county-card over" style="margin-bottom:1.5rem;">
+<div class="card-label">Over-Performer · Wisconsin</div>
+<div class="card-name">Trempealeau County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
+<div class="card-residual">Residual: +`r round(r$residual, 2)` percentage points</div>
+</div>
+
+### Predictor Profile
+
+```{r trempealeau-bar, fig.cap="County values vs. state average for all five model predictors.", fig.height=3.5}
+predictor_bar("Trempealeau") %>%
+  ggplot(aes(x = value, y = variable, fill = type)) +
+  geom_col(position = "dodge", width = 0.65) +
+  scale_fill_manual(values = c("County" = "#2e7d52", "State Avg" = "#d8d4ce")) +
+  labs(x = "Percent (%)", y = NULL, fill = NULL) +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+### Qualitative Analysis
+
+> **[Placeholder — add your findings here]**
+
+*Trempealeau County, WI — note its agricultural/rural character, proximity to La Crosse metro, and Wisconsin's historically high-turnout culture. Consider how AVR, same-day registration, and any local organizing might interact.*
+
+<div class="callout finding">
+<strong>Emerging Finding</strong>
+[Replace this with your key takeaway.]
+</div>
+
+---
+
+# Near-Expected {.tabset}
+
+## Brown County, WI
+
+```{r brown-stats}
+r <- county_row("Brown")
+```
+
+<div class="county-card middle" style="margin-bottom:1.5rem;">
+<div class="card-label">Near-Expected · Wisconsin</div>
+<div class="card-name">Brown County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
+<div class="card-residual">Residual: `r round(r$residual, 2)` percentage points</div>
+</div>
+
+### Predictor Profile
+
+```{r brown-bar, fig.cap="County values vs. state average.", fig.height=3.5}
+predictor_bar("Brown") %>%
+  ggplot(aes(x = value, y = variable, fill = type)) +
+  geom_col(position = "dodge", width = 0.65) +
+  scale_fill_manual(values = c("County" = "#888580", "State Avg" = "#d8d4ce")) +
+  labs(x = "Percent (%)", y = NULL, fill = NULL) +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+### Qualitative Analysis
+
+> **[Placeholder — add your findings here]**
+
+*Near-expected counties are analytically interesting as baselines. What makes Brown County "typical"? Are there any tensions between demographic diversity (Green Bay's immigrant and refugee communities) and the structural model's predictions?*
+
+<div class="callout">
+<strong>Baseline Case</strong>
+[What does "as expected" actually look like on the ground? Document the absence of unusual mobilizing or suppressing factors.]
+</div>
+
+---
+
+## Vanderburgh County, IN
+
+```{r vanderburgh-stats}
+r <- county_row("Vanderburgh")
+```
+
+<div class="county-card middle" style="margin-bottom:1.5rem;">
+<div class="card-label">Near-Expected · Indiana</div>
+<div class="card-name">Vanderburgh County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
+<div class="card-residual">Residual: `r round(r$residual, 2)` percentage points</div>
+</div>
+
+### Predictor Profile
+
+```{r vanderburgh-bar, fig.cap="County values vs. state average.", fig.height=3.5}
+predictor_bar("Vanderburgh") %>%
+  ggplot(aes(x = value, y = variable, fill = type)) +
+  geom_col(position = "dodge", width = 0.65) +
+  scale_fill_manual(values = c("County" = "#888580", "State Avg" = "#d8d4ce")) +
+  labs(x = "Percent (%)", y = NULL, fill = NULL) +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+### Qualitative Analysis
+
+> **[Placeholder — add your findings here]**
+
+*Vanderburgh is home to Evansville, Indiana's third-largest city. Consider the urban-rural divide within the county, Indiana's registration restrictions, and any local competitive dynamics.*
+
+<div class="callout">
+<strong>Baseline Case</strong>
+[What does "as expected" look like here? Note any notable features even if residual is near zero.]
+</div>
+
+---
+
+# Under-Performers {.tabset}
+
+## Clinton County
+
+```{r clinton-stats}
+r <- county_row("Clinton")
+```
+
+<div class="county-card under" style="margin-bottom:1.5rem;">
+<div class="card-label">Under-Performer · `r r$state_name`</div>
+<div class="card-name">Clinton County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
+<div class="card-residual">Residual: `r round(r$residual, 2)` percentage points</div>
+</div>
+
+### Predictor Profile
+
+```{r clinton-bar, fig.cap="County values vs. state average.", fig.height=3.5}
+predictor_bar("Clinton") %>%
+  ggplot(aes(x = value, y = variable, fill = type)) +
+  geom_col(position = "dodge", width = 0.65) +
+  scale_fill_manual(values = c("County" = "#c0392b", "State Avg" = "#d8d4ce")) +
+  labs(x = "Percent (%)", y = NULL, fill = NULL) +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+### Qualitative Analysis
+
+> **[Placeholder — add your findings here]**
+
+*Suggested dimensions:*
+
+- **Structural barriers:** Voter ID laws, registration restrictions, polling place consolidation?
+- **Civic disengagement:** Low competitive elections, weak local party infrastructure, low trust in institutions?
+- **Population churn:** High transience (college town, military base, agricultural seasonal workers) that disrupts registration rolls?
+
+<div class="callout warning">
+<strong>Emerging Finding</strong>
+[Replace with your key takeaway. What explains the gap between structural conditions and actual turnout?]
+</div>
+
+---
+
+## DeKalb County
+
+```{r dekalb-stats}
+r <- county_row("DeKalb")
+```
+
+<div class="county-card under" style="margin-bottom:1.5rem;">
+<div class="card-label">Under-Performer · `r r$state_name`</div>
+<div class="card-name">DeKalb County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
+<div class="card-residual">Residual: `r round(r$residual, 2)` percentage points</div>
+</div>
+
+### Predictor Profile
+
+```{r dekalb-bar, fig.cap="County values vs. state average.", fig.height=3.5}
+predictor_bar("DeKalb") %>%
+  ggplot(aes(x = value, y = variable, fill = type)) +
+  geom_col(position = "dodge", width = 0.65) +
+  scale_fill_manual(values = c("County" = "#c0392b", "State Avg" = "#d8d4ce")) +
+  labs(x = "Percent (%)", y = NULL, fill = NULL) +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+### Qualitative Analysis
+
+> **[Placeholder — add your findings here]**
+
+*Note: If this is DeKalb County, IL (home of NIU), student population effects on CVAP and registration may be particularly relevant. DeKalb, IN would have a different profile — confirm which state before writing up.*
+
+<div class="callout warning">
+<strong>Emerging Finding</strong>
+[Replace with your key takeaway.]
+</div>
+
+---
+
+<span class="section-label">Cross-County Patterns</span>
+
+## Comparing Across Cases
+
+```{r cross-county, fig.cap="All six case-study counties plotted across the five model predictors, with state average benchmarks. Use this to identify cross-cutting patterns.", fig.height=5}
+case_counties <- df_pct %>%
+  filter(county %in% c("Montmorency", "Trempealeau",
+                        "Brown", "Vanderburgh",
+                        "Clinton", "DeKalb")) %>%
+  mutate(tier = case_when(
+    county %in% c("Montmorency", "Trempealeau") ~ "Over",
+    county %in% c("Brown", "Vanderburgh")        ~ "Expected",
+    TRUE                                          ~ "Under"
+  ))
+
+vars <- c("pct_bachelors", "pct_households_internet",
+          "pct_limited_english", "pct_disability_total", "pct_poverty")
+labels <- c("Bachelor's+", "Internet\nAccess", "Limited\nEnglish",
+            "Disability", "Poverty")
+
+case_long <- case_counties %>%
+  select(county, tier, all_of(vars)) %>%
+  pivot_longer(all_of(vars), names_to = "variable", values_to = "value") %>%
+  mutate(variable = factor(variable, levels = vars, labels = labels))
+
+ggplot(case_long, aes(x = variable, y = value, color = tier, group = county)) +
+  geom_line(alpha = 0.4, linewidth = 0.7) +
+  geom_point(size = 3, alpha = 0.9) +
+  ggrepel::geom_text_repel(
+    data = case_long %>% filter(variable == "Poverty"),
+    aes(label = county), size = 3, family = "sans",
+    nudge_x = 0.3, show.legend = FALSE
+  ) +
+  scale_color_manual(
+    values = c("Over" = "#2e7d52", "Expected" = "#888580", "Under" = "#c0392b"),
+    name = "Performance Tier"
+  ) +
+  labs(x = NULL, y = "Percent (%)") +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+*Use this parallel coordinates–style view to identify predictors where over- and under-performers diverge most sharply. Patterns here can motivate hypotheses for qualitative investigation.*
+
+---
+
+<div class="site-footer">
+Case county selection based on model residuals. Qualitative analysis draws on [sources to be listed]. Visualizations produced in R with ggplot2.
+</div>

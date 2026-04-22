@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Explore the Data</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="custom.css" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Explore the Data</h1>
+
+
+
+<p><span class="section-label">Interactive Explorer</span></p>
+<div id="explore-county-level-turnout" class="section level1">
+<h1>Explore County-Level Turnout</h1>
+<p>The interactive application below lets you explore the full dataset
+of counties across all five states. Filter by state, adjust which
+predictor to plot against turnout, and hover over individual counties to
+see their model statistics.</p>
+<div class="callout">
+<p><strong>How to Use</strong> Select a state and predictor variable
+from the dropdowns on the left. Each point represents one county.
+Counties selected as case studies are highlighted. The regression line
+reflects the simple bivariate relationship — the full model uses all
+five predictors simultaneously.</p>
+</div>
+<hr />
+<div id="interactive-county-explorer" class="section level2">
+<h2>Interactive County Explorer</h2>
+<!-- 
+  SHINYLIVE EMBED
+  ─────────────────────────────────────────────────────────────────────────
+  Option A: Shinylive via <iframe> (recommended for GitHub Pages)
+  
+  After building your Shiny app separately and deploying it with shinylive,
+  replace the src below with your deployed URL.
+  
+  shinylive::export() will generate a self-contained app folder.
+  Push that folder to GitHub Pages (e.g., /docs/app/) and use:
+  src="app/index.html"
+  ─────────────────────────────────────────────────────────────────────────
+-->
+<div class="shiny-frame-wrapper">
+<iframe 
+    src="app/index.html" 
+    height="620" 
+    title="County Voter Turnout Explorer"
+    loading="lazy"
+    allowfullscreen> </iframe>
+<div class="shiny-caption">
+<pre><code>Interactive Shiny application. Data: ACS 2020 5-Year Estimates; State Election Commissions (IL, IN, OH, WI, MI). 
+Built with R Shiny + shinylive.</code></pre>
+</div>
+</div>
+<hr />
+</div>
+<div id="building-the-shinylive-app" class="section level2">
+<h2>Building the Shinylive App</h2>
+<p>The Shiny app source is in <code>shiny-app/app.R</code>. To compile
+and export it for GitHub Pages:</p>
+<pre class="r"><code># Install shinylive if needed
+install.packages(&quot;shinylive&quot;)
+
+# Export the app to the docs/app/ folder
+shinylive::export(&quot;shiny-app&quot;, &quot;docs/app&quot;)</code></pre>
+<p>Then push <code>docs/</code> to GitHub — the iframe above will load
+it automatically.</p>
+<p>The app source below serves as a starting-point template:</p>
+<pre class="r"><code># shiny-app/app.R
+library(shiny)
+library(tidyverse)
+library(bslib)
+library(plotly)
+
+df_pct &lt;- readRDS(&quot;../data/df_pct.rds&quot;)
+# Add predicted/residual columns (rerun model or load pre-saved output)
+
+ui &lt;- page_sidebar(
+  title = &quot;Midwest Voter Turnout Explorer&quot;,
+  theme = bs_theme(
+    base_font  = font_google(&quot;IBM Plex Sans&quot;),
+    bg         = &quot;#ffffff&quot;,
+    fg         = &quot;#1c1c1e&quot;,
+    primary    = &quot;#1a4a8a&quot;
+  ),
+  sidebar = sidebar(
+    selectInput(&quot;state&quot;, &quot;State&quot;,
+      choices  = c(&quot;All&quot;, sort(unique(df_pct$state_name))),
+      selected = &quot;All&quot;
+    ),
+    selectInput(&quot;xvar&quot;, &quot;X-Axis Predictor&quot;,
+      choices = c(
+        &quot;% Bachelor&#39;s+&quot;           = &quot;pct_bachelors&quot;,
+        &quot;% Internet Access&quot;       = &quot;pct_households_internet&quot;,
+        &quot;% Limited English&quot;       = &quot;pct_limited_english&quot;,
+        &quot;% Disability&quot;            = &quot;pct_disability_total&quot;,
+        &quot;% Poverty&quot;               = &quot;pct_poverty&quot;
+      )
+    ),
+    checkboxInput(&quot;highlight&quot;, &quot;Highlight case-study counties&quot;, TRUE),
+    hr(),
+    p(&quot;Each point = one county. Hover for details.&quot;, 
+      style = &quot;font-size:0.82rem;color:#888580;&quot;)
+  ),
+  card(plotlyOutput(&quot;scatter&quot;, height = &quot;480px&quot;)),
+  card(
+    card_header(&quot;Top 10 Residuals&quot;),
+    tableOutput(&quot;top_table&quot;)
+  )
+)
+
+server &lt;- function(input, output) {
+  case_counties &lt;- c(&quot;Montmorency&quot;, &quot;Trempealeau&quot;,
+                     &quot;Brown&quot;, &quot;Vanderburgh&quot;,
+                     &quot;Clinton&quot;, &quot;DeKalb&quot;)
+
+  filtered &lt;- reactive({
+    d &lt;- df_pct
+    if (input$state != &quot;All&quot;) d &lt;- filter(d, state_name == input$state)
+    d
+  })
+
+  output$scatter &lt;- renderPlotly({
+    d &lt;- filtered() %&gt;%
+      mutate(
+        is_case = county %in% case_counties,
+        label   = paste0(county, &quot;, &quot;, state_name,
+                         &quot;&lt;br&gt;Actual: &quot;, round(turnout_rate, 1), &quot;%&quot;,
+                         &quot;&lt;br&gt;Predicted: &quot;, round(predicted, 1), &quot;%&quot;,
+                         &quot;&lt;br&gt;Residual: &quot;, round(residual, 2), &quot; pp&quot;)
+      )
+
+    p &lt;- ggplot(d, aes_string(x = input$xvar, y = &quot;turnout_rate&quot;,
+                               text = &quot;label&quot;)) +
+      geom_smooth(method = &quot;lm&quot;, se = TRUE, color = &quot;#1a4a8a&quot;, fill = &quot;#d0ddef&quot;,
+                  linewidth = 0.7, alpha = 0.3) +
+      geom_point(data = filter(d, !is_case),
+                 color = &quot;#d8d4ce&quot;, size = 2.5, alpha = 0.7) +
+      labs(x = input$xvar, y = &quot;Turnout Rate (%)&quot;) +
+      theme_minimal(base_family = &quot;sans&quot;)
+
+    if (input$highlight) {
+      p &lt;- p +
+        geom_point(data = filter(d, is_case),
+                   aes(color = case_when(
+                     residual &gt; 1  ~ &quot;Over-Performer&quot;,
+                     residual &lt; -1 ~ &quot;Under-Performer&quot;,
+                     TRUE          ~ &quot;Near-Expected&quot;
+                   )), size = 4, alpha = 0.95) +
+        scale_color_manual(values = c(&quot;Over-Performer&quot;  = &quot;#2e7d52&quot;,
+                                      &quot;Near-Expected&quot;   = &quot;#888580&quot;,
+                                      &quot;Under-Performer&quot; = &quot;#c0392b&quot;),
+                           name = NULL)
+    }
+
+    ggplotly(p, tooltip = &quot;text&quot;) %&gt;%
+      layout(legend = list(orientation = &quot;h&quot;, x = 0, y = 1.05))
+  })
+
+  output$top_table &lt;- renderTable({
+    filtered() %&gt;%
+      arrange(desc(abs(residual))) %&gt;%
+      slice_head(n = 10) %&gt;%
+      select(County = county, State = state_name,
+             `Actual (%)` = turnout_rate,
+             `Predicted (%)` = predicted,
+             `Residual (pp)` = residual) %&gt;%
+      mutate(across(where(is.numeric), ~ round(.x, 2)))
+  }, striped = TRUE, hover = TRUE, bordered = FALSE)
+}
+
+shinyApp(ui, server)</code></pre>
+<hr />
+<div class="callout">
+<p><strong>Note on Shinylive</strong> Shinylive compiles R code to
+WebAssembly and runs entirely in the browser — no server required. This
+makes it compatible with GitHub Pages. The first load may take 10–15
+seconds while the R environment initializes. Package size is a
+constraint: keep dependencies minimal (tidyverse, plotly, bslib are
+manageable). If the app grows complex, consider deploying to
+shinyapps.io and embedding via iframe instead.</p>
+</div>
+<hr />
+<div class="site-footer">
+<p>Interactive visualization built with R Shiny and shinylive. Full
+source on <a href="https://github.com/[your-repo]">GitHub</a>.</p>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

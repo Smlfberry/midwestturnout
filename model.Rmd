@@ -6,9 +6,6 @@ output:
     css: custom.css
     highlight: pygments
     toc: true
-    toc_float:
-      collapsed: false
-      smooth_scroll: true
     toc_depth: 2
 ---
 
@@ -132,7 +129,7 @@ s <- summary(model1)
 
 ```{r coef-plot, fig.cap="Point estimates and 95% confidence intervals. Estimates represent percentage-point change in turnout rate per one-unit change in predictor."}
 coef_df %>%
-  mutate(term = fct_reorder(Predictor, estimate)) %>%
+  mutate(term = fct_reorder(term, estimate)) %>%
   ggplot(aes(x = estimate, y = term)) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "#888580", linewidth = 0.5) +
   geom_segment(aes(x = conf.low, xend = conf.high,

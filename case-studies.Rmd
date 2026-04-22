@@ -6,9 +6,6 @@ output:
     css: custom.css
     highlight: pygments
     toc: true
-    toc_float:
-      collapsed: true
-      smooth_scroll: true
     toc_depth: 2
 ---
 

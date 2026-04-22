@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>About</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="custom.css" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">About</h1>
+
+
+
+<p><span class="section-label">About This Project</span></p>
+<div id="research-overview" class="section level2">
+<h2>Research Overview</h2>
+<p>This project examines county-level voter turnout inequality across
+five Midwest states — Illinois, Indiana, Ohio, Wisconsin, and Michigan —
+using a predictive modeling approach to identify counties that perform
+above or below their structural expectations. The analysis pairs
+quantitative modeling with qualitative case-study investigation to
+generate hypotheses about the civic, institutional, and historical
+factors that drive participation beyond what demographics predict.</p>
+<p>The work builds on practicum research conducted with the
+<strong>Chicago Lawyers’ Committee for Civil Rights (CLC)</strong>,
+which uses quantitative analysis of turnout data to inform voting rights
+advocacy across the region.</p>
+<hr />
+<p><span class="section-label">Methods Summary</span></p>
+</div>
+<div id="methodology" class="section level2">
+<h2>Methodology</h2>
+<p><strong>Turnout rates</strong> are calculated using Citizen Voting
+Age Population (CVAP) denominators from ACS Special Tabulation
+estimates. CVAP is the appropriate denominator for voting rights
+research because it accounts for the legally eligible electorate rather
+than all residents or all adults.</p>
+<p><strong>Structural predictors</strong> are drawn from the 2020 ACS
+5-Year Estimates and retrieved via the <code>tidycensus</code> R
+package. The five predictors — educational attainment, internet access,
+limited English proficiency, disability status, and poverty — represent
+well-documented correlates of voter participation in the political
+science and public administration literature.</p>
+<p><strong>Case selection</strong> follows a purposive residual-based
+logic: two counties from the top of the residual distribution
+(over-performers), two near zero (near-expected), and two from the
+bottom (under-performers). Selection was also guided by geographic
+diversity across states.</p>
+<p><strong>Qualitative analysis</strong> draws on [list sources — local
+news archives, election commission reports, organizational documents,
+etc.].</p>
+<hr />
+<p><span class="section-label">Data Sources</span></p>
+</div>
+<div id="data-code" class="section level2">
+<h2>Data &amp; Code</h2>
+<table>
+<colgroup>
+<col width="38%" />
+<col width="61%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>U.S. Census Bureau, ACS 2020 5-Year</td>
+<td>Educational attainment, internet access, LEP, disability,
+poverty</td>
+</tr>
+<tr class="even">
+<td>ACS CVAP Special Tabulation, 2020</td>
+<td>Eligible electorate denominators</td>
+</tr>
+<tr class="odd">
+<td>IL State Board of Elections</td>
+<td>2020 general election vote totals</td>
+</tr>
+<tr class="even">
+<td>IN Secretary of State</td>
+<td>2020 general election vote totals</td>
+</tr>
+<tr class="odd">
+<td>OH Secretary of State</td>
+<td>2020 general election vote totals</td>
+</tr>
+<tr class="even">
+<td>WI Elections Commission</td>
+<td>2020 general election vote totals</td>
+</tr>
+<tr class="odd">
+<td>MI Department of State</td>
+<td>2020 general election vote totals</td>
+</tr>
+</tbody>
+</table>
+<p>All data processing and analysis were conducted in <strong>R</strong>
+using the <code>tidyverse</code>, <code>tidycensus</code>,
+<code>broom</code>, and <code>kableExtra</code> packages. Interactive
+visualizations use <code>shiny</code>, <code>plotly</code>, and
+<code>shinylive</code>.</p>
+<p>Full replication code is available on <a
+href="https://github.com/%5Byour-repo%5D">GitHub →</a>.</p>
+<hr />
+<p><span class="section-label">About the Researcher</span></p>
+</div>
+<div id="your-name" class="section level2">
+<h2>[Your Name]</h2>
+<p>[Your Name] is a master’s student in the [Program] at the University
+of Chicago, graduating in [Month Year]. Their research focuses on voter
+participation, electoral inequality, and quantitative methods in public
+policy.</p>
+<p>Prior to graduate school, [he/she/they] worked on [brief note about
+campaign experience or California background]. During their master’s
+program, they conducted practicum research with the Chicago Lawyers’
+Committee for Civil Rights, leading quantitative analysis of
+county-level voter turnout patterns across the Midwest.</p>
+<p><strong>Contact:</strong> [<a href="mailto:your-email@uchicago.edu"
+class="email">your-email@uchicago.edu</a>]<br />
+<strong>GitHub:</strong> [github.com/your-handle]<br />
+<strong>LinkedIn:</strong> [linkedin.com/in/your-profile]</p>
+<hr />
+<p><span class="section-label">Acknowledgments</span></p>
+</div>
+<div id="acknowledgments" class="section level2">
+<h2>Acknowledgments</h2>
+<p>This project was developed in partial fulfillment of practicum
+requirements at the University of Chicago Crown Family School of Social
+Work, Policy, and Practice. The author thanks [advisor name] for
+guidance on research design, and the Chicago Lawyers’ Committee for
+Civil Rights for the opportunity to conduct applied voting rights
+research.</p>
+<hr />
+<div class="site-footer">
+<p>Site built with R Markdown and deployed via GitHub Pages. Last
+updated April 2026.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

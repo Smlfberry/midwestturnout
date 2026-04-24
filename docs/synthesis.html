@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<meta name="date" content="2026-04-24" />
+
+<title>Synthesis &amp; Implications</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="custom.css" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Synthesis &amp; Implications</h1>
+<h4 class="date">2026-04-24</h4>
+
+
+
+<p><span class="section-label">Synthesis</span></p>
+<div id="what-this-project-set-out-to-answer" class="section level2">
+<h2>What This Project Set Out to Answer</h2>
+<p>This project began with a straightforward observation from the CLC
+descriptive analysis: Wisconsin and Michigan consistently showed higher
+county-level turnout and smaller within-state gaps than Indiana,
+Illinois, and Ohio — even after accounting for demographic differences.
+The descriptive analysis could document this pattern but could not
+explain it. The predictive modeling phase was designed to ask a more
+precise question: <em>beyond what demographics predict, what explains
+why some counties over- or under-perform?</em></p>
+<p>The answer that emerges across both the quantitative modeling and the
+qualitative case analysis points to two primary factors: <strong>model
+specification</strong> and <strong>state institutional access
+environments</strong>.</p>
+<hr />
+<p><span class="section-label">Finding 1</span></p>
+</div>
+<div id="model-specification-matters-but-doesnt-explain-everything"
+class="section level2">
+<h2>Model Specification Matters — But Doesn’t Explain Everything</h2>
+<p>Model 1 used five structural predictors drawn from the CLC
+descriptive findings: bachelor’s degree attainment, internet access,
+limited English proficiency, disability status, and poverty. It
+explained approximately 43% of variance in county-level turnout rates
+(Adjusted R² = 0.434).</p>
+<p>A natural critique of this specification — motivated by the CLC
+descriptive findings themselves — was that race and lower-tail
+educational attainment were prominent correlates of turnout variation
+but absent from the model. Model 2 added percent Black population and
+percent with no high school diploma. The results were meaningful:</p>
+<table class="table table-striped table-hover" style="font-size: 13px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Model
+</th>
+<th style="text-align:left;">
+Predictors
+</th>
+<th style="text-align:right;">
+Adj. R²
+</th>
+<th style="text-align:right;">
+RMSE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Model 1
+</td>
+<td style="text-align:left;">
+Bachelor’s, Internet, LEP, Disability, Poverty
+</td>
+<td style="text-align:right;">
+0.434
+</td>
+<td style="text-align:right;">
+0.0628
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model 2
+</td>
+<td style="text-align:left;">
+<ul>
+<li>% No HS Diploma, + % Black
+</td>
+<td style="text-align:right;">
+0.536
+</td>
+<td style="text-align:right;">
+0.0567
+</td>
+</tr>
+</tbody>
+</table></li>
+</ul>
+<p>Adjusted R² improved from 0.434 to 0.536 — a meaningful gain. Both
+added predictors were highly significant: lower-tail education (β =
+-0.011, p &lt; .001) and Black population share (β = -0.002, p &lt;
+.001) independently suppress turnout beyond what the original five
+predictors captured.</p>
+<p>The most important case-level result: <strong>Brown County IL’s
+residual collapsed from -16.4pp to +1.5pp in Model 2</strong>. Brown was
+not genuinely anomalous — Model 1 was underspecified for its demographic
+profile. Its severe lower-tail educational disadvantage and unusually
+high Black population share for a rural county of its size were
+suppressing turnout in ways the bachelor’s variable alone could not
+capture.</p>
+<div class="callout finding">
+<p><strong>Finding 1</strong> A more fully specified model resolves
+Brown County’s apparent anomaly — confirming that race and lower-tail
+educational attainment are independent predictors of turnout
+suppression. This has direct methodological implications: future
+county-level turnout models should include both tails of the education
+distribution and racial composition alongside resource-based structural
+variables.</p>
+</div>
+<hr />
+<p><span class="section-label">Finding 2</span></p>
+</div>
+<div id="state-institutional-environment-explains-persistent-residuals"
+class="section level2">
+<h2>State Institutional Environment Explains Persistent Residuals</h2>
+<p>Brown County’s resolution by Model 2 makes the persistence of the
+other case county residuals more analytically significant — not less.
+Even in the better-specified model, four of the five remaining case
+counties retain substantial residuals:</p>
+<table class="table table-striped table-hover" style="font-size: 13px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+County
+</th>
+<th style="text-align:left;">
+State
+</th>
+<th style="text-align:left;">
+Tier
+</th>
+<th style="text-align:right;">
+Actual (%)
+</th>
+<th style="text-align:right;">
+Model 1 Residual (pp)
+</th>
+<th style="text-align:right;">
+Model 2 Residual (pp)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;background-color: rgba(238, 245, 241, 255) !important;">
+Montmorency
+</td>
+<td style="text-align:left;background-color: rgba(238, 245, 241, 255) !important;">
+Michigan
+</td>
+<td style="text-align:left;background-color: rgba(238, 245, 241, 255) !important;">
+Over-Performer
+</td>
+<td style="text-align:right;background-color: rgba(238, 245, 241, 255) !important;">
+80.1
+</td>
+<td style="text-align:right;background-color: rgba(238, 245, 241, 255) !important;">
+16.2
+</td>
+<td style="text-align:right;background-color: rgba(238, 245, 241, 255) !important;">
+13.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: rgba(238, 245, 241, 255) !important;">
+Trempealeau
+</td>
+<td style="text-align:left;background-color: rgba(238, 245, 241, 255) !important;">
+Wisconsin
+</td>
+<td style="text-align:left;background-color: rgba(238, 245, 241, 255) !important;">
+Over-Performer
+</td>
+<td style="text-align:right;background-color: rgba(238, 245, 241, 255) !important;">
+75.3
+</td>
+<td style="text-align:right;background-color: rgba(238, 245, 241, 255) !important;">
+14.5
+</td>
+<td style="text-align:right;background-color: rgba(238, 245, 241, 255) !important;">
+9.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DeKalb
+</td>
+<td style="text-align:left;">
+Illinois
+</td>
+<td style="text-align:left;">
+As-Expected
+</td>
+<td style="text-align:right;">
+63.2
+</td>
+<td style="text-align:right;">
+0.0
+</td>
+<td style="text-align:right;">
+-0.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Clinton
+</td>
+<td style="text-align:left;">
+Ohio
+</td>
+<td style="text-align:left;">
+As-Expected
+</td>
+<td style="text-align:right;">
+65.7
+</td>
+<td style="text-align:right;">
+0.0
+</td>
+<td style="text-align:right;">
+-1.3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: rgba(253, 242, 241, 255) !important;">
+Vanderburgh
+</td>
+<td style="text-align:left;background-color: rgba(253, 242, 241, 255) !important;">
+Indiana
+</td>
+<td style="text-align:left;background-color: rgba(253, 242, 241, 255) !important;">
+Under-Performer
+</td>
+<td style="text-align:right;background-color: rgba(253, 242, 241, 255) !important;">
+54.3
+</td>
+<td style="text-align:right;background-color: rgba(253, 242, 241, 255) !important;">
+-14.5
+</td>
+<td style="text-align:right;background-color: rgba(253, 242, 241, 255) !important;">
+-11.8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: rgba(253, 242, 241, 255) !important;">
+Brown
+</td>
+<td style="text-align:left;background-color: rgba(253, 242, 241, 255) !important;">
+Illinois
+</td>
+<td style="text-align:left;background-color: rgba(253, 242, 241, 255) !important;">
+Under-Performer
+</td>
+<td style="text-align:right;background-color: rgba(253, 242, 241, 255) !important;">
+47.8
+</td>
+<td style="text-align:right;background-color: rgba(253, 242, 241, 255) !important;">
+-16.4
+</td>
+<td style="text-align:right;background-color: rgba(253, 242, 241, 255) !important;">
+1.5
+</td>
+</tr>
+</tbody>
+</table>
+<p>Vanderburgh County IN remains at -11.8pp in Model 2. Montmorency MI
+remains at +13.1pp. Trempealeau WI remains at +9.2pp. These are not
+demographic artifacts — they are real unexplained variation that tracks
+systematically with state institutional environments.</p>
+<p><strong>The state-level pattern is the clearest evidence.</strong>
+Looking across the full residual distribution, Wisconsin and Michigan
+counties dominate the top — while Indiana counties dominate the bottom.
+Six of the ten largest negative residuals belong to Indiana counties.
+This clustering cannot be explained by county-level demographics
+alone.</p>
+<div class="figure">
+<img src="synthesis_files/figure-html/state-residual-boxplot-1.png" alt="Distribution of model residuals by state. Positive residuals indicate over-performance relative to structural predictions; negative residuals indicate under-performance. Model 1 residuals shown." width="1200" />
+<p class="caption">
+Distribution of model residuals by state. Positive residuals indicate
+over-performance relative to structural predictions; negative residuals
+indicate under-performance. Model 1 residuals shown.
+</p>
+</div>
+<p>The institutional access contrast between the states is stark:</p>
+<table>
+<colgroup>
+<col width="8%" />
+<col width="16%" />
+<col width="23%" />
+<col width="17%" />
+<col width="12%" />
+<col width="21%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>State</th>
+<th>Same-Day Reg</th>
+<th>No-Excuse Absentee</th>
+<th>Early Voting</th>
+<th>Photo ID</th>
+<th>Median Residual</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Wisconsin</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>Strict</td>
+<td>Positive</td>
+</tr>
+<tr class="even">
+<td>Michigan</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓ (9 days min)</td>
+<td>Strict</td>
+<td>Positive</td>
+</tr>
+<tr class="odd">
+<td>Ohio</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+<td>Non-strict</td>
+<td>Near zero</td>
+</tr>
+<tr class="even">
+<td>Illinois</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+<td>None</td>
+<td>Negative</td>
+</tr>
+<tr class="odd">
+<td>Indiana</td>
+<td>✗</td>
+<td>✗</td>
+<td>Limited</td>
+<td>Strict</td>
+<td>Most negative</td>
+</tr>
+</tbody>
+</table>
+<p>The pattern is not perfectly linear — Illinois has relatively
+permissive ID requirements yet still shows negative median residuals,
+suggesting other factors are at work. But the Indiana/Wisconsin contrast
+is sharp and consistent: Indiana’s combination of strict photo ID, no
+same-day registration, and no no-excuse absentee produces the most
+suppressed residual distribution of any state, while Wisconsin and
+Michigan’s permissive access environments produce the most elevated.</p>
+<div class="callout finding">
+<p><strong>Finding 2</strong> State institutional access environments
+explain a meaningful portion of the residual variation that demographic
+models cannot capture. Counties in permissive states (WI, MI)
+systematically over-perform their structural predictions; counties in
+restrictive states (IN) systematically under-perform. This pattern
+persists across both model specifications and is most clearly
+illustrated by the Trempealeau/Vanderburgh contrast — a rural
+lower-income Wisconsin county over-performs while an urban Indiana
+county under-performs, despite the model predicting similar turnout for
+both.</p>
+</div>
+<hr />
+<p><span class="section-label">Finding 3</span></p>
+</div>
+<div id="the-trempealeauvanderburgh-contrast-is-the-core-argument"
+class="section level2">
+<h2>The Trempealeau/Vanderburgh Contrast Is the Core Argument</h2>
+<p>The most analytically compelling comparison in the dataset is between
+Trempealeau County WI and Vanderburgh County IN. Both are structurally
+disadvantaged in different ways — Trempealeau is rural, lower-income,
+and lower-education; Vanderburgh is urban with a diverse population in a
+restrictive state. Yet their residuals point in opposite directions by
+roughly equal magnitudes.</p>
+<p>Trempealeau suggests that <strong>permissive voting access policies
+can compensate for structural disadvantage</strong> — a rural,
+lower-income, Republican-leaning county achieves 75% turnout because
+Wisconsin’s institutional environment lifts the floor for all counties
+regardless of demographics.</p>
+<p>Vanderburgh suggests that <strong>restrictive policies suppress
+turnout even where structural conditions are favorable</strong> — an
+urban county whose demographics predict higher participation
+consistently under-performs because Indiana’s compounding barriers
+(strict ID, no SDR, no no-excuse absentee) depress participation in ways
+that demographics cannot explain.</p>
+<p>This contrast holds even after Model 2’s improved specification. It
+is not a demographic artifact — it is an institutional story.</p>
+<hr />
+<p><span class="section-label">Limitations</span></p>
+</div>
+<div id="what-this-analysis-cannot-claim" class="section level2">
+<h2>What This Analysis Cannot Claim</h2>
+<p>This analysis is observational and cross-sectional. The institutional
+access argument is supported by pattern evidence across counties and
+states, but causal identification is not possible from these data.
+Several important limitations apply:</p>
+<p><strong>State fixed effects were deliberately omitted.</strong>
+Including state dummies would absorb the institutional variation this
+analysis seeks to examine qualitatively. This is a principled analytical
+choice, not an oversight — but it means state-level confounders beyond
+voting laws (political culture, party infrastructure, historical
+patterns) cannot be separated from the institutional access effect.</p>
+<p><strong>Age is not in the model.</strong> Age is one of the strongest
+individual-level predictors of turnout and was not available in the
+county-level format used for other predictors. Montmorency County’s
+median age of 56 likely contributes to its over-performance in ways the
+model cannot capture. Future specifications should include median age or
+percent 65+ as a predictor.</p>
+<p><strong>Small county instability.</strong> Brown County’s N of
+approximately 6,000 means the turnout rate is sensitive to small vote
+count changes. The large Model 1 residual may partly reflect noise in
+addition to genuine demographic specification issues.</p>
+<p><strong>The qual analysis is secondary source only.</strong> County
+narratives draw on publicly available documents, news archives, and
+organizational reports — not primary fieldwork or interviews. The
+explanatory factors identified are theoretically motivated hypotheses,
+not confirmed causal mechanisms.</p>
+<hr />
+<p><span class="section-label">Implications</span></p>
+</div>
+<div id="what-this-means-for-clc" class="section level2">
+<h2>What This Means for CLC</h2>
+<p>These findings have direct implications for the CLC’s Midwest
+expansion strategy:</p>
+<p><strong>Prioritize Indiana.</strong> The concentration of large
+negative residuals in Indiana — six of the bottom ten — combined with
+the state’s restrictive institutional environment suggests that Indiana
+counties face suppression beyond what demographics predict. This is
+exactly the kind of pattern that should inform CLC’s litigation,
+advocacy, and voter protection priorities. Vanderburgh/Evansville is a
+natural starting point given its size, documented low turnout, and
+existing local GOTV infrastructure through the Evansville NewsLab.</p>
+<p><strong>Institutional advocacy is as important as community
+organizing.</strong> The Trempealeau finding suggests that permissive
+access policies lift turnout even in structurally disadvantaged
+communities. This supports CLC’s focus on policy advocacy — same-day
+registration, no-excuse absentee, and early voting expansion in Indiana
+and Illinois would likely produce meaningful turnout gains independent
+of community-level interventions.</p>
+<p><strong>Brown County points to a data gap.</strong> The collapse of
+Brown’s residual in Model 2 reveals that lower-tail education and racial
+composition matter independently. CLC’s future data collection and
+analysis should include these variables alongside the resource-based
+predictors to better identify genuinely underserved communities.</p>
+<p><strong>Wisconsin and Michigan are models, not targets.</strong> The
+strong over-performance of WI and MI counties suggests these states’
+institutional frameworks — particularly Michigan’s Proposal 2022-2 —
+represent policy templates worth advocating for in Indiana and
+Illinois.</p>
+<hr />
+<p><span class="section-label">Future Research</span></p>
+</div>
+<div id="next-steps" class="section level2">
+<h2>Next Steps</h2>
+<p>Several directions would strengthen and extend this analysis:</p>
+<ul>
+<li><strong>Add age structure</strong> (median age or % 65+) to the
+predictive model to address the likely underprediction in older rural
+counties</li>
+<li><strong>Panel analysis</strong> across multiple election cycles to
+assess whether residual patterns are stable or election-specific</li>
+<li><strong>Primary source qualitative research</strong> — interviews
+with local election officials, nonprofit staff, and community organizers
+in the six case counties would allow the hypotheses developed here to be
+tested more rigorously</li>
+<li><strong>Cost of Voting Index integration</strong> — incorporating a
+validated state-level voting access score as a continuous predictor
+would allow more precise estimation of the institutional access
+effect</li>
+<li><strong>Precinct-level analysis</strong> within under-performing
+counties to identify whether suppression is geographically concentrated
+within counties</li>
+</ul>
+<hr />
+<div class="site-footer">
+<p>Analysis conducted in R. Data: ACS 2024 5-Year Estimates; CVAP
+Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI);
+Michigan Department of State 2024 Election Report; NCSL Voting Laws
+database; Hajnal, Lajevardi &amp; Nielson (2017); Barber &amp; Holbein
+(2022). Prepared in partial fulfillment of capstone requirements,
+University of Chicago Crown Family School of Social Work, Policy, and
+Practice.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

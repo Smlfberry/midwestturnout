@@ -14,21 +14,17 @@ library(knitr)
 library(kableExtra)
 
 df_pct <- readRDS("data/df_pct.rds")
-
-# Load model results (built in model.Rmd or a shared setup script)
-# If you run_all() via rmarkdown::render_site(), sourcing a shared
-# data-prep script here keeps things DRY.
 ```
 
 <div class="site-hero">
-<span class="kicker">Quantitative Analysis · Midwest · 2020 General Election</span>
+<span class="kicker">Quantitative Analysis · Midwest · 2024 General Election</span>
 
 # Who Votes — and Why Some Counties Beat the Odds
 
 <p class="dek">A predictive model of county-level voter turnout across five Midwest states reveals systematic patterns of under- and over-performance. Six counties — selected from the top, middle, and bottom of the residual distribution — anchor a mixed-methods investigation into the structural and civic factors that shape participation.</p>
 
 <p class="byline">
-[Your Name] &nbsp;·&nbsp; University of Chicago, Crown Family School &nbsp;·&nbsp; [Year]<br>
+Sam Berry &nbsp;·&nbsp; University of Chicago, Crown Family School &nbsp;·&nbsp; 2026<br>
 Practicum research in partnership with the Chicago Lawyers' Committee for Civil Rights
 </p>
 </div>
@@ -47,8 +43,8 @@ Practicum research in partnership with the Chicago Lawyers' Committee for Civil 
     <span class="stat-label">Case Studies</span>
   </div>
   <div class="stat-item">
-    <span class="stat-num">5</span>
-    <span class="stat-label">Predictors</span>
+    <span class="stat-num">7</span>
+    <span class="stat-label">Predictors (Model 2)</span>
   </div>
 </div>
 
@@ -58,22 +54,26 @@ Practicum research in partnership with the Chicago Lawyers' Committee for Civil 
 
 ## What This Project Does
 
-Existing research on voter turnout tends to focus on individual-level determinants — income, education, age — drawing on survey data. County-level analysis offers a complementary lens: it captures the *aggregate civic environment* in which individuals make participation decisions, and it surfaces variation that individual models can obscure.
+This project extends a descriptive needs assessment conducted for the Chicago Lawyers' Committee for Civil Rights (CLC) as part of their Midwest regional expansion. The prior analysis documented demographic patterns associated with low voter turnout across five Midwestern states — finding consistent gaps by education, race, internet access, and disability status. This capstone takes the next step: moving from descriptive patterns to a predictive model that identifies counties performing above or below their structural expectations, then investigating why through qualitative case analysis.
 
-This project builds an OLS regression model predicting county-level turnout rates in the 2020 general election across Illinois, Indiana, Ohio, Wisconsin, and Michigan. The model includes five structural predictors — educational attainment, internet access, limited English proficiency, disability rates, and poverty — drawn from the American Community Survey. Residuals from this model identify counties that perform *better or worse than their structural conditions predict*.
+County-level analysis offers a complementary lens to individual survey data — it captures the aggregate civic environment in which participation decisions are made, and surfaces variation that individual-level models can obscure.
 
-Those residuals are the core analytic object. The counties with the largest positive residuals are "over-performers": something beyond their demographics is driving participation. The counties with the largest negative residuals are "under-performers": something is suppressing turnout that the model can't explain on its own. The counties closest to zero are the "expected" cases.
+This project builds two OLS regression models predicting county-level turnout rates in the 2024 general election across Illinois, Indiana, Ohio, Wisconsin, and Michigan. Model 1 uses five structural predictors drawn from the American Community Survey. Model 2 adds racial composition and lower-tail educational attainment as a theoretically motivated robustness check informed by the prior CLC descriptive findings. Residuals from these models identify counties that perform *better or worse than their structural conditions predict*.
+
+Those residuals are the core analytic object. Counties with the largest positive residuals are "over-performers": something beyond their demographics is driving participation. Counties with the largest negative residuals are "under-performers": something is suppressing turnout that the model cannot explain. Counties closest to zero are the "as-expected" cases.
 
 <div class="callout">
 <strong>Why Residuals?</strong>
 Turnout rates alone can be misleading. A county with 65% turnout might be underperforming if its demographics predict 72%, while a county with 58% might be over-performing given its structural constraints. Residual analysis shifts the question from <em>how much</em> to <em>relative to what</em>.
 </div>
 
+---
+
 <span class="section-label">Case Selection</span>
 
 ## The Six Counties
 
-Two counties from each tier — over-performers, near-expected, and under-performers — were selected for in-depth qualitative analysis. Selection balanced geographic spread across states and avoided extreme outliers that might reflect data anomalies.
+Two counties from each tier — over-performers, as-expected, and under-performers — were selected for in-depth qualitative analysis. Selection balanced geographic spread across states and was based on residuals from Model 1.
 
 <div class="county-grid">
 
@@ -81,53 +81,51 @@ Two counties from each tier — over-performers, near-expected, and under-perfor
 <div class="card-label">Over-Performer</div>
 <div class="card-name">Montmorency County</div>
 <div class="card-state">Michigan</div>
-<div class="card-stat">Turnout: XX.X% &nbsp;|&nbsp; Predicted: XX.X%</div>
-<div class="card-residual">Residual: +X.X pp</div>
+<div class="card-stat">Turnout: 80.1% &nbsp;|&nbsp; Predicted: 63.8%</div>
+<div class="card-residual">Residual: +16.2 pp</div>
 </div>
 
 <div class="county-card over">
 <div class="card-label">Over-Performer</div>
 <div class="card-name">Trempealeau County</div>
 <div class="card-state">Wisconsin</div>
-<div class="card-stat">Turnout: XX.X% &nbsp;|&nbsp; Predicted: XX.X%</div>
-<div class="card-residual">Residual: +X.X pp</div>
+<div class="card-stat">Turnout: 75.3% &nbsp;|&nbsp; Predicted: 60.9%</div>
+<div class="card-residual">Residual: +14.5 pp</div>
 </div>
 
 <div class="county-card middle">
-<div class="card-label">Near-Expected</div>
+<div class="card-label">As-Expected</div>
+<div class="card-name">Clinton County</div>
+<div class="card-state">Ohio</div>
+<div class="card-stat">Turnout: 65.7% &nbsp;|&nbsp; Predicted: 65.7%</div>
+<div class="card-residual">Residual: ≈0.0 pp</div>
+</div>
+
+<div class="county-card middle">
+<div class="card-label">As-Expected</div>
+<div class="card-name">DeKalb County</div>
+<div class="card-state">Illinois</div>
+<div class="card-stat">Turnout: 63.2% &nbsp;|&nbsp; Predicted: 63.2%</div>
+<div class="card-residual">Residual: ≈0.0 pp</div>
+</div>
+
+<div class="county-card under">
+<div class="card-label">Under-Performer</div>
 <div class="card-name">Brown County</div>
-<div class="card-state">Wisconsin</div>
-<div class="card-stat">Turnout: XX.X% &nbsp;|&nbsp; Predicted: XX.X%</div>
-<div class="card-residual">Residual: ±X.X pp</div>
+<div class="card-state">Illinois</div>
+<div class="card-stat">Turnout: 47.8% &nbsp;|&nbsp; Predicted: 64.2%</div>
+<div class="card-residual">Residual: −16.4 pp</div>
 </div>
 
-<div class="county-card middle">
-<div class="card-label">Near-Expected</div>
+<div class="county-card under">
+<div class="card-label">Under-Performer</div>
 <div class="card-name">Vanderburgh County</div>
 <div class="card-state">Indiana</div>
-<div class="card-stat">Turnout: XX.X% &nbsp;|&nbsp; Predicted: XX.X%</div>
-<div class="card-residual">Residual: ±X.X pp</div>
-</div>
-
-<div class="county-card under">
-<div class="card-label">Under-Performer</div>
-<div class="card-name">Clinton County</div>
-<div class="card-state">[State]</div>
-<div class="card-stat">Turnout: XX.X% &nbsp;|&nbsp; Predicted: XX.X%</div>
-<div class="card-residual">Residual: −X.X pp</div>
-</div>
-
-<div class="county-card under">
-<div class="card-label">Under-Performer</div>
-<div class="card-name">DeKalb County</div>
-<div class="card-state">[State]</div>
-<div class="card-stat">Turnout: XX.X% &nbsp;|&nbsp; Predicted: XX.X%</div>
-<div class="card-residual">Residual: −X.X pp</div>
+<div class="card-stat">Turnout: 54.3% &nbsp;|&nbsp; Predicted: 68.7%</div>
+<div class="card-residual">Residual: −14.5 pp</div>
 </div>
 
 </div>
-
-*Note: Exact turnout, predicted values, and residuals will populate from model output. Replace XX.X placeholders once `model.Rmd` is rendered.*
 
 ---
 
@@ -141,15 +139,17 @@ Two counties from each tier — over-performers, near-expected, and under-perfor
 
 Turnout rates are calculated using **Citizen Voting Age Population (CVAP)** denominators from ACS estimates, consistent with best practices in voting rights research. Using CVAP rather than total population or VAP ensures the denominator reflects the legally eligible electorate.
 
-Structural predictors are drawn from the **2020 ACS 5-Year estimates**:
+Structural predictors are drawn from the **2024 ACS 5-Year estimates**:
 
 | Predictor | ACS Table | Rationale |
 |-----------|-----------|-----------|
 | % Bachelor's degree or higher | B15003 | Civic engagement, information access |
+| % No high school diploma | B15003 | Lower-tail educational disadvantage |
 | % Households with internet access | B28002 | Voter registration, information environment |
 | % Limited English proficiency | B16004 | Ballot access barriers |
 | % With a disability | B18101 | Participation barriers, registration gaps |
 | % Below poverty line | B17001 | Resource constraints on participation |
+| % Black or African American | B02001 | Racial composition, suppression exposure |
 
 All data were retrieved using the `tidycensus` R package. County GEOID codes are used as the merge key across all datasets.
 
@@ -159,13 +159,15 @@ All data were retrieved using the `tidycensus` R package. County GEOID codes are
 
 ## Explore This Project
 
-- **[The Model →](model.html)** Full model specification, coefficient table, model fit, and the full residual distribution.
-- **[Case Studies →](case-studies.html)** Deep-dive analysis of each of the six selected counties.
+- **[Background →](descriptive.html)** Prior CLC descriptive findings: state choropleths and demographic gap analysis across all five states.
+- **[The Model →](model.html)** Model specification, coefficient tables, model fit, and residual distribution for both models.
+- **[Case Studies →](case-studies.html)** Qualitative deep-dive on each of the six selected counties.
+- **[Synthesis →](synthesis.html)** Cross-case patterns, institutional access argument, and implications for CLC expansion.
 - **[Explore the Data →](explore.html)** Interactive tools for exploring the full county-level dataset.
 
 ---
 
 <div class="site-footer">
-Data: U.S. Census Bureau American Community Survey (2020 5-Year Estimates); CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). Analysis conducted in R. Code available on <a href="https://github.com/[your-repo]">GitHub</a>.<br>
-Prepared in partial fulfillment of practicum requirements, University of Chicago Crown Family School of Social Work, Policy, and Practice.
+Data: U.S. Census Bureau American Community Survey (2024 5-Year Estimates); CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). Analysis conducted in R. Code available on <a href="https://github.com/Smlfberry/midwestturnout">GitHub</a>.<br>
+Prepared in partial fulfillment of capstone requirements, University of Chicago Crown Family School of Social Work, Policy, and Practice. Developed in partnership with the Chicago Lawyers' Committee for Civil Rights.
 </div>

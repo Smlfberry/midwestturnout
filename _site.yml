@@ -7,10 +7,14 @@ navbar:
   left:
     - text: "Overview"
       href: index.html
+    - text: "Background"
+      href: descriptive.html
     - text: "The Model"
       href: model.html
     - text: "Case Studies"
       href: case-studies.html
+    - text: "Synthesis"
+      href: synthesis.html
     - text: "Explore"
       href: explore.html
     - text: "About"

@@ -45,14 +45,12 @@ model1 <- lm(
 df_pct$predicted <- predict(model1)
 df_pct$residual  <- df_pct$turnout_rate - df_pct$predicted
 
-# Helper: pull one county's stats cleanly
-county_row <- function(cname) {
-  df_pct %>% filter(county == cname) %>% slice(1)
+county_row <- function(cname, sname) {
+  df_pct %>% filter(county == cname, state_name == sname) %>% slice(1)
 }
 
-# Predictor comparison helper
-predictor_bar <- function(cname, state_abbr) {
-  target <- df_pct %>% filter(county == cname) %>% slice(1)
+predictor_bar <- function(cname, sname) {
+  target <- df_pct %>% filter(county == cname, state_name == sname) %>% slice(1)
   state_avg <- df_pct %>%
     filter(state_name == target$state_name) %>%
     summarise(across(c(pct_bachelors, pct_households_internet,
@@ -78,12 +76,9 @@ predictor_bar <- function(cname, state_abbr) {
 
 # Six Counties, Three Stories
 
-The six case-study counties represent three distinct patterns relative to model predictions. **Over-performers** suggest that something in the civic environment — local organizing, competitive elections, cultural norms — is mobilizing voters beyond what demographics alone would predict. **Near-expected** counties serve as a baseline. **Under-performers** raise questions about suppression, disengagement, or structural barriers not captured by the model.
+The six case-study counties represent three distinct patterns relative to model predictions. **Over-performers** suggest that something beyond demographics — institutional access, civic infrastructure, political context — is mobilizing voters. **As-expected** counties serve as baselines where structural conditions straightforwardly predict participation. **Under-performers** raise questions about suppression, disengagement, or barriers not captured by the model.
 
-Each county profile includes:  
-(1) key statistics from the model,  
-(2) a comparison of predictors against the state average, and  
-(3) space for qualitative findings from document review, news archive analysis, or other sources.
+Each county profile includes: (1) key model statistics, (2) a comparison of predictors against the state average, and (3) qualitative findings from secondary source analysis.
 
 ---
 
@@ -92,20 +87,20 @@ Each county profile includes:
 ## Montmorency County, MI
 
 ```{r montmorency-stats}
-r <- county_row("Montmorency")
+r <- county_row("Montmorency", "Michigan")
 ```
 
 <div class="county-card over" style="margin-bottom:1.5rem;">
 <div class="card-label">Over-Performer · Michigan</div>
 <div class="card-name">Montmorency County</div>
-<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
-<div class="card-residual">Residual: +`r round(r$residual, 2)` percentage points</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate * 100, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted * 100, 1)`%</div>
+<div class="card-residual">Residual: +`r round(r$residual * 100, 1)` percentage points</div>
 </div>
 
 ### Predictor Profile
 
-```{r montmorency-bar, fig.cap="County values vs. state average for all five model predictors.", fig.height=3.5}
-predictor_bar("Montmorency") %>%
+```{r montmorency-bar, fig.cap="County values vs. Michigan state average for all five model predictors.", fig.height=3.5}
+predictor_bar("Montmorency", "Michigan") %>%
   ggplot(aes(x = value, y = variable, fill = type)) +
   geom_col(position = "dodge", width = 0.65) +
   scale_fill_manual(values = c("County" = "#2e7d52", "State Avg" = "#d8d4ce")) +
@@ -118,18 +113,15 @@ predictor_bar("Montmorency") %>%
 
 ### Qualitative Analysis
 
-> **[Placeholder — add your findings here]**
+Montmorency County is among the smallest counties in Michigan — population approximately 9,000, median age 56, 92% white, with an 18% poverty rate higher than the state average and near-average educational attainment. By demographic profile alone, the model predicts moderate turnout. Yet Montmorency achieves 80.1% — the highest residual in the dataset at +16.2 percentage points.
 
-*Suggested dimensions to investigate:*
+Michigan's institutional environment is the critical backdrop. Following Proposal 2022-2, Michigan voters approved nine days of early in-person voting, secure ballot drop boxes for every 5,000 voters, and the option to join a permanent vote-by-mail list. The Michigan Department of State's 2024 Election Report ranked Michigan third in the nation for eligible voter turnout at 74.6% — and attributed gains directly to expanded access. Montmorency's 50.9% mail or early vote share sits at the state median, suggesting the county is fully utilizing these expanded options.
 
-- **Civic infrastructure:** Are there active nonpartisan GOTV organizations? Strong union presence? Churches with voter mobilization history?
-- **Electoral competition:** Was there a particularly competitive local race in 2020 that drove turnout above what national-level enthusiasm alone would predict?
-- **Historical patterns:** Is over-performance consistent across election cycles, or is 2020 an anomaly?
-- **Community characteristics:** What do residents, local news, or community organizations say about civic participation?
+Beyond institutional access, two county-specific factors likely contribute. First, Montmorency's older population — median age 56 — is a turnout asset not captured by the model. Age is one of the strongest individual-level predictors of voting, and the model's omission of age structure likely systematically underpredicts turnout in older counties. Second, Montmorency leans liberal in a predominantly conservative rural Michigan context — a politically engaged minority community may maintain higher mobilization energy than the structural variables suggest.
 
 <div class="callout finding">
-<strong>Emerging Finding</strong>
-[Replace this with your key takeaway from qualitative research. What explains the gap between predicted and actual turnout?]
+<strong>Key Finding</strong>
+Montmorency's over-performance likely reflects a combination of Michigan's permissive institutional access environment and an older population whose high participation propensity is not captured by the model's demographic predictors. The residual may partly reflect a model specification gap — age — rather than purely unexplained civic factors.
 </div>
 
 ---
@@ -137,20 +129,20 @@ predictor_bar("Montmorency") %>%
 ## Trempealeau County, WI
 
 ```{r trempealeau-stats}
-r <- county_row("Trempealeau")
+r <- county_row("Trempealeau", "Wisconsin")
 ```
 
 <div class="county-card over" style="margin-bottom:1.5rem;">
 <div class="card-label">Over-Performer · Wisconsin</div>
 <div class="card-name">Trempealeau County</div>
-<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
-<div class="card-residual">Residual: +`r round(r$residual, 2)` percentage points</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate * 100, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted * 100, 1)`%</div>
+<div class="card-residual">Residual: +`r round(r$residual * 100, 1)` percentage points</div>
 </div>
 
 ### Predictor Profile
 
-```{r trempealeau-bar, fig.cap="County values vs. state average for all five model predictors.", fig.height=3.5}
-predictor_bar("Trempealeau") %>%
+```{r trempealeau-bar, fig.cap="County values vs. Wisconsin state average for all five model predictors.", fig.height=3.5}
+predictor_bar("Trempealeau", "Wisconsin") %>%
   ggplot(aes(x = value, y = variable, fill = type)) +
   geom_col(position = "dodge", width = 0.65) +
   scale_fill_manual(values = c("County" = "#2e7d52", "State Avg" = "#d8d4ce")) +
@@ -163,36 +155,38 @@ predictor_bar("Trempealeau") %>%
 
 ### Qualitative Analysis
 
-> **[Placeholder — add your findings here]**
+Trempealeau County is a rural agricultural county of approximately 30,800 in western Wisconsin along the Mississippi River. It is 92% white, lower income than the state average, and predominantly Republican — atypical for Wisconsin, which skews more educated and Democratic overall. By the model's structural predictions, Trempealeau should perform somewhere near the middle of the distribution. Instead it achieves 75.3% turnout — a +14.5 percentage point residual.
 
-*Trempealeau County, WI — note its agricultural/rural character, proximity to La Crosse metro, and Wisconsin's historically high-turnout culture. Consider how AVR, same-day registration, and any local organizing might interact.*
+Wisconsin's institutional environment is the most important explanatory factor. Wisconsin permits same-day voter registration, no-excuse absentee voting, online registration, early voting, and keeps polls open until 8pm. These features benefit all counties, but may disproportionately help counties like Trempealeau whose lower-income, lower-education profile would otherwise predict suppressed participation.
+
+Critically, Trempealeau's over-performance is analytically important because it challenges the assumption that rural, lower-income, Republican-leaning counties are structurally low-turnout. In Wisconsin's permissive access environment, this demographic profile does not translate to low participation. This suggests institutional access can compensate for structural disadvantage — a finding that persists even in the more fully specified Model 2, where Trempealeau's residual remains substantial at +9.2 percentage points.
 
 <div class="callout finding">
-<strong>Emerging Finding</strong>
-[Replace this with your key takeaway.]
+<strong>Key Finding</strong>
+Trempealeau provides the clearest evidence that permissive state voting access policies can compensate for structural demographic disadvantage. A rural, lower-income, lower-education county outperforms its predictions substantially — and continues to do so even after race and lower-tail education are added to the model.
 </div>
 
 ---
 
-# Near-Expected {.tabset}
+# As-Expected {.tabset}
 
-## Brown County, WI
+## Clinton County, OH
 
-```{r brown-stats}
-r <- county_row("Brown")
+```{r clinton-stats}
+r <- county_row("Clinton", "Ohio")
 ```
 
 <div class="county-card middle" style="margin-bottom:1.5rem;">
-<div class="card-label">Near-Expected · Wisconsin</div>
-<div class="card-name">Brown County</div>
-<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
-<div class="card-residual">Residual: `r round(r$residual, 2)` percentage points</div>
+<div class="card-label">As-Expected · Ohio</div>
+<div class="card-name">Clinton County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate * 100, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted * 100, 1)`%</div>
+<div class="card-residual">Residual: ≈`r round(r$residual * 100, 2)` percentage points</div>
 </div>
 
 ### Predictor Profile
 
-```{r brown-bar, fig.cap="County values vs. state average.", fig.height=3.5}
-predictor_bar("Brown") %>%
+```{r clinton-bar, fig.cap="County values vs. Ohio state average for all five model predictors.", fig.height=3.5}
+predictor_bar("Clinton", "Ohio") %>%
   ggplot(aes(x = value, y = variable, fill = type)) +
   geom_col(position = "dodge", width = 0.65) +
   scale_fill_manual(values = c("County" = "#888580", "State Avg" = "#d8d4ce")) +
@@ -205,13 +199,99 @@ predictor_bar("Brown") %>%
 
 ### Qualitative Analysis
 
-> **[Placeholder — add your findings here]**
+Clinton County, Ohio is this project's most precisely predicted county — a residual of essentially zero in both model specifications. With a population of approximately 40,000, 92% white, 12% poverty, agricultural character, and reliably Republican voting history, Clinton fits the model's expectations almost perfectly at 65.7% turnout.
 
-*Near-expected counties are analytically interesting as baselines. What makes Brown County "typical"? Are there any tensions between demographic diversity (Green Bay's immigrant and refugee communities) and the structural model's predictions?*
+No unusual mobilizing or suppressing factors are evident. Clinton has no competitive local races driving exceptional turnout, no notable civic infrastructure beyond Ohio's standard voting environment, and no documented access barriers beyond the state baseline. Notably, Clinton is whiter and has lower educational attainment than the Ohio average — yet still performs exactly as predicted, validating the model's ability to handle rural, white, lower-education Ohio counties without systematic bias.
 
 <div class="callout">
-<strong>Baseline Case</strong>
-[What does "as expected" actually look like on the ground? Document the absence of unusual mobilizing or suppressing factors.]
+<strong>Key Finding</strong>
+Clinton County is what "expected" looks like — a demographically typical rural Ohio county where structural conditions straightforwardly predict participation. Its near-zero residual in both model specifications serves as a validation check for the modeling approach.
+</div>
+
+---
+
+## DeKalb County, IL
+
+```{r dekalb-stats}
+r <- county_row("DeKalb", "Illinois")
+```
+
+<div class="county-card middle" style="margin-bottom:1.5rem;">
+<div class="card-label">As-Expected · Illinois</div>
+<div class="card-name">DeKalb County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate * 100, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted * 100, 1)`%</div>
+<div class="card-residual">Residual: ≈`r round(r$residual * 100, 2)` percentage points</div>
+</div>
+
+### Predictor Profile
+
+```{r dekalb-bar, fig.cap="County values vs. Illinois state average for all five model predictors.", fig.height=3.5}
+predictor_bar("DeKalb", "Illinois") %>%
+  ggplot(aes(x = value, y = variable, fill = type)) +
+  geom_col(position = "dodge", width = 0.65) +
+  scale_fill_manual(values = c("County" = "#888580", "State Avg" = "#d8d4ce")) +
+  labs(x = "Percent (%)", y = NULL, fill = NULL) +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+### Qualitative Analysis
+
+DeKalb County, Illinois is home to Northern Illinois University and has a population of approximately 100,000 — the largest of the six case counties. It is politically competitive, having voted for Harris in 2024, and demographically diverse with roughly 13.5% Hispanic and 8-9% Black residents alongside a 71-74% white population.
+
+DeKalb's near-zero residual in both model specifications is analytically interesting as a canceling-out story. The student population likely inflates the CVAP denominator while registering and voting at lower rates than permanent residents — a dynamic partially captured by the model's education and internet variables. Simultaneously, the competitive political environment drives mobilization from both parties, keeping turnout at predicted levels without pushing it above them. The result is a county where multiple forces balance each other out to produce almost exactly the structural prediction.
+
+<div class="callout">
+<strong>Key Finding</strong>
+DeKalb illustrates how competing forces — student population churn, demographic diversity, and competitive elections — can balance each other to produce exactly expected turnout. It represents a structurally complex county that the model nonetheless predicts well.
+</div>
+
+---
+
+# Under-Performers {.tabset}
+
+## Brown County, IL
+
+```{r brown-stats}
+r <- county_row("Brown", "Illinois")
+```
+
+<div class="county-card under" style="margin-bottom:1.5rem;">
+<div class="card-label">Under-Performer · Illinois</div>
+<div class="card-name">Brown County</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate * 100, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted * 100, 1)`%</div>
+<div class="card-residual">Residual: `r round(r$residual * 100, 1)` percentage points</div>
+</div>
+
+### Predictor Profile
+
+```{r brown-bar, fig.cap="County values vs. Illinois state average for all five model predictors.", fig.height=3.5}
+predictor_bar("Brown", "Illinois") %>%
+  ggplot(aes(x = value, y = variable, fill = type)) +
+  geom_col(position = "dodge", width = 0.65) +
+  scale_fill_manual(values = c("County" = "#c0392b", "State Avg" = "#d8d4ce")) +
+  labs(x = "Percent (%)", y = NULL, fill = NULL) +
+  theme_minimal(base_family = "sans", base_size = 11) +
+  theme(legend.position = "top", panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.background = element_rect(fill = "white", color = NA))
+```
+
+### Qualitative Analysis
+
+Brown County, Illinois is among the most striking cases in the dataset — a 47.8% turnout rate that is alarming in absolute terms, and the largest negative residual in Model 1 at -16.4 percentage points. With a population of approximately 6,000, Brown is the smallest case county and one of the smallest in the five-state region.
+
+Demographically, Brown is unusual for rural Illinois: 74% white with a 14% Black population — high for a county of its size and location — and 23% of residents lacking a high school diploma, one of the most extreme lower-tail education profiles in the dataset. These features are not fully captured by Model 1, which uses bachelor's degree attainment rather than the lower tail of the education distribution.
+
+This interpretation is confirmed by Model 2. When racial composition (pct_black) and lower-tail education (pct_no_hs) are added to the model, Brown's residual collapses from -16.4 to near zero (+1.5 percentage points). This is the most important methodological finding in the case study analysis: Brown County was not genuinely anomalous — Model 1 was underspecified for this demographic profile. The large Black population share and severe educational disadvantage were suppressing turnout in ways the bachelor's variable alone could not capture.
+
+Illinois's institutional context adds a secondary layer. Illinois requires registration 28 days before the election with no same-day registration option, which compounds population decline effects — a shrinking rural county accumulates lapsed registrations with no mechanism to re-engage voters on Election Day.
+
+<div class="callout warning">
+<strong>Key Finding</strong>
+Brown County's dramatic under-performance in Model 1 is largely resolved by Model 2 — revealing a model specification issue rather than a genuinely unexplained civic phenomenon. Adding racial composition and lower-tail education substantially explains the residual, making Brown County the primary evidence for why race and education distribution matter independently in turnout modeling.
 </div>
 
 ---
@@ -219,62 +299,20 @@ predictor_bar("Brown") %>%
 ## Vanderburgh County, IN
 
 ```{r vanderburgh-stats}
-r <- county_row("Vanderburgh")
+r <- county_row("Vanderburgh", "Indiana")
 ```
 
-<div class="county-card middle" style="margin-bottom:1.5rem;">
-<div class="card-label">Near-Expected · Indiana</div>
+<div class="county-card under" style="margin-bottom:1.5rem;">
+<div class="card-label">Under-Performer · Indiana</div>
 <div class="card-name">Vanderburgh County</div>
-<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
-<div class="card-residual">Residual: `r round(r$residual, 2)` percentage points</div>
+<div class="card-stat">Actual turnout: **`r round(r$turnout_rate * 100, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted * 100, 1)`%</div>
+<div class="card-residual">Residual: `r round(r$residual * 100, 1)` percentage points</div>
 </div>
 
 ### Predictor Profile
 
-```{r vanderburgh-bar, fig.cap="County values vs. state average.", fig.height=3.5}
-predictor_bar("Vanderburgh") %>%
-  ggplot(aes(x = value, y = variable, fill = type)) +
-  geom_col(position = "dodge", width = 0.65) +
-  scale_fill_manual(values = c("County" = "#888580", "State Avg" = "#d8d4ce")) +
-  labs(x = "Percent (%)", y = NULL, fill = NULL) +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.major.y = element_blank(),
-        panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
-```
-
-### Qualitative Analysis
-
-> **[Placeholder — add your findings here]**
-
-*Vanderburgh is home to Evansville, Indiana's third-largest city. Consider the urban-rural divide within the county, Indiana's registration restrictions, and any local competitive dynamics.*
-
-<div class="callout">
-<strong>Baseline Case</strong>
-[What does "as expected" look like here? Note any notable features even if residual is near zero.]
-</div>
-
----
-
-# Under-Performers {.tabset}
-
-## Clinton County
-
-```{r clinton-stats}
-r <- county_row("Clinton")
-```
-
-<div class="county-card under" style="margin-bottom:1.5rem;">
-<div class="card-label">Under-Performer · `r r$state_name`</div>
-<div class="card-name">Clinton County</div>
-<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
-<div class="card-residual">Residual: `r round(r$residual, 2)` percentage points</div>
-</div>
-
-### Predictor Profile
-
-```{r clinton-bar, fig.cap="County values vs. state average.", fig.height=3.5}
-predictor_bar("Clinton") %>%
+```{r vanderburgh-bar, fig.cap="County values vs. Indiana state average for all five model predictors.", fig.height=3.5}
+predictor_bar("Vanderburgh", "Indiana") %>%
   ggplot(aes(x = value, y = variable, fill = type)) +
   geom_col(position = "dodge", width = 0.65) +
   scale_fill_manual(values = c("County" = "#c0392b", "State Avg" = "#d8d4ce")) +
@@ -287,57 +325,17 @@ predictor_bar("Clinton") %>%
 
 ### Qualitative Analysis
 
-> **[Placeholder — add your findings here]**
+Vanderburgh County is home to Evansville, Indiana's third-largest city, with a population of approximately 180,000. It is the most urban of the six case counties and the only one where an urban context combines with a highly restrictive state institutional environment. Its Model 1 residual of -14.5 percentage points makes it the second-largest under-performer in the dataset — and crucially, this residual persists at -11.8 percentage points even in the more fully specified Model 2. Unlike Brown County, Vanderburgh's under-performance is not resolved by adding demographic controls.
 
-*Suggested dimensions:*
+Vanderburgh is not an isolated Indiana anomaly. Six of the bottom ten residuals in the dataset belong to Indiana counties — including Hendricks, Vigo, Madison, Miami, Putnam, and LaGrange alongside Vanderburgh. This clustering strongly suggests a state-level institutional effect rather than county-specific factors.
 
-- **Structural barriers:** Voter ID laws, registration restrictions, polling place consolidation?
-- **Civic disengagement:** Low competitive elections, weak local party infrastructure, low trust in institutions?
-- **Population churn:** High transience (college town, military base, agricultural seasonal workers) that disrupts registration rolls?
+Indiana's voting environment is among the most restrictive in the Midwest. The state requires strict photo identification to vote in person and to request an absentee ballot by mail. Absentee voting is not available without excuse — voters must qualify under specific conditions including absence from county, disability, or age 65+. Indiana has no same-day registration, requiring voters to register 29 days before the election. These compounding barriers are directly consistent with the suppression mechanisms documented by Hajnal, Lajevardi, and Nielson (2017), who found that strict identification laws have disproportionate negative effects on racial and ethnic minority voters.
 
-<div class="callout warning">
-<strong>Emerging Finding</strong>
-[Replace with your key takeaway. What explains the gap between structural conditions and actual turnout?]
-</div>
-
----
-
-## DeKalb County
-
-```{r dekalb-stats}
-r <- county_row("DeKalb")
-```
-
-<div class="county-card under" style="margin-bottom:1.5rem;">
-<div class="card-label">Under-Performer · `r r$state_name`</div>
-<div class="card-name">DeKalb County</div>
-<div class="card-stat">Actual turnout: **`r round(r$turnout_rate, 1)`%** &nbsp;|&nbsp; Predicted: `r round(r$predicted, 1)`%</div>
-<div class="card-residual">Residual: `r round(r$residual, 2)` percentage points</div>
-</div>
-
-### Predictor Profile
-
-```{r dekalb-bar, fig.cap="County values vs. state average.", fig.height=3.5}
-predictor_bar("DeKalb") %>%
-  ggplot(aes(x = value, y = variable, fill = type)) +
-  geom_col(position = "dodge", width = 0.65) +
-  scale_fill_manual(values = c("County" = "#c0392b", "State Avg" = "#d8d4ce")) +
-  labs(x = "Percent (%)", y = NULL, fill = NULL) +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.major.y = element_blank(),
-        panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
-```
-
-### Qualitative Analysis
-
-> **[Placeholder — add your findings here]**
-
-*Note: If this is DeKalb County, IL (home of NIU), student population effects on CVAP and registration may be particularly relevant. DeKalb, IN would have a different profile — confirm which state before writing up.*
+The Evansville NewsLab, a local civic journalism initiative, independently identified low voter turnout as a primary community concern and has launched an active GOTV campaign targeting Gen Z voters, immigrant communities (Latino, Haitian Creole, and Marshallese residents), and Black voters through partnerships with the League of Women Voters and local Black-owned media. This local acknowledgment validates the quantitative finding and suggests the suppression pattern is recognized on the ground.
 
 <div class="callout warning">
-<strong>Emerging Finding</strong>
-[Replace with your key takeaway.]
+<strong>Key Finding</strong>
+Vanderburgh's persistent under-performance across both model specifications — combined with Indiana's dominance of the bottom residual distribution — points to state-level institutional barriers as the primary suppressing factor. This is the strongest evidence in the case study analysis for the institutional access argument, and has direct implications for CLC's Indiana expansion strategy.
 </div>
 
 ---
@@ -346,15 +344,20 @@ predictor_bar("DeKalb") %>%
 
 ## Comparing Across Cases
 
-```{r cross-county, fig.cap="All six case-study counties plotted across the five model predictors, with state average benchmarks. Use this to identify cross-cutting patterns.", fig.height=5}
+```{r cross-county, fig.cap="All six case-study counties plotted across the five model predictors, with state average benchmarks.", fig.height=5}
 case_counties <- df_pct %>%
-  filter(county %in% c("Montmorency", "Trempealeau",
-                        "Brown", "Vanderburgh",
-                        "Clinton", "DeKalb")) %>%
+  filter(
+    (county == "Montmorency" & state_name == "Michigan") |
+    (county == "Trempealeau" & state_name == "Wisconsin") |
+    (county == "Brown"       & state_name == "Illinois") |
+    (county == "Vanderburgh" & state_name == "Indiana") |
+    (county == "Clinton"     & state_name == "Ohio") |
+    (county == "DeKalb"      & state_name == "Illinois")
+  ) %>%
   mutate(tier = case_when(
-    county %in% c("Montmorency", "Trempealeau") ~ "Over",
-    county %in% c("Brown", "Vanderburgh")        ~ "Expected",
-    TRUE                                          ~ "Under"
+    county %in% c("Montmorency", "Trempealeau") ~ "Over-Performer",
+    county %in% c("Clinton", "DeKalb")           ~ "As-Expected",
+    county %in% c("Brown", "Vanderburgh")         ~ "Under-Performer"
   ))
 
 vars <- c("pct_bachelors", "pct_households_internet",
@@ -376,7 +379,9 @@ ggplot(case_long, aes(x = variable, y = value, color = tier, group = county)) +
     nudge_x = 0.3, show.legend = FALSE
   ) +
   scale_color_manual(
-    values = c("Over" = "#2e7d52", "Expected" = "#888580", "Under" = "#c0392b"),
+    values = c("Over-Performer"  = "#2e7d52",
+               "As-Expected"     = "#888580",
+               "Under-Performer" = "#c0392b"),
     name = "Performance Tier"
   ) +
   labs(x = NULL, y = "Percent (%)") +
@@ -385,10 +390,8 @@ ggplot(case_long, aes(x = variable, y = value, color = tier, group = county)) +
         plot.background = element_rect(fill = "white", color = NA))
 ```
 
-*Use this parallel coordinates–style view to identify predictors where over- and under-performers diverge most sharply. Patterns here can motivate hypotheses for qualitative investigation.*
-
 ---
 
 <div class="site-footer">
-Case county selection based on model residuals. Qualitative analysis draws on [sources to be listed]. Visualizations produced in R with ggplot2.
+Qualitative analysis draws on secondary sources including Michigan Department of State 2024 Election Report, Ballotpedia, NCSL voting law summaries, VoteRiders, and the Evansville NewsLab / CivicInfo Index. Visualizations produced in R with ggplot2.
 </div>

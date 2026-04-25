@@ -27,3 +27,5 @@ output:
     highlight: pygments
     toc: false
     self_contained: false
+    includes:
+      in_header: header.html

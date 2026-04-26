@@ -1,11 +1,11 @@
 ---
-title: "The Model"
+title: "Model"
 output:
   html_document:
-    theme: null
+    theme: flatly
     css: custom.css
     highlight: pygments
-    toc: true
+    toc: false
     toc_depth: 2
 ---
 

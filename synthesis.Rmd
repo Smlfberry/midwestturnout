@@ -1,7 +1,12 @@
 ---
 title: "synthesis"
-output: html_document
-date: "2026-04-24"
+output:
+  html_document:
+    theme: flatly
+    css: custom.css
+    highlight: null
+    toc: true
+    toc_depth: 2
 ---
 
 ---

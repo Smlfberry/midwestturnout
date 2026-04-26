@@ -2,11 +2,11 @@
 title: "About"
 output:
   html_document:
-    theme: null
+    theme: flatly
     css: custom.css
     highlight: null
-    toc: false
 ---
+
 
 <span class="section-label">About This Project</span>
 

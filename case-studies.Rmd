@@ -2,10 +2,10 @@
 title: "Case Studies"
 output:
   html_document:
-    theme: null
+    theme: flatly
     css: custom.css
     highlight: pygments
-    toc: true
+    toc: false
     toc_depth: 2
 ---
 
@@ -342,7 +342,7 @@ Vanderburgh's persistent under-performance across both model specifications — 
 
 <span class="section-label">Cross-County Patterns</span>
 
-## Comparing Across Cases
+# Comparing Across Cases
 
 ```{r cross-county, fig.cap="All six case-study counties plotted across the five model predictors, with state average benchmarks.", fig.height=5}
 case_counties <- df_pct %>%

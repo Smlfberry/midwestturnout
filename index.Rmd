@@ -2,7 +2,7 @@
 title: ""
 output:
   html_document:
-    theme: null
+    theme: flatly
     css: custom.css
     highlight: null
 ---
@@ -24,29 +24,15 @@ df_pct <- readRDS("data/df_pct.rds")
 <p class="dek">A predictive model of county-level voter turnout across five Midwest states reveals systematic patterns of under- and over-performance. Six counties — selected from the top, middle, and bottom of the residual distribution — anchor a mixed-methods investigation into the structural and civic factors that shape participation.</p>
 
 <p class="byline">
-Sam Berry &nbsp;·&nbsp; University of Chicago, Crown Family School &nbsp;·&nbsp; 2026<br>
+Sam Berry &nbsp;·&nbsp; University of Chicago &nbsp;·&nbsp; 2026<br>
 Practicum research in partnership with the Chicago Lawyers' Committee for Civil Rights
 </p>
 </div>
 
-<div class="stat-strip">
-  <div class="stat-item">
-    <span class="stat-num">5</span>
-    <span class="stat-label">States</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num">`r nrow(df_pct)`</span>
-    <span class="stat-label">Counties</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num">6</span>
-    <span class="stat-label">Case Studies</span>
-  </div>
-  <div class="stat-item">
-    <span class="stat-num">7</span>
-    <span class="stat-label">Predictors (Model 2)</span>
-  </div>
-</div>
+| | | | |
+|:---:|:---:|:---:|:---:|
+| **5** | **437** | **6** | **7** |
+| States | Counties | Case Studies | Predictors (Model 2) |
 
 ---
 

@@ -21,7 +21,7 @@
   --mono:        'IBM Plex Mono', monospace;
   --sans:        'IBM Plex Sans', system-ui, sans-serif;
   --serif:       'IBM Plex Serif', Georgia, serif;
-  --max-w:       820px;
+  --max-w:       1250px;
   --gutter:      2rem;
 }
 
@@ -30,57 +30,63 @@
 
 body {
   font-family: var(--serif);
-  font-size: 1.0625rem;
+  font-size: 1.35rem;
   line-height: 1.75;
   color: var(--text-body);
   background: var(--page);
   -webkit-font-smoothing: antialiased;
 }
 
-/* === NAVBAR — override Bootstrap === */
-.navbar {
-  background: var(--ink) !important;
-  border: none !important;
-  border-bottom: 3px solid var(--accent) !important;
-  border-radius: 0 !important;
-  padding: 0 var(--gutter);
-  font-family: var(--sans);
-  min-height: 56px;
+/* === NAVBAR — flatly override === */
+.navbar-default {
+  background-color: #1c1c1e !important;
+  border-color: #1a4a8a !important;
 }
 
-.navbar-brand {
+.navbar-default .navbar-brand {
   color: #ffffff !important;
   font-family: var(--sans);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
-.navbar-nav > li > a {
+.navbar {
+  min-height: 60px;
+}
+
+.navbar-default .navbar-nav > li > a {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.navbar-default .navbar-brand {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.navbar-default .navbar-nav > li > a {
   color: rgba(255,255,255,0.75) !important;
   font-family: var(--sans);
-  font-size: 0.85rem;
-  font-weight: 400;
-  letter-spacing: 0.03em;
-  padding: 18px 14px !important;
-  transition: color 0.15s ease;
+  font-size: 1.05rem;
 }
 
-.navbar-nav > li > a:hover,
-.navbar-nav > li.active > a {
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li.active > a {
   color: #ffffff !important;
-  background: transparent !important;
-  border-bottom: 3px solid var(--accent);
+  background-color: #1a4a8a !important;
 }
-
-.navbar-toggle .icon-bar { background: #ffffff; }
 
 /* === PAGE WRAPPER === */
 .container-fluid.main-container {
   max-width: var(--max-w);
   margin: 0 auto;
   padding: 3rem var(--gutter) 5rem;
+}
+
+.container-fluid {
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 /* === HERO / LANDING === */
@@ -379,7 +385,7 @@ pre code { background: none; padding: 0; }
 }
 
 .figure img, figure img {
-  max-width: 100%;
+  max-width: 70%;
   height: auto;
   border: 1px solid var(--rule);
   display: block;
@@ -394,6 +400,14 @@ figcaption, .figure-caption, .caption {
   line-height: 1.5;
   text-align: left;
 }
+
+img {
+  max-width: 70%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
 
 /* === SHINYLIVE EMBED === */
 .shiny-frame-wrapper {

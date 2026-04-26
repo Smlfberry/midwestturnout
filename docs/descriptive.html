@@ -8,14 +8,28 @@
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
-<meta name="date" content="2026-04-24" />
 
 <title>Background: Descriptive Findings</title>
 
 <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -36,18 +50,241 @@
 
 
 
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
 
 </head>
 
 <body>
 
 
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Midwest Voter Turnout</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+<li>
+  <a href="descriptive.html">Background</a>
+</li>
+<li>
+  <a href="model.html">The Model</a>
+</li>
+<li>
+  <a href="case-studies.html">Case Studies</a>
+</li>
+<li>
+  <a href="synthesis.html">Synthesis</a>
+</li>
+<li>
+  <a href="explore.html">Explore</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
 
 
 <h1 class="title toc-ignore">Background: Descriptive Findings</h1>
-<h4 class="date">2026-04-24</h4>
 
+</div>
 
+<div id="TOC">
+<ul>
+<li><a href="#the-clc-needs-assessment"
+id="toc-the-clc-needs-assessment">The CLC Needs Assessment</a></li>
+<li><a href="#voter-turnout-by-county"
+id="toc-voter-turnout-by-county">Voter Turnout by County</a></li>
+<li><a href="#who-lives-in-low-vs.-high-turnout-counties"
+id="toc-who-lives-in-low-vs.-high-turnout-counties">Who Lives in Low
+vs. High Turnout Counties?</a></li>
+<li><a href="#what-the-descriptive-analysis-found"
+id="toc-what-the-descriptive-analysis-found">What the Descriptive
+Analysis Found</a></li>
+<li><a href="#from-description-to-prediction"
+id="toc-from-description-to-prediction">From Description to
+Prediction</a></li>
+</ul>
+</div>
 
 <p><span class="section-label">Project Background</span></p>
 <div id="the-clc-needs-assessment" class="section level2">
@@ -95,11 +332,12 @@ for the institutional access argument developed in the predictive
 modeling phase.</p>
 <div id="illinois" class="section level3">
 <h3>Illinois</h3>
-<div class="float">
-<img src="figures/turnout_maps/illinoisturnout.png"
-alt="Voter turnout rate by county in Illinois, 2024 General Election. Turnout ranged from 48% to 78%." />
-<div class="figcaption">Voter turnout rate by county in Illinois, 2024
-General Election. Turnout ranged from 48% to 78%.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/turnout_maps/illinoisturnout.png" alt="Voter turnout rate by county in Illinois, 2024 General Election. Turnout ranged from 48% to 78%." width="65%" />
+<p class="caption">
+Voter turnout rate by county in Illinois, 2024 General Election. Turnout
+ranged from 48% to 78%.
+</p>
 </div>
 <p>Illinois county-level turnout ranged from 48% to 78%. Counties in the
 highest quintile voted 15.5 percentage points more on average than those
@@ -108,11 +346,12 @@ counties clustered in rural west-central and southern Illinois.</p>
 </div>
 <div id="indiana" class="section level3">
 <h3>Indiana</h3>
-<div class="float">
-<img src="figures/turnout_maps/indianaturnout.png"
-alt="Voter turnout rate by county in Indiana, 2024 General Election. Turnout ranged from 38.5% to 77.9%." />
-<div class="figcaption">Voter turnout rate by county in Indiana, 2024
-General Election. Turnout ranged from 38.5% to 77.9%.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/turnout_maps/indianaturnout.png" alt="Voter turnout rate by county in Indiana, 2024 General Election. Turnout ranged from 38.5% to 77.9%." width="65%" />
+<p class="caption">
+Voter turnout rate by county in Indiana, 2024 General Election. Turnout
+ranged from 38.5% to 77.9%.
+</p>
 </div>
 <p>Indiana showed the widest within-state variation of the five states,
 with turnout ranging from 38.5% to 77.9% — a spread of nearly 40
@@ -123,11 +362,12 @@ voting environment.</p>
 </div>
 <div id="michigan" class="section level3">
 <h3>Michigan</h3>
-<div class="float">
-<img src="figures/turnout_maps/michiganturnout.png"
-alt="Voter turnout rate by county in Michigan, 2024 General Election. Turnout ranged from 57.7% to 93.2%." />
-<div class="figcaption">Voter turnout rate by county in Michigan, 2024
-General Election. Turnout ranged from 57.7% to 93.2%.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/turnout_maps/michiganturnout.png" alt="Voter turnout rate by county in Michigan, 2024 General Election. Turnout ranged from 57.7% to 93.2%." width="65%" />
+<p class="caption">
+Voter turnout rate by county in Michigan, 2024 General Election. Turnout
+ranged from 57.7% to 93.2%.
+</p>
 </div>
 <p>Michigan showed the highest turnout ceiling of any state in the
 analysis, with some counties reaching over 90%. The highest quintile
@@ -138,11 +378,12 @@ passed under Proposal 2022-2.</p>
 </div>
 <div id="ohio" class="section level3">
 <h3>Ohio</h3>
-<div class="float">
-<img src="figures/turnout_maps/ohioturnout.png"
-alt="Voter turnout rate by county in Ohio, 2024 General Election. Turnout ranged from 40.8% to 84.3%." />
-<div class="figcaption">Voter turnout rate by county in Ohio, 2024
-General Election. Turnout ranged from 40.8% to 84.3%.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/turnout_maps/ohioturnout.png" alt="Voter turnout rate by county in Ohio, 2024 General Election. Turnout ranged from 40.8% to 84.3%." width="65%" />
+<p class="caption">
+Voter turnout rate by county in Ohio, 2024 General Election. Turnout
+ranged from 40.8% to 84.3%.
+</p>
 </div>
 <p>Ohio turnout ranged from 40.8% to 84.3%, with the highest quintile
 averaging 17.6 percentage points above the lowest. Educational
@@ -151,11 +392,12 @@ differentiators between low and high turnout counties in Ohio.</p>
 </div>
 <div id="wisconsin" class="section level3">
 <h3>Wisconsin</h3>
-<div class="float">
-<img src="figures/turnout_maps/wisconsinturnout.png"
-alt="Voter turnout rate by county in Wisconsin, 2024 General Election. Turnout ranged from 53.6% to 87.5%." />
-<div class="figcaption">Voter turnout rate by county in Wisconsin, 2024
-General Election. Turnout ranged from 53.6% to 87.5%.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/turnout_maps/wisconsinturnout.png" alt="Voter turnout rate by county in Wisconsin, 2024 General Election. Turnout ranged from 53.6% to 87.5%." width="65%" />
+<p class="caption">
+Voter turnout rate by county in Wisconsin, 2024 General Election.
+Turnout ranged from 53.6% to 87.5%.
+</p>
 </div>
 <p>Wisconsin had the smallest within-state gap of the five states — just
 13.5 percentage points between the average of the lowest and highest
@@ -177,11 +419,12 @@ Values to the right of center are higher in high-turnout counties;
 values to the left are higher in low-turnout counties.</p>
 <div id="illinois-1" class="section level3">
 <h3>Illinois</h3>
-<div class="float">
-<img src="figures/top_gaps_illinois.jpg"
-alt="Largest demographic gaps between high- and low-turnout counties in Illinois." />
-<div class="figcaption">Largest demographic gaps between high- and
-low-turnout counties in Illinois.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/state_gap_plots/top_gaps_illinois.jpg" alt="Largest demographic gaps between high- and low-turnout counties in Illinois." width="70%" />
+<p class="caption">
+Largest demographic gaps between high- and low-turnout counties in
+Illinois.
+</p>
 </div>
 <p>In Illinois, the largest demographic gaps between low and high
 turnout counties were racial composition (+9.5pp more white residents in
@@ -193,11 +436,12 @@ diploma.</p>
 </div>
 <div id="indiana-1" class="section level3">
 <h3>Indiana</h3>
-<div class="float">
-<img src="figures/top_gaps_indiana.jpg"
-alt="Largest demographic gaps between high- and low-turnout counties in Indiana." />
-<div class="figcaption">Largest demographic gaps between high- and
-low-turnout counties in Indiana.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/state_gap_plots/top_gaps_indiana.jpg" alt="Largest demographic gaps between high- and low-turnout counties in Indiana." width="70%" />
+<p class="caption">
+Largest demographic gaps between high- and low-turnout counties in
+Indiana.
+</p>
 </div>
 <p>Indiana showed the largest education gap of any state — low-turnout
 counties averaged 6.4 percentage points more residents with no high
@@ -207,11 +451,12 @@ origin were also prominent differentiators.</p>
 </div>
 <div id="michigan-1" class="section level3">
 <h3>Michigan</h3>
-<div class="float">
-<img src="figures/top_gaps_michigan.jpg"
-alt="Largest demographic gaps between high- and low-turnout counties in Michigan." />
-<div class="figcaption">Largest demographic gaps between high- and
-low-turnout counties in Michigan.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/state_gap_plots/top_gaps_michigan.jpg" alt="Largest demographic gaps between high- and low-turnout counties in Michigan." width="70%" />
+<p class="caption">
+Largest demographic gaps between high- and low-turnout counties in
+Michigan.
+</p>
 </div>
 <p>Michigan’s largest demographic gap was in educational attainment —
 low-turnout counties averaged 8.4 percentage points more residents with
@@ -222,11 +467,11 @@ percentage points more Black residents.</p>
 </div>
 <div id="ohio-1" class="section level3">
 <h3>Ohio</h3>
-<div class="float">
-<img src="figures/top_gaps_ohio.jpg"
-alt="Largest demographic gaps between high- and low-turnout counties in Ohio." />
-<div class="figcaption">Largest demographic gaps between high- and
-low-turnout counties in Ohio.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/state_gap_plots/top_gaps_ohio.jpg" alt="Largest demographic gaps between high- and low-turnout counties in Ohio." width="70%" />
+<p class="caption">
+Largest demographic gaps between high- and low-turnout counties in Ohio.
+</p>
 </div>
 <p>Ohio showed the most pronounced technology access gap — high-turnout
 counties averaged 7.2 percentage points more households with internet
@@ -235,11 +480,12 @@ remained the largest differentiator overall.</p>
 </div>
 <div id="wisconsin-1" class="section level3">
 <h3>Wisconsin</h3>
-<div class="float">
-<img src="figures/top_gaps_wisconsin.jpg"
-alt="Largest demographic gaps between high- and low-turnout counties in Wisconsin." />
-<div class="figcaption">Largest demographic gaps between high- and
-low-turnout counties in Wisconsin.</div>
+<div class="figure" style="text-align: center">
+<img src="figures/state_gap_plots/top_gaps_wisconsin.jpg" alt="Largest demographic gaps between high- and low-turnout counties in Wisconsin." width="70%" />
+<p class="caption">
+Largest demographic gaps between high- and low-turnout counties in
+Wisconsin.
+</p>
 </div>
 <p>Wisconsin’s largest gap was in education (9.0pp more HS-only
 residents in low-turnout counties) and racial composition, with
@@ -321,6 +567,36 @@ Chicago Lawyers’ Committee for Civil Rights.</p>
 </div>
 
 
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
 
 <!-- code folding -->
 

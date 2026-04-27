@@ -29,11 +29,6 @@ Practicum research in partnership with the Chicago Lawyers' Committee for Civil 
 </p>
 </div>
 
-| | | | |
-|:---:|:---:|:---:|:---:|
-| **5** | **437** | **6** | **7** |
-| States | Counties | Case Studies | Predictors (Model 2) |
-
 ---
 
 <span class="section-label">Research Design</span>
@@ -52,6 +47,87 @@ Those residuals are the core analytic object. Counties with the largest positive
 <strong>Why Residuals?</strong>
 Turnout rates alone can be misleading. A county with 65% turnout might be underperforming if its demographics predict 72%, while a county with 58% might be over-performing given its structural constraints. Residual analysis shifts the question from <em>how much</em> to <em>relative to what</em>.
 </div>
+
+```{r hero-scatter, cache=TRUE, fig.width=9, fig.height=6, fig.cap="Each point is a county. The dashed line marks perfect prediction (actual = predicted). Counties above the line over-perform their structural conditions; counties below under-perform. The six case-study counties are highlighted."}
+library(tidycensus)
+library(ggrepel)
+
+# Pull poverty (not in df_pct), fit Model 1, compute predicted + residual
+poverty_data <- get_acs(
+  geography = "county",
+  variables = c(poverty = "B17001_002", total = "B17001_001"),
+  year = 2024, survey = "acs5"
+)
+
+poverty_pct <- poverty_data %>%
+  select(GEOID, variable, estimate) %>%
+  pivot_wider(names_from = variable, values_from = estimate) %>%
+  mutate(pct_poverty = poverty / total * 100)
+
+df_hero <- df_pct %>%
+  left_join(poverty_pct %>% select(GEOID, pct_poverty),
+            by = c("geoid" = "GEOID"))
+
+m_hero <- lm(
+  turnout_rate ~ pct_bachelors + pct_households_internet +
+    pct_limited_english + pct_disability_total + pct_poverty,
+  data = df_hero
+)
+
+df_hero$predicted <- predict(m_hero)
+df_hero$residual  <- df_hero$turnout_rate - df_hero$predicted
+
+df_hero <- df_hero %>%
+  mutate(tier = case_when(
+    (county == "Montmorency" & state_name == "Michigan")  ~ "Over-Performer",
+    (county == "Trempealeau" & state_name == "Wisconsin") ~ "Over-Performer",
+    (county == "Clinton"     & state_name == "Ohio")      ~ "As-Expected",
+    (county == "DeKalb"      & state_name == "Illinois")  ~ "As-Expected",
+    (county == "Brown"       & state_name == "Illinois")  ~ "Under-Performer",
+    (county == "Vanderburgh" & state_name == "Indiana")   ~ "Under-Performer",
+    TRUE ~ "Other"
+  ))
+
+ggplot(df_hero, aes(x = predicted, y = turnout_rate)) +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed",
+              color = "#888580", linewidth = 0.6) +
+  geom_point(data = filter(df_hero, tier == "Other"),
+             color = "#d8d4ce", size = 2, alpha = 0.65) +
+  geom_point(data = filter(df_hero, tier != "Other"),
+             aes(color = tier), size = 4, alpha = 0.95) +
+  ggrepel::geom_text_repel(
+    data = filter(df_hero, tier != "Other"),
+    aes(label = county, color = tier),
+    size = 4, family = "sans", fontface = "bold",
+    show.legend = FALSE,
+    box.padding = 0.6, point.padding = 0.4, max.overlaps = 20,
+    seed = 42
+  ) +
+  scale_color_manual(
+    values = c("Over-Performer"  = "#2e7d52",
+               "As-Expected"     = "#888580",
+               "Under-Performer" = "#c0392b"),
+    breaks = c("Over-Performer", "As-Expected", "Under-Performer")
+  ) +
+  labs(
+    x = "Predicted turnout rate (%)",
+    y = "Actual turnout rate (%)",
+    color = NULL,
+    caption = paste0("N = ", nrow(df_hero),
+                     " counties across IL, IN, OH, WI, MI. Predictions from OLS regression on five structural ACS predictors.")
+  ) +
+  theme_minimal(base_family = "sans", base_size = 13) +
+  theme(
+    legend.position   = "top",
+    legend.text       = element_text(size = 12),
+    panel.grid.minor  = element_blank(),
+    axis.title        = element_text(size = 13),
+    axis.text         = element_text(size = 11),
+    plot.caption      = element_text(size = 10, color = "#888580",
+                                     margin = margin(t = 10)),
+    plot.background   = element_rect(fill = "white", color = NA)
+  )
+```
 
 ---
 

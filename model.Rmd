@@ -49,11 +49,16 @@ model1 <- lm(
 df_pct$predicted <- predict(model1)
 df_pct$residual  <- df_pct$turnout_rate - df_pct$predicted
 
-# Case study counties
+# Case study counties (disambiguate by state — Brown/Clinton/DeKalb exist in multiple states)
 selected <- df_pct %>%
-  filter(county %in% c("Montmorency", "Trempealeau",
-                        "Brown", "Vanderburgh",
-                        "Clinton", "DeKalb"))
+  filter(
+    (county == "Montmorency" & state_name == "Michigan")  |
+    (county == "Trempealeau" & state_name == "Wisconsin") |
+    (county == "Clinton"     & state_name == "Ohio")      |
+    (county == "DeKalb"      & state_name == "Illinois")  |
+    (county == "Brown"       & state_name == "Illinois")  |
+    (county == "Vanderburgh" & state_name == "Indiana")
+  )
 
 # Palette
 pal <- c(over = "#2e7d52", middle = "#888580", under = "#c0392b")
@@ -162,9 +167,12 @@ The distribution of residuals reveals whether the model systematically over- or 
 # Assign tier labels
 df_pct <- df_pct %>%
   mutate(tier = case_when(
-    county %in% c("Montmorency", "Trempealeau") ~ "Over-Performer",
-    county %in% c("Brown", "Vanderburgh")        ~ "Near-Expected",
-    county %in% c("Clinton", "DeKalb")           ~ "Under-Performer",
+    (county == "Montmorency" & state_name == "Michigan")  ~ "Over-Performer",
+    (county == "Trempealeau" & state_name == "Wisconsin") ~ "Over-Performer",
+    (county == "Clinton"     & state_name == "Ohio")      ~ "As-Expected",
+    (county == "DeKalb"      & state_name == "Illinois")  ~ "As-Expected",
+    (county == "Brown"       & state_name == "Illinois")  ~ "Under-Performer",
+    (county == "Vanderburgh" & state_name == "Indiana")   ~ "Under-Performer",
     TRUE ~ "Other"
   ))
 
@@ -177,9 +185,10 @@ ggplot(df_pct, aes(x = residual)) +
     size = 3, shape = 17, alpha = 0.9
   ) +
   scale_color_manual(
-    values = c("Over-Performer" = "#2e7d52",
-               "Near-Expected"  = "#888580",
-               "Under-Performer"= "#c0392b")
+    values = c("Over-Performer"  = "#2e7d52",
+               "As-Expected"     = "#888580",
+               "Under-Performer" = "#c0392b"),
+    breaks = c("Over-Performer", "As-Expected", "Under-Performer")
   ) +
   labs(
     x = "Residual (percentage points)",
@@ -215,9 +224,10 @@ ggplot(df_pct, aes(x = predicted, y = turnout_rate)) +
     box.padding = 0.4, max.overlaps = 20
   ) +
   scale_color_manual(
-    values = c("Over-Performer" = "#2e7d52",
-               "Near-Expected"  = "#888580",
-               "Under-Performer"= "#c0392b")
+    values = c("Over-Performer"  = "#2e7d52",
+               "As-Expected"     = "#888580",
+               "Under-Performer" = "#c0392b"),
+    breaks = c("Over-Performer", "As-Expected", "Under-Performer")
   ) +
   labs(
     x = "Predicted turnout rate (%)",

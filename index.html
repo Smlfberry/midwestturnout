@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>index.knit</title>
+
+<script src="index_files/header-attrs-2.30/header-attrs.js"></script>
+<script src="index_files/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="index_files/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="index_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="index_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="index_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="index_files/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="custom.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Midwest Voter Turnout</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+<li>
+  <a href="descriptive.html">Background</a>
+</li>
+<li>
+  <a href="model.html">The Model</a>
+</li>
+<li>
+  <a href="case-studies.html">Case Studies</a>
+</li>
+<li>
+  <a href="synthesis.html">Synthesis</a>
+</li>
+<li>
+  <a href="explore.html">Explore</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<div class="site-hero">
+<p><span class="kicker">Quantitative Analysis · Midwest · 2024 General
+Election</span></p>
+<div id="who-votes-and-why-some-counties-beat-the-odds"
+class="section level1">
+<h1>Who Votes — and Why Some Counties Beat the Odds</h1>
+<p class="dek">
+A predictive model of county-level voter turnout across five Midwest
+states reveals systematic patterns of under- and over-performance. Six
+counties — selected from the top, middle, and bottom of the residual
+distribution — anchor a mixed-methods investigation into the structural
+and civic factors that shape participation.
+</p>
+<p class="byline">
+Sam Berry  ·  University of Chicago  ·  2026<br> Practicum research in
+partnership with the Chicago Lawyers’ Committee for Civil Rights
+</p>
+</div>
+</div>
+<hr />
+<p><span class="section-label">Research Design</span></p>
+<div id="what-this-project-does" class="section level2">
+<h2>What This Project Does</h2>
+<p>This project extends a descriptive needs assessment conducted for the
+Chicago Lawyers’ Committee for Civil Rights (CLC) as part of their
+Midwest regional expansion. The prior analysis documented demographic
+patterns associated with low voter turnout across five Midwestern states
+— finding consistent gaps by education, race, internet access, and
+disability status. This capstone takes the next step: moving from
+descriptive patterns to a predictive model that identifies counties
+performing above or below their structural expectations, then
+investigating why through qualitative case analysis.</p>
+<p>County-level analysis offers a complementary lens to individual
+survey data — it captures the aggregate civic environment in which
+participation decisions are made, and surfaces variation that
+individual-level models can obscure.</p>
+<p>This project builds two OLS regression models predicting county-level
+turnout rates in the 2024 general election across Illinois, Indiana,
+Ohio, Wisconsin, and Michigan. Model 1 uses five structural predictors
+drawn from the American Community Survey. Model 2 adds racial
+composition and lower-tail educational attainment as a theoretically
+motivated robustness check informed by the prior CLC descriptive
+findings. Residuals from these models identify counties that perform
+<em>better or worse than their structural conditions predict</em>.</p>
+<p>Those residuals are the core analytic object. Counties with the
+largest positive residuals are “over-performers”: something beyond their
+demographics is driving participation. Counties with the largest
+negative residuals are “under-performers”: something is suppressing
+turnout that the model cannot explain. Counties closest to zero are the
+“as-expected” cases.</p>
+<div class="callout">
+<p><strong>Why Residuals?</strong> Turnout rates alone can be
+misleading. A county with 65% turnout might be underperforming if its
+demographics predict 72%, while a county with 58% might be
+over-performing given its structural constraints. Residual analysis
+shifts the question from <em>how much</em> to <em>relative to
+what</em>.</p>
+</div>
+<div class="figure">
+<img src="index_files/figure-html/hero-scatter-1.png" alt="Each point is a county. The dashed line marks perfect prediction (actual = predicted). Counties above the line over-perform their structural conditions; counties below under-perform. The six case-study counties are highlighted." width="864" />
+<p class="caption">
+Each point is a county. The dashed line marks perfect prediction (actual
+= predicted). Counties above the line over-perform their structural
+conditions; counties below under-perform. The six case-study counties
+are highlighted.
+</p>
+</div>
+<hr />
+<p><span class="section-label">Case Selection</span></p>
+</div>
+<div id="the-six-counties" class="section level2">
+<h2>The Six Counties</h2>
+<p>Two counties from each tier — over-performers, as-expected, and
+under-performers — were selected for in-depth qualitative analysis.
+Selection balanced geographic spread across states and was based on
+residuals from Model 1.</p>
+<div class="county-grid">
+<div class="county-card over">
+<div class="card-label">
+Over-Performer
+</div>
+<div class="card-name">
+Montmorency County
+</div>
+<div class="card-state">
+Michigan
+</div>
+<div class="card-stat">
+Turnout: 80.1%  |  Predicted: 63.8%
+</div>
+<div class="card-residual">
+Residual: +16.2 pp
+</div>
+</div>
+<div class="county-card over">
+<div class="card-label">
+Over-Performer
+</div>
+<div class="card-name">
+Trempealeau County
+</div>
+<div class="card-state">
+Wisconsin
+</div>
+<div class="card-stat">
+Turnout: 75.3%  |  Predicted: 60.9%
+</div>
+<div class="card-residual">
+Residual: +14.5 pp
+</div>
+</div>
+<div class="county-card middle">
+<div class="card-label">
+As-Expected
+</div>
+<div class="card-name">
+Clinton County
+</div>
+<div class="card-state">
+Ohio
+</div>
+<div class="card-stat">
+Turnout: 65.7%  |  Predicted: 65.7%
+</div>
+<div class="card-residual">
+Residual: ≈0.0 pp
+</div>
+</div>
+<div class="county-card middle">
+<div class="card-label">
+As-Expected
+</div>
+<div class="card-name">
+DeKalb County
+</div>
+<div class="card-state">
+Illinois
+</div>
+<div class="card-stat">
+Turnout: 63.2%  |  Predicted: 63.2%
+</div>
+<div class="card-residual">
+Residual: ≈0.0 pp
+</div>
+</div>
+<div class="county-card under">
+<div class="card-label">
+Under-Performer
+</div>
+<div class="card-name">
+Brown County
+</div>
+<div class="card-state">
+Illinois
+</div>
+<div class="card-stat">
+Turnout: 47.8%  |  Predicted: 64.2%
+</div>
+<div class="card-residual">
+Residual: −16.4 pp
+</div>
+</div>
+<div class="county-card under">
+<div class="card-label">
+Under-Performer
+</div>
+<div class="card-name">
+Vanderburgh County
+</div>
+<div class="card-state">
+Indiana
+</div>
+<div class="card-stat">
+Turnout: 54.3%  |  Predicted: 68.7%
+</div>
+<div class="card-residual">
+Residual: −14.5 pp
+</div>
+</div>
+</div>
+<hr />
+<p><span class="section-label">Data &amp; Methods</span></p>
+</div>
+<div id="data-sources" class="section level2">
+<h2>Data Sources</h2>
+<p><span class="method-tag">ACS 5-Year</span> <span
+class="method-tag">CVAP Denominators</span> <span
+class="method-tag">State Election Commissions</span></p>
+<p>Turnout rates are calculated using <strong>Citizen Voting Age
+Population (CVAP)</strong> denominators from ACS estimates, consistent
+with best practices in voting rights research. Using CVAP rather than
+total population or VAP ensures the denominator reflects the legally
+eligible electorate.</p>
+<p>Structural predictors are drawn from the <strong>2024 ACS 5-Year
+estimates</strong>:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Predictor</th>
+<th>ACS Table</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>% Bachelor’s degree or higher</td>
+<td>B15003</td>
+<td>Civic engagement, information access</td>
+</tr>
+<tr class="even">
+<td>% No high school diploma</td>
+<td>B15003</td>
+<td>Lower-tail educational disadvantage</td>
+</tr>
+<tr class="odd">
+<td>% Households with internet access</td>
+<td>B28002</td>
+<td>Voter registration, information environment</td>
+</tr>
+<tr class="even">
+<td>% Limited English proficiency</td>
+<td>B16004</td>
+<td>Ballot access barriers</td>
+</tr>
+<tr class="odd">
+<td>% With a disability</td>
+<td>B18101</td>
+<td>Participation barriers, registration gaps</td>
+</tr>
+<tr class="even">
+<td>% Below poverty line</td>
+<td>B17001</td>
+<td>Resource constraints on participation</td>
+</tr>
+<tr class="odd">
+<td>% Black or African American</td>
+<td>B02001</td>
+<td>Racial composition, suppression exposure</td>
+</tr>
+</tbody>
+</table>
+<p>All data were retrieved using the <code>tidycensus</code> R package.
+County GEOID codes are used as the merge key across all datasets.</p>
+<hr />
+<p><span class="section-label">Navigation</span></p>
+</div>
+<div id="explore-this-project" class="section level2">
+<h2>Explore This Project</h2>
+<ul>
+<li><strong><a href="descriptive.html">Background →</a></strong> Prior
+CLC descriptive findings: state choropleths and demographic gap analysis
+across all five states.</li>
+<li><strong><a href="model.html">The Model →</a></strong> Model
+specification, coefficient tables, model fit, and residual distribution
+for both models.</li>
+<li><strong><a href="case-studies.html">Case Studies →</a></strong>
+Qualitative deep-dive on each of the six selected counties.</li>
+<li><strong><a href="synthesis.html">Synthesis →</a></strong> Cross-case
+patterns, institutional access argument, and implications for CLC
+expansion.</li>
+<li><strong><a href="explore.html">Explore the Data →</a></strong>
+Interactive tools for exploring the full county-level dataset.</li>
+</ul>
+<hr />
+<div class="site-footer">
+<p>Data: U.S. Census Bureau American Community Survey (2024 5-Year
+Estimates); CVAP Special Tabulation; State Election Commissions (IL, IN,
+OH, WI, MI). Analysis conducted in R. Code available on
+<a href="https://github.com/Smlfberry/midwestturnout">GitHub</a>.<br>
+Prepared in partial fulfillment of capstone requirements, University of
+Chicago Crown Family School of Social Work, Policy, and Practice.
+Developed in partnership with the Chicago Lawyers’ Committee for Civil
+Rights.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

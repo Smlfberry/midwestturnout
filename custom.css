@@ -119,19 +119,20 @@ body {
 
 .site-hero .dek {
   font-family: var(--sans);
-  font-size: 1.05rem;
-  font-weight: 300;
-  line-height: 1.65;
-  color: var(--text-mid);
-  max-width: 600px;
-  margin-bottom: 1.5rem;
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-body);
+  max-width: 680px;
+  margin-bottom: 1.75rem;
 }
 
 .site-hero .byline {
   font-family: var(--sans);
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: var(--text-light);
   letter-spacing: 0.02em;
+  line-height: 1.6;
 }
 
 /* === STAT STRIP === */
@@ -155,17 +156,17 @@ body {
 
 .stat-item .stat-num {
   font-family: var(--sans);
-  font-size: 1.75rem;
+  font-size: 2.1rem;
   font-weight: 600;
   color: var(--accent);
   line-height: 1;
   display: block;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.4rem;
 }
 
 .stat-item .stat-label {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -181,15 +182,15 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.3;
 }
 
-h1 { font-size: 2rem; font-weight: 600; }
-h2 { font-size: 1.45rem; font-weight: 600; border-bottom: 1px solid var(--rule); padding-bottom: 0.4rem; }
-h3 { font-size: 1.15rem; font-weight: 600; font-style: italic; }
-h4 { font-size: 0.95rem; font-family: var(--sans); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-mid); }
+h1 { font-size: 2.15rem; font-weight: 600; }
+h2 { font-size: 1.65rem; font-weight: 600; border-bottom: 1px solid var(--rule); padding-bottom: 0.4rem; }
+h3 { font-size: 1.3rem; font-weight: 600; font-style: italic; }
+h4 { font-size: 1rem; font-family: var(--sans); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-mid); }
 
 /* Section label / overline */
 .section-label {
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -213,10 +214,10 @@ a:hover { border-bottom-color: var(--accent); }
 .callout {
   border-left: 4px solid var(--accent);
   background: #eef2f8;
-  padding: 1rem 1.25rem;
+  padding: 1.25rem 1.5rem;
   margin: 1.75rem 0;
   font-family: var(--sans);
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   line-height: 1.6;
   color: var(--text-body);
   border-radius: 0 2px 2px 0;
@@ -236,8 +237,8 @@ a:hover { border-bottom-color: var(--accent); }
   font-family: var(--sans);
   font-weight: 600;
   display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.78rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -245,15 +246,15 @@ a:hover { border-bottom-color: var(--accent); }
 /* === COUNTY CARDS === */
 .county-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  margin: 2rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 1.5rem;
+  margin: 2.5rem 0;
 }
 
 .county-card {
   border: 1px solid var(--rule);
   border-radius: 3px;
-  padding: 1.25rem;
+  padding: 1.75rem 1.75rem 1.75rem 2rem;
   background: var(--page);
   position: relative;
   overflow: hidden;
@@ -263,7 +264,7 @@ a:hover { border-bottom-color: var(--accent); }
   content: '';
   position: absolute;
   top: 0; left: 0;
-  width: 4px;
+  width: 6px;
   height: 100%;
 }
 
@@ -273,12 +274,12 @@ a:hover { border-bottom-color: var(--accent); }
 
 .county-card .card-label {
   font-family: var(--sans);
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-light);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
 }
 
 .county-card.over  .card-label { color: var(--accent3); }
@@ -286,30 +287,33 @@ a:hover { border-bottom-color: var(--accent); }
 
 .county-card .card-name {
   font-family: var(--serif);
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: var(--ink);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.25;
 }
 
 .county-card .card-state {
   font-family: var(--sans);
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: var(--text-light);
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .county-card .card-stat {
   font-family: var(--mono);
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   color: var(--text-mid);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.35rem;
+  line-height: 1.5;
 }
 
 .county-card .card-residual {
   font-family: var(--sans);
-  font-size: 0.85rem;
+  font-size: 1.05rem;
   font-weight: 600;
+  margin-top: 0.25rem;
 }
 
 .county-card.over  .card-residual { color: var(--accent3); }
@@ -321,7 +325,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--sans);
-  font-size: 0.875rem;
+  font-size: 1rem;
   margin: 1.5rem 0;
 }
 
@@ -331,10 +335,10 @@ thead {
 }
 
 thead th {
-  padding: 0.6rem 0.75rem;
+  padding: 0.75rem 0.85rem;
   text-align: left;
   font-weight: 600;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-mid);
@@ -344,7 +348,7 @@ tbody tr { border-bottom: 1px solid var(--rule); }
 tbody tr:last-child { border-bottom: 2px solid var(--ink); }
 
 tbody td {
-  padding: 0.6rem 0.75rem;
+  padding: 0.75rem 0.85rem;
   vertical-align: top;
   color: var(--text-body);
 }
@@ -394,9 +398,9 @@ pre code { background: none; padding: 0; }
 
 figcaption, .figure-caption, .caption {
   font-family: var(--sans);
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   color: var(--text-light);
-  margin-top: 0.6rem;
+  margin-top: 0.65rem;
   line-height: 1.5;
   text-align: left;
 }
@@ -437,13 +441,13 @@ img {
 .method-tag {
   display: inline-block;
   font-family: var(--sans);
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
   border: 1px solid var(--accent);
-  padding: 0.15em 0.5em;
+  padding: 0.2em 0.6em;
   border-radius: 2px;
   margin-right: 0.4rem;
   margin-bottom: 0.4rem;
@@ -455,7 +459,7 @@ img {
   padding-top: 1.5rem;
   border-top: 2px solid var(--ink);
   font-family: var(--sans);
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   color: var(--text-light);
   line-height: 1.7;
 }

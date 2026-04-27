@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>PROJECT_NOTES</title>
+
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<link rel="stylesheet" href="custom.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Midwest Voter Turnout</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Overview</a>
+</li>
+<li>
+  <a href="descriptive.html">Background</a>
+</li>
+<li>
+  <a href="model.html">The Model</a>
+</li>
+<li>
+  <a href="case-studies.html">Case Studies</a>
+</li>
+<li>
+  <a href="synthesis.html">Synthesis</a>
+</li>
+<li>
+  <a href="explore.html">Explore</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<div id="project_notes.md-midwestturnout" class="section level1">
+<h1>PROJECT_NOTES.md — midwestturnout</h1>
+<blockquote>
+<p>Living notes file for Sam’s UChicago capstone. Read this first at the
+start of every Claude session — it’s the cheapest way to load
+context.</p>
+</blockquote>
+<p><em>Last updated: 2026-04-25</em></p>
+<hr />
+<div id="what-this-project-is" class="section level2">
+<h2>What this project is</h2>
+<p><strong>Title:</strong> Midwest Voter Turnout Study — <em>Who Votes,
+and Why Some Counties Beat the Odds</em> <strong>Author:</strong> Sam
+Berry, University of Chicago, Crown Family School of Social Work,
+Policy, and Practice (2026 capstone) <strong>Partner:</strong> Chicago
+Lawyers’ Committee for Civil Rights (CLC) — extends prior descriptive
+needs assessment Sam did for them <strong>GitHub:</strong> <a
+href="https://github.com/Smlfberry/midwestturnout"
+class="uri">https://github.com/Smlfberry/midwestturnout</a></p>
+<p><strong>One-line pitch:</strong> A county-level OLS model of 2024
+general election turnout across IL, IN, OH, WI, MI, using residuals to
+flag over- and under-performing counties — followed by qualitative case
+studies of six counties to investigate <em>why</em>.</p>
+<p><strong>Scale:</strong> 5 states · 437 counties · 6 case studies · 2
+models · 7 predictors (Model 2)</p>
+<hr />
+</div>
+<div id="the-deliverable" class="section level2">
+<h2>The deliverable</h2>
+<p>An <strong>R Markdown website</strong>
+(<code>rmarkdown::render_site()</code>), output to
+<code>docs/</code>.</p>
+<div id="site-map-from-_site.yml" class="section level3">
+<h3>Site map (from <code>_site.yml</code>)</h3>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="20%" />
+<col width="66%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Nav label</th>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Overview</td>
+<td><code>index.Rmd</code></td>
+<td>Landing page — pitch, six counties, data sources, navigation</td>
+</tr>
+<tr class="even">
+<td>Background</td>
+<td><code>descriptive.Rmd</code></td>
+<td>Prior CLC descriptive findings, choropleths, demographic gaps</td>
+</tr>
+<tr class="odd">
+<td>The Model</td>
+<td><code>model.Rmd</code></td>
+<td>Model spec, coefficient tables, fit stats, residual
+distribution</td>
+</tr>
+<tr class="even">
+<td>Case Studies</td>
+<td><code>case-studies.Rmd</code></td>
+<td>Qualitative deep-dive on each of the 6 counties</td>
+</tr>
+<tr class="odd">
+<td>Synthesis</td>
+<td><code>synthesis.Rmd</code></td>
+<td>Cross-case patterns, institutional access argument, CLC
+implications</td>
+</tr>
+<tr class="even">
+<td>Explore</td>
+<td><code>explore.Rmd</code></td>
+<td>Interactive tools for the full 437-county dataset</td>
+</tr>
+<tr class="odd">
+<td>About</td>
+<td><code>about.Rmd</code></td>
+<td>About / methods / acknowledgments</td>
+</tr>
+</tbody>
+</table>
+<p>Theme: <code>flatly</code> (Bootswatch, via
+<code>html_document</code>) with <code>custom.css</code> overriding.</p>
+<hr />
+</div>
+</div>
+<div id="models" class="section level2">
+<h2>Models</h2>
+<p><strong>Model 1</strong> — five structural ACS predictors: - %
+Bachelor’s+ (B15003) - % Households with internet access (B28002) - %
+Limited English proficiency (B16004) - % With a disability (B18101) - %
+Below poverty line (B17001)</p>
+<p><strong>Model 2</strong> — Model 1 + two predictors as a
+theoretically motivated robustness check informed by prior CLC findings:
+- % No high school diploma (B15003) — lower-tail educational
+disadvantage - % Black or African American (B02001) — racial composition
+/ suppression exposure</p>
+<p><strong>Outcome:</strong> Turnout rate, 2024 general election,
+denominator = <strong>CVAP</strong> (Citizen Voting Age Population, ACS
+Special Tabulation).</p>
+<p>Residuals from <strong>Model 1</strong> drive case selection.</p>
+<hr />
+</div>
+<div id="the-six-case-study-counties" class="section level2">
+<h2>The six case-study counties</h2>
+<table style="width:100%;">
+<colgroup>
+<col width="22%" />
+<col width="26%" />
+<col width="14%" />
+<col width="10%" />
+<col width="13%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tier</th>
+<th>County</th>
+<th>State</th>
+<th>Turnout</th>
+<th>Predicted</th>
+<th>Residual</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Over-performer</td>
+<td>Montmorency</td>
+<td>Michigan</td>
+<td>80.1%</td>
+<td>63.8%</td>
+<td>+16.2 pp</td>
+</tr>
+<tr class="even">
+<td>Over-performer</td>
+<td>Trempealeau</td>
+<td>Wisconsin</td>
+<td>75.3%</td>
+<td>60.9%</td>
+<td>+14.5 pp</td>
+</tr>
+<tr class="odd">
+<td>As-expected</td>
+<td>Clinton</td>
+<td>Ohio</td>
+<td>65.7%</td>
+<td>65.7%</td>
+<td>≈0.0 pp</td>
+</tr>
+<tr class="even">
+<td>As-expected</td>
+<td>DeKalb</td>
+<td>Illinois</td>
+<td>63.2%</td>
+<td>63.2%</td>
+<td>≈0.0 pp</td>
+</tr>
+<tr class="odd">
+<td>Under-performer</td>
+<td>Brown</td>
+<td>Illinois</td>
+<td>47.8%</td>
+<td>64.2%</td>
+<td>−16.4 pp</td>
+</tr>
+<tr class="even">
+<td>Under-performer</td>
+<td>Vanderburgh</td>
+<td>Indiana</td>
+<td>54.3%</td>
+<td>68.7%</td>
+<td>−14.5 pp</td>
+</tr>
+</tbody>
+</table>
+<hr />
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<ul>
+<li><strong>Predictors:</strong> 2024 ACS 5-Year estimates, retrieved
+via <code>tidycensus</code></li>
+<li><strong>Turnout numerators:</strong> State election commissions (IL,
+IN, OH, WI, MI)</li>
+<li><strong>Turnout denominator:</strong> CVAP Special Tabulation</li>
+<li><strong>Merge key:</strong> County GEOID</li>
+<li><strong>Cached data object:</strong> <code>data/df_pct.rds</code>
+(loaded in <code>index.Rmd</code> setup chunk)</li>
+</ul>
+<hr />
+</div>
+<div id="file-map-top-level" class="section level2">
+<h2>File map (top level)</h2>
+<pre><code>midwestturnout/
+├── _site.yml             # Site config (nav, theme, output dir)
+├── index.Rmd             # Overview / landing
+├── descriptive.Rmd       # Background page
+├── model.Rmd             # Model spec &amp; results
+├── case-studies.Rmd      # 6-county qualitative
+├── synthesis.Rmd         # Cross-case + implications
+├── explore.Rmd           # Interactive data tools
+├── about.Rmd             # About page
+├── custom.css            # Site styling overrides
+├── header.html           # Custom HTML head includes
+├── data/
+│   └── df_pct.rds        # Cached cleaned dataset
+├── docs/                 # Rendered site output (rmarkdown::render_site)
+├── figures/              # Saved figure outputs
+├── README.md             # Currently a stub
+└── midwestturnout.Rproj  # RStudio project file</code></pre>
+<hr />
+</div>
+<div id="conventions-decisions-made-so-far" class="section level2">
+<h2>Conventions / decisions made so far</h2>
+<ul>
+<li><strong>Building the site shell</strong> is the current focus —
+content scaffolding, custom.css polish, navigation, hero/cards/callouts
+on the landing page.</li>
+<li>Landing page uses styled HTML blocks: <code>.site-hero</code>,
+<code>.county-grid &gt; .county-card.{over|middle|under}</code>,
+<code>.callout</code>, <code>.method-tag</code>,
+<code>.section-label</code>, <code>.kicker</code>, <code>.dek</code>,
+<code>.byline</code>, <code>.site-footer</code>. Keep these classes
+consistent across pages.</li>
+<li>Setup chunks:
+<code>echo = FALSE, warning = FALSE, message = FALSE</code>. Prefer
+pre-computed objects from <code>df_pct.rds</code> over re-running heavy
+ACS pulls in chunks.</li>
+<li><code>output_dir: "docs"</code> so the site can be served via GitHub
+Pages.</li>
+</ul>
+<hr />
+</div>
+<div id="open-questions-whats-next" class="section level2">
+<h2>Open questions / what’s next</h2>
+<p><em>(Update this section every session — it’s the single most useful
+thing for picking up where we left off.)</em></p>
+<p><strong>Picking up here (paused 2026-04-25):</strong> - [ ] Replace
+filler/placeholder copy across the <code>.Rmd</code> pages with Sam’s
+own writing - [ ] Continue formatting edits to <code>custom.css</code>
+and the styled HTML blocks (hero, county cards, callouts, etc.) -
+Suggested order when resuming: pick one page at a time, swap real text
+in, render the site (<code>rmarkdown::render_site()</code>), tweak CSS
+as issues surface.</p>
+<hr />
+</div>
+<div id="how-to-use-this-file" class="section level2">
+<h2>How to use this file</h2>
+<p><strong>Sam:</strong> at the start of each Claude session, just say
+<em>“read PROJECT_NOTES.md”</em> — that’s enough for Claude to load all
+of the above without crawling the whole project. Cheap on usage, fast to
+orient.</p>
+<p><strong>Claude:</strong> keep this file accurate. When a meaningful
+decision gets made (model spec, file added, page restructured, design
+choice locked in), update the relevant section. When a session ends with
+work in progress, note it under “Open questions / what’s next.”</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

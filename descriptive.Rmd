@@ -5,28 +5,95 @@ output:
     theme: flatly
     css: custom.css
     highlight: null
-    toc: true
-    toc_depth: 2
+    toc: false
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+
+# Canonical data from /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd
+canonical_path <- "data/df_pct_with_predictions.rds"
+if (!file.exists(canonical_path)) {
+  stop("Canonical predictions not found. Run /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd first to generate data/df_pct_with_predictions.rds")
+}
+df_pct <- readRDS(canonical_path)
 ```
 
 <span class="section-label">Project Background</span>
 
-## The CLC Needs Assessment
+## The Descriptive Groundwork
 
-This project extends quantitative research conducted for the **Chicago Lawyers' Committee for Civil Rights (CLC)** as part of their Midwest regional expansion. The CLC is a legal nonprofit that provides direct legal services, litigation, advocacy, and community-based support with a focus on voting rights. As part of a needs assessment across Illinois, Indiana, Ohio, Wisconsin, and Michigan, the CLC sought to identify where turnout disparities are most concentrated and how they align with demographic patterns and institutional barriers.
+The descriptive analysis that grounds the project comes from the quantitative component of a regional needs assessment conducted for the **Chicago Lawyers' Committee for Civil Rights (CLC)** — a legal nonprofit focused on voting rights — supporting their Midwest expansion across Illinois, Indiana, Ohio, Wisconsin, and Michigan. The analysis covered all 437 counties in the five states, pairing turnout data from the 2024 Presidential General Election with demographic estimates from the American Community Survey.
 
-My role was to lead the quantitative component of that assessment — analyzing county-level voter turnout from the 2024 Presidential General Election alongside demographic information from the American Community Survey. The analysis covered 437 counties across the five states.
-
-The findings from that descriptive analysis directly motivated the predictive modeling approach in this capstone. The CLC work identified *what* the demographic patterns look like; this project asks *why some counties perform differently than their demographics predict*.
+The findings here establish *where* turnout disparities are concentrated and *what* demographic patterns track with them. They directly informed the predictor selection for the predictive model that anchors this capstone — but description alone cannot explain *why* some counties perform above or below what their structural conditions predict. That gap is what the model and case studies take up.
 
 <div class="callout">
-<strong>Research Questions (CLC Phase)</strong>
-(1) Where are disparities in voter turnout most concentrated across Illinois, Michigan, Ohio, Indiana, and Wisconsin? (2) How do observed patterns align with demographic disparities and voting barriers?
+<strong>Descriptive Research Questions</strong>
+(1) Where are disparities in voter turnout most concentrated across the five Midwest states? (2) How do observed patterns align with demographic disparities and voting barriers?
 </div>
+
+---
+
+<span class="section-label">At a Glance</span>
+
+## State-Level Overview
+
+Two patterns emerge immediately from the cross-state comparison: **Wisconsin and Michigan show the highest overall turnout and the smallest within-state gaps**, while **Indiana shows the widest spread and the lowest floor**. This state-level pattern is the empirical signal that motivates the institutional access argument developed later in the project.
+
+```{r state-overview-table}
+state_overview <- df_pct %>%
+  group_by(state_name) %>%
+  summarise(
+    n_counties  = n(),
+    turnout_min = min(turnout_rate),
+    turnout_max = max(turnout_rate),
+    .groups = "drop"
+  )
+
+# Top vs. bottom quintile gap (mean turnout within Q5 minus mean within Q1)
+quintile_gaps <- df_pct %>%
+  group_by(state_name) %>%
+  mutate(quintile = ntile(turnout_rate, 5)) %>%
+  filter(quintile %in% c(1, 5)) %>%
+  group_by(state_name, quintile) %>%
+  summarise(mean_turnout = mean(turnout_rate), .groups = "drop") %>%
+  pivot_wider(names_from = quintile, values_from = mean_turnout,
+              names_prefix = "q") %>%
+  mutate(quintile_gap_pp = (q5 - q1) * 100) %>%
+  select(state_name, quintile_gap_pp)
+
+# Largest demographic differentiator — qualitative summary from gap analysis
+largest_gap <- tibble(
+  state_name = c("Illinois", "Indiana", "Michigan", "Ohio", "Wisconsin"),
+  largest_gap_label = c(
+    "Race + place of origin",
+    "Education (no HS / bachelor's)",
+    "Education (HS-only) + race",
+    "Education + internet access",
+    "Education + AI/AN composition"
+  )
+)
+
+state_overview %>%
+  left_join(quintile_gaps,  by = "state_name") %>%
+  left_join(largest_gap,    by = "state_name") %>%
+  arrange(state_name) %>%
+  transmute(
+    State = state_name,
+    Counties = n_counties,
+    `Turnout Range` = sprintf("%.1f%% – %.1f%%",
+                              turnout_min * 100, turnout_max * 100),
+    `Q5–Q1 Gap`     = sprintf("%.1f pp", quintile_gap_pp),
+    `Largest Demographic Gap` = largest_gap_label
+  ) %>%
+  kable(align = c("l", "r", "l", "r", "l"),
+        caption = "State-level overview. Q5–Q1 Gap is the difference in mean turnout between the top and bottom turnout quintiles within each state.") %>%
+  kable_styling(bootstrap_options = c("striped", "hover"),
+                full_width = TRUE, font_size = 13)
+```
 
 ---
 

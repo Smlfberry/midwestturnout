@@ -13,10 +13,19 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 
-df_pct <- readRDS("data/df_pct.rds")
+# Canonical predictions from /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd
+# Re-run that .Rmd whenever the model spec or input data changes.
+canonical_path <- "data/df_pct_with_predictions.rds"
+if (!file.exists(canonical_path)) {
+  stop("Canonical predictions not found. Run /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd first to generate data/df_pct_with_predictions.rds")
+}
+df_pct <- readRDS(canonical_path)
 ```
 
 <div class="site-hero">
+<div class="hero-grid">
+<div class="hero-text">
+
 <span class="kicker">Quantitative Analysis · Midwest · 2024 General Election</span>
 
 # Who Votes — and Why Some Counties Beat the Odds
@@ -27,57 +36,17 @@ df_pct <- readRDS("data/df_pct.rds")
 Sam Berry &nbsp;·&nbsp; University of Chicago &nbsp;·&nbsp; 2026<br>
 Practicum research in partnership with the Chicago Lawyers' Committee for Civil Rights
 </p>
+
 </div>
 
----
+<div class="hero-viz">
 
-<span class="section-label">Research Design</span>
-
-## What This Project Does
-
-This project extends a descriptive needs assessment conducted for the Chicago Lawyers' Committee for Civil Rights (CLC) as part of their Midwest regional expansion. The prior analysis documented demographic patterns associated with low voter turnout across five Midwestern states — finding consistent gaps by education, race, internet access, and disability status. This capstone takes the next step: moving from descriptive patterns to a predictive model that identifies counties performing above or below their structural expectations, then investigating why through qualitative case analysis.
-
-County-level analysis offers a complementary lens to individual survey data — it captures the aggregate civic environment in which participation decisions are made, and surfaces variation that individual-level models can obscure.
-
-This project builds two OLS regression models predicting county-level turnout rates in the 2024 general election across Illinois, Indiana, Ohio, Wisconsin, and Michigan. Model 1 uses five structural predictors drawn from the American Community Survey. Model 2 adds racial composition and lower-tail educational attainment as a theoretically motivated robustness check informed by the prior CLC descriptive findings. Residuals from these models identify counties that perform *better or worse than their structural conditions predict*.
-
-Those residuals are the core analytic object. Counties with the largest positive residuals are "over-performers": something beyond their demographics is driving participation. Counties with the largest negative residuals are "under-performers": something is suppressing turnout that the model cannot explain. Counties closest to zero are the "as-expected" cases.
-
-<div class="callout">
-<strong>Why Residuals?</strong>
-Turnout rates alone can be misleading. A county with 65% turnout might be underperforming if its demographics predict 72%, while a county with 58% might be over-performing given its structural constraints. Residual analysis shifts the question from <em>how much</em> to <em>relative to what</em>.
-</div>
-
-```{r hero-scatter, cache=TRUE, fig.width=9, fig.height=6, fig.cap="Each point is a county. The dashed line marks perfect prediction (actual = predicted). Counties above the line over-perform their structural conditions; counties below under-perform. The six case-study counties are highlighted."}
-library(tidycensus)
+```{r hero-scatter, fig.width=7.5, fig.height=6.5, fig.cap="Each point is a county. The dashed line marks perfect prediction. Six case-study counties highlighted."}
 library(ggrepel)
 
-# Pull poverty (not in df_pct), fit Model 1, compute predicted + residual
-poverty_data <- get_acs(
-  geography = "county",
-  variables = c(poverty = "B17001_002", total = "B17001_001"),
-  year = 2024, survey = "acs5"
-)
-
-poverty_pct <- poverty_data %>%
-  select(GEOID, variable, estimate) %>%
-  pivot_wider(names_from = variable, values_from = estimate) %>%
-  mutate(pct_poverty = poverty / total * 100)
-
+# Predictions come from the canonical Capstone analysis (Model 1).
+# Loaded via setup chunk as df_pct.
 df_hero <- df_pct %>%
-  left_join(poverty_pct %>% select(GEOID, pct_poverty),
-            by = c("geoid" = "GEOID"))
-
-m_hero <- lm(
-  turnout_rate ~ pct_bachelors + pct_households_internet +
-    pct_limited_english + pct_disability_total + pct_poverty,
-  data = df_hero
-)
-
-df_hero$predicted <- predict(m_hero)
-df_hero$residual  <- df_hero$turnout_rate - df_hero$predicted
-
-df_hero <- df_hero %>%
   mutate(tier = case_when(
     (county == "Montmorency" & state_name == "Michigan")  ~ "Over-Performer",
     (county == "Trempealeau" & state_name == "Wisconsin") ~ "Over-Performer",
@@ -104,9 +73,9 @@ ggplot(df_hero, aes(x = predicted, y = turnout_rate)) +
     seed = 42
   ) +
   scale_color_manual(
-    values = c("Over-Performer"  = "#2e7d52",
+    values = c("Over-Performer"  = "#3a7d72",
                "As-Expected"     = "#888580",
-               "Under-Performer" = "#c0392b"),
+               "Under-Performer" = "#6e5d83"),
     breaks = c("Over-Performer", "As-Expected", "Under-Performer")
   ) +
   labs(
@@ -114,20 +83,43 @@ ggplot(df_hero, aes(x = predicted, y = turnout_rate)) +
     y = "Actual turnout rate (%)",
     color = NULL,
     caption = paste0("N = ", nrow(df_hero),
-                     " counties across IL, IN, OH, WI, MI. Predictions from OLS regression on five structural ACS predictors.")
+                     " counties across IL, IN, OH, WI, MI.")
   ) +
-  theme_minimal(base_family = "sans", base_size = 13) +
+  theme_minimal(base_family = "sans", base_size = 12) +
   theme(
     legend.position   = "top",
-    legend.text       = element_text(size = 12),
+    legend.text       = element_text(size = 11),
     panel.grid.minor  = element_blank(),
-    axis.title        = element_text(size = 13),
-    axis.text         = element_text(size = 11),
-    plot.caption      = element_text(size = 10, color = "#888580",
-                                     margin = margin(t = 10)),
+    axis.title        = element_text(size = 12),
+    axis.text         = element_text(size = 10),
+    plot.caption      = element_text(size = 9, color = "#888580",
+                                     margin = margin(t = 8)),
     plot.background   = element_rect(fill = "white", color = NA)
   )
 ```
+
+</div>
+</div>
+</div>
+
+---
+
+<span class="section-label">Research Design</span>
+
+## What This Project Does
+
+This project extends a descriptive needs assessment conducted for the Chicago Lawyers' Committee for Civil Rights (CLC) as part of their Midwest regional expansion. The prior analysis documented demographic patterns associated with low voter turnout across five Midwestern states — finding consistent gaps by education, race, internet access, and disability status. This capstone takes the next step: moving from descriptive patterns to a predictive model that identifies counties performing above or below their structural expectations, then investigating why through qualitative case analysis.
+
+County-level analysis offers a complementary lens to individual survey data — it captures the aggregate civic environment in which participation decisions are made, and surfaces variation that individual-level models can obscure.
+
+This project builds two OLS regression models predicting county-level turnout rates in the 2024 general election across Illinois, Indiana, Ohio, Wisconsin, and Michigan. Model 1 uses five structural predictors drawn from the American Community Survey. Model 2 adds racial composition and lower-tail educational attainment as a theoretically motivated robustness check informed by the prior CLC descriptive findings. Residuals from these models identify counties that perform *better or worse than their structural conditions predict*.
+
+Those residuals are the core analytic object. Counties with the largest positive residuals are "over-performers": something beyond their demographics is driving participation. Counties with the largest negative residuals are "under-performers": something is suppressing turnout that the model cannot explain. Counties closest to zero are the "as-expected" cases.
+
+<div class="callout">
+<strong>Why Residuals?</strong>
+Turnout rates alone can be misleading. A county with 65% turnout might be underperforming if its demographics predict 72%, while a county with 58% might be over-performing given its structural constraints. Residual analysis shifts the question from <em>how much</em> to <em>relative to what</em>.
+</div>
 
 ---
 

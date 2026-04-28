@@ -13,41 +13,22 @@ output:
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
                       fig.width = 8, fig.height = 5, dpi = 150)
 library(tidyverse)
-library(tidycensus)
 library(knitr)
 library(kableExtra)
 
-# ── Data Prep ──────────────────────────────────────────────────────────────
-df_pct <- readRDS("data/df_pct.rds")
+# ── Canonical artifacts ────────────────────────────────────────────────────
+# All predictions and model objects come from the canonical Capstone analysis:
+#   /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd
+# Re-run that .Rmd whenever the model spec or input data changes.
+canonical_df    <- "data/df_pct_with_predictions.rds"
+canonical_model <- "data/model1.rds"
 
-poverty_data <- get_acs(
-  geography = "county",
-  variables = c(poverty = "B17001_002", total = "B17001_001"),
-  year = 2024, survey = "acs5"
-)
+if (!file.exists(canonical_df) || !file.exists(canonical_model)) {
+  stop("Canonical artifacts not found. Run /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd first to generate data/df_pct_with_predictions.rds and data/model1.rds")
+}
 
-poverty_pct <- poverty_data %>%
-  select(GEOID, variable, estimate) %>%
-  pivot_wider(names_from = variable, values_from = estimate) %>%
-  mutate(pct_poverty = poverty / total * 100)
-
-df_pct <- df_pct %>%
-  left_join(poverty_pct %>% select(GEOID, pct_poverty),
-            by = c("geoid" = "GEOID"))
-
-# ── Model ──────────────────────────────────────────────────────────────────
-model1 <- lm(
-  turnout_rate ~
-    pct_bachelors +
-    pct_households_internet +
-    pct_limited_english +
-    pct_disability_total +
-    pct_poverty,
-  data = df_pct
-)
-
-df_pct$predicted <- predict(model1)
-df_pct$residual  <- df_pct$turnout_rate - df_pct$predicted
+df_pct <- readRDS(canonical_df)
+model1 <- readRDS(canonical_model)
 
 # Case study counties (disambiguate by state — Brown/Clinton/DeKalb exist in multiple states)
 selected <- df_pct %>%
@@ -61,7 +42,7 @@ selected <- df_pct %>%
   )
 
 # Palette
-pal <- c(over = "#2e7d52", middle = "#888580", under = "#c0392b")
+pal <- c(over = "#3a7d72", middle = "#888580", under = "#6e5d83")
 ```
 
 <span class="section-label">Methodology</span>
@@ -141,7 +122,7 @@ coef_df %>%
                    y = term, yend = term),
                color = "#1a4a8a", linewidth = 0.8, alpha = 0.5) +
   geom_point(aes(color = estimate > 0), size = 3.5) +
-  scale_color_manual(values = c(`TRUE` = "#2e7d52", `FALSE` = "#c0392b"),
+  scale_color_manual(values = c(`TRUE` = "#3a7d72", `FALSE` = "#6e5d83"),
                      guide = "none") +
   labs(x = "Coefficient estimate (percentage points)", y = NULL,
        caption = "95% confidence intervals shown. N = counties across 5 Midwest states.") +
@@ -185,9 +166,9 @@ ggplot(df_pct, aes(x = residual)) +
     size = 3, shape = 17, alpha = 0.9
   ) +
   scale_color_manual(
-    values = c("Over-Performer"  = "#2e7d52",
+    values = c("Over-Performer"  = "#3a7d72",
                "As-Expected"     = "#888580",
-               "Under-Performer" = "#c0392b"),
+               "Under-Performer" = "#6e5d83"),
     breaks = c("Over-Performer", "As-Expected", "Under-Performer")
   ) +
   labs(
@@ -224,9 +205,9 @@ ggplot(df_pct, aes(x = predicted, y = turnout_rate)) +
     box.padding = 0.4, max.overlaps = 20
   ) +
   scale_color_manual(
-    values = c("Over-Performer"  = "#2e7d52",
+    values = c("Over-Performer"  = "#3a7d72",
                "As-Expected"     = "#888580",
-               "Under-Performer" = "#c0392b"),
+               "Under-Performer" = "#6e5d83"),
     breaks = c("Over-Performer", "As-Expected", "Under-Performer")
   ) +
   labs(
@@ -270,9 +251,9 @@ selected %>%
   kable_styling(bootstrap_options = c("striped","hover"),
                 full_width = TRUE, font_size = 13) %>%
   row_spec(which(selected %>% arrange(desc(residual)) %>% pull(residual) > 1),
-           background = "#eef5f1") %>%
+           background = "#e8efed") %>%
   row_spec(which(selected %>% arrange(desc(residual)) %>% pull(residual) < -1),
-           background = "#fdf2f1")
+           background = "#ece9f0")
 ```
 
 ---

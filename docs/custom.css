@@ -11,8 +11,8 @@
   --page:        #ffffff;
   --page-alt:    #f5f5f0;
   --accent:      #1a4a8a;      /* institutional navy */
-  --accent2:     #c0392b;      /* alert / underperformer */
-  --accent3:     #2e7d52;      /* positive / overperformer */
+  --accent2:     #6e5d83;      /* dusty plum — under-performer (subdued, non-political) */
+  --accent3:     #3a7d72;      /* sage teal — over-performer (earthy, non-political) */
   --neutral:     #888580;
   --rule:        #e0ddd8;
   --text-body:   #2d2d2d;
@@ -91,9 +91,57 @@ body {
 
 /* === HERO / LANDING === */
 .site-hero {
-  padding: 4rem 0 3rem;
+  background: linear-gradient(180deg, #f5efe6 0%, #faf6ee 100%);
+  padding: 3rem 2.5rem 2.75rem;
+  border-radius: 3px;
   border-bottom: 1px solid var(--rule);
   margin-bottom: 3rem;
+}
+
+/* Two-column hero: text left, viz right */
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-text { min-width: 0; }
+.hero-viz  { min-width: 0; }
+
+.hero-text h1 { max-width: none; }
+.hero-text .dek { max-width: none; }
+
+/* The R chunk renders into a .figure wrapper; reset margins/widths */
+.hero-viz .figure,
+.hero-viz figure {
+  margin: 0;
+  text-align: left;
+}
+
+.hero-viz img {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  border: none;
+  margin: 0;
+  display: block;
+}
+
+.hero-viz .caption,
+.hero-viz figcaption,
+.hero-viz .figure-caption {
+  font-size: 0.85rem;
+  margin-top: 0.6rem;
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .site-hero { padding: 2.5rem 1.5rem 2rem; }
 }
 
 .site-hero .kicker {
@@ -119,12 +167,12 @@ body {
 
 .site-hero .dek {
   font-family: var(--sans);
-  font-size: 1.2rem;
-  font-weight: 300;
-  line-height: 1.65;
-  color: var(--text-mid);
-  max-width: 640px;
-  margin-bottom: 1.5rem;
+  font-size: 1.35rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-body);
+  max-width: 680px;
+  margin-bottom: 1.75rem;
 }
 
 .site-hero .byline {
@@ -214,31 +262,31 @@ a:hover { border-bottom-color: var(--accent); }
 .callout {
   border-left: 4px solid var(--accent);
   background: #eef2f8;
-  padding: 1.25rem 1.5rem;
+  padding: 1.4rem 1.65rem;
   margin: 1.75rem 0;
   font-family: var(--sans);
-  font-size: 1.05rem;
-  line-height: 1.6;
+  font-size: 1.18rem;
+  line-height: 1.65;
   color: var(--text-body);
   border-radius: 0 2px 2px 0;
 }
 
 .callout.finding {
   border-left-color: var(--accent3);
-  background: #eef5f1;
+  background: #e8efed;     /* pale sage */
 }
 
 .callout.warning {
   border-left-color: var(--accent2);
-  background: #fdf2f1;
+  background: #ece9f0;     /* pale plum */
 }
 
 .callout strong {
   font-family: var(--sans);
   font-weight: 600;
   display: block;
-  margin-bottom: 0.35rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.95rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -398,11 +446,24 @@ pre code { background: none; padding: 0; }
 
 figcaption, .figure-caption, .caption {
   font-family: var(--sans);
-  font-size: 0.95rem;
-  color: var(--text-light);
+  font-size: 0.98rem;
+  color: var(--text-mid);
   margin-top: 0.65rem;
-  line-height: 1.5;
+  line-height: 1.55;
   text-align: left;
+}
+
+/* kable() renders the `caption =` argument as a <caption> element on the table */
+table caption,
+caption {
+  font-family: var(--sans);
+  font-size: 1rem;
+  color: var(--text-mid);
+  font-style: italic;
+  text-align: left;
+  caption-side: top;
+  padding: 0.5rem 0 0.85rem;
+  line-height: 1.55;
 }
 
 img {

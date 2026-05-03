@@ -24,9 +24,9 @@ The work builds on practicum research conducted with the **Chicago Lawyers' Comm
 
 **Turnout rates** are calculated using Citizen Voting Age Population (CVAP) denominators from ACS Special Tabulation estimates. CVAP is the appropriate denominator for voting rights research because it accounts for the legally eligible electorate rather than all residents or all adults.
 
-**Structural predictors** are drawn from the 2020 ACS 5-Year Estimates and retrieved via the `tidycensus` R package. The five predictors — educational attainment, internet access, limited English proficiency, disability status, and poverty — represent well-documented correlates of voter participation in the political science and public administration literature.
+**Structural predictors** are drawn from the 2024 ACS 5-Year Estimates and retrieved via the `tidycensus` R package. The analysis builds up four nested OLS models. Model 1 uses five structural predictors derived from prior CLC research — educational attainment (bachelor's), internet access, limited English proficiency, disability status, and poverty. Model 2 adds racial composition and lower-tail educational attainment. Model 3 introduces state fixed effects to adjust for state-level institutional context. Model 4 — the comprehensive specification — adds Hispanic, American Indian / Alaska Native, and age-structure variables. Model 4 drives case selection; Models 1–3 are presented as a methodological progression.
 
-**Case selection** follows a purposive residual-based logic: two counties from the top of the residual distribution (over-performers), two near zero (near-expected), and two from the bottom (under-performers). Selection was also guided by geographic diversity across states.
+**Case selection** follows a purposive residual-based logic drawing on Model 4: two counties from the top of the residual distribution (over-performers, one extreme and one moderate), two near zero (as-expected baselines), and two from the bottom (under-performers, one extreme and one moderate). The extreme + moderate pairing in each tail lets the analysis show that patterns hold beyond just the very furthest tails. Two counties with substantial incarcerated populations (Noble OH, Gratiot MI) were excluded from selection because their CVAP-counted prison populations distort the turnout-rate denominator.
 
 **Qualitative analysis** draws on [list sources — local news archives, election commission reports, organizational documents, etc.].
 
@@ -38,13 +38,13 @@ The work builds on practicum research conducted with the **Chicago Lawyers' Comm
 
 | Source | Description |
 |--------|-------------|
-| U.S. Census Bureau, ACS 2020 5-Year | Educational attainment, internet access, LEP, disability, poverty |
-| ACS CVAP Special Tabulation, 2020 | Eligible electorate denominators |
-| IL State Board of Elections | 2020 general election vote totals |
-| IN Secretary of State | 2020 general election vote totals |
-| OH Secretary of State | 2020 general election vote totals |
-| WI Elections Commission | 2020 general election vote totals |
-| MI Department of State | 2020 general election vote totals |
+| U.S. Census Bureau, ACS 2024 5-Year | Educational attainment, internet access, LEP, disability, poverty, racial/ethnic composition, age structure |
+| ACS CVAP Special Tabulation | Eligible electorate denominators |
+| IL State Board of Elections | 2024 general election vote totals |
+| IN Secretary of State | 2024 general election vote totals |
+| OH Secretary of State | 2024 general election vote totals |
+| WI Elections Commission | 2024 general election vote totals |
+| MI Department of State | 2024 general election vote totals |
 
 All data processing and analysis were conducted in **R** using the `tidyverse`, `tidycensus`, `broom`, and `kableExtra` packages. Interactive visualizations use `shiny`, `plotly`, and `shinylive`.
 

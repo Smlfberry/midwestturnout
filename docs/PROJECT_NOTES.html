@@ -275,7 +275,7 @@ $(document).ready(function () {
 start of every Claude session — it’s the cheapest way to load
 context.</p>
 </blockquote>
-<p><em>Last updated: 2026-04-25</em></p>
+<p><em>Last updated: 2026-05-01</em></p>
 <hr />
 <div id="what-this-project-is" class="section level2">
 <h2>What this project is</h2>
@@ -291,8 +291,8 @@ class="uri">https://github.com/Smlfberry/midwestturnout</a></p>
 general election turnout across IL, IN, OH, WI, MI, using residuals to
 flag over- and under-performing counties — followed by qualitative case
 studies of six counties to investigate <em>why</em>.</p>
-<p><strong>Scale:</strong> 5 states · 437 counties · 6 case studies · 2
-models · 7 predictors (Model 2)</p>
+<p><strong>Scale:</strong> 5 states · 437 counties · 6 case studies · 4
+models · 12 predictors (Model 4)</p>
 <hr />
 </div>
 <div id="the-deliverable" class="section level2">
@@ -362,31 +362,51 @@ implications</td>
 </div>
 <div id="models" class="section level2">
 <h2>Models</h2>
-<p><strong>Model 1</strong> — five structural ACS predictors: - %
-Bachelor’s+ (B15003) - % Households with internet access (B28002) - %
-Limited English proficiency (B16004) - % With a disability (B18101) - %
-Below poverty line (B17001)</p>
-<p><strong>Model 2</strong> — Model 1 + two predictors as a
-theoretically motivated robustness check informed by prior CLC findings:
-- % No high school diploma (B15003) — lower-tail educational
-disadvantage - % Black or African American (B02001) — racial composition
-/ suppression exposure</p>
+<p>The analysis builds up four nested OLS models. Each adds variables to
+its predecessor; comparing across them shows which findings are robust
+and which are model-spec artifacts.</p>
+<p><strong>Model 1</strong> — original CLC-derived structural predictors
+(5 variables): - % Bachelor’s+ (B15003) - % Households with internet
+access (B28002) - % Limited English proficiency (B16004) - % With a
+disability (B18101) - % Below poverty line (B17001)</p>
+<p><strong>Model 2</strong> — Model 1 + lower-tail education and racial
+composition (7 variables): - % No high school diploma (B15003) —
+lower-tail educational disadvantage - % Black or African American
+(B02001) — racial composition / suppression exposure</p>
+<p><strong>Model 3</strong> — Model 2 + state fixed effects (7
+substantive predictors + 4 state dummies). Adjusts case identification
+for state-level institutional context (registration rules, ballot
+access, party competition).</p>
+<p><strong>Model 4</strong> — full comprehensive specification (12
+predictors + state FE): - % Hispanic / Latino (B03003) - % American
+Indian / Alaska Native (B02001) - % Age 18–24 (B01001) — captures
+college-town age structure - % Age 65+ (B01001) — captures
+retirement-aged share</p>
 <p><strong>Outcome:</strong> Turnout rate, 2024 general election,
 denominator = <strong>CVAP</strong> (Citizen Voting Age Population, ACS
 Special Tabulation).</p>
-<p>Residuals from <strong>Model 1</strong> drive case selection.</p>
+<p>Residuals from <strong>Model 4</strong> drive case selection. Earlier
+models (1–3) are presented as a methodological progression showing how
+adding state context and demographic detail shifts which counties stand
+out.</p>
 <hr />
 </div>
 <div id="the-six-case-study-counties" class="section level2">
 <h2>The six case-study counties</h2>
+<p>Selected from Model 4 residuals. The selection picks <strong>one
+extreme + one moderate</strong> from each tail, rather than just the two
+most extreme cases — this lets the analysis show that the pattern holds
+beyond just outliers. The two middle counties sit near the median rank
+with residuals close to zero.</p>
 <table style="width:100%;">
 <colgroup>
-<col width="22%" />
-<col width="26%" />
-<col width="14%" />
-<col width="10%" />
-<col width="13%" />
-<col width="13%" />
+<col width="18%" />
+<col width="16%" />
+<col width="11%" />
+<col width="8%" />
+<col width="17%" />
+<col width="16%" />
+<col width="11%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -394,74 +414,121 @@ Special Tabulation).</p>
 <th>County</th>
 <th>State</th>
 <th>Turnout</th>
-<th>Predicted</th>
-<th>Residual</th>
+<th>Predicted (m4)</th>
+<th>Residual (m4)</th>
+<th>Rank (m4)</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Over-performer</td>
-<td>Montmorency</td>
-<td>Michigan</td>
-<td>80.1%</td>
-<td>63.8%</td>
-<td>+16.2 pp</td>
+<td>Jasper</td>
+<td>Illinois</td>
+<td>77.7%</td>
+<td>66.3%</td>
+<td>+11.4 pp</td>
+<td>437 (top)</td>
 </tr>
 <tr class="even">
 <td>Over-performer</td>
-<td>Trempealeau</td>
-<td>Wisconsin</td>
-<td>75.3%</td>
-<td>60.9%</td>
-<td>+14.5 pp</td>
-</tr>
-<tr class="odd">
-<td>As-expected</td>
-<td>Clinton</td>
-<td>Ohio</td>
-<td>65.7%</td>
-<td>65.7%</td>
-<td>≈0.0 pp</td>
-</tr>
-<tr class="even">
-<td>As-expected</td>
-<td>DeKalb</td>
-<td>Illinois</td>
-<td>63.2%</td>
-<td>63.2%</td>
-<td>≈0.0 pp</td>
-</tr>
-<tr class="odd">
-<td>Under-performer</td>
-<td>Brown</td>
-<td>Illinois</td>
-<td>47.8%</td>
-<td>64.2%</td>
-<td>−16.4 pp</td>
-</tr>
-<tr class="even">
-<td>Under-performer</td>
-<td>Vanderburgh</td>
+<td>Martin</td>
 <td>Indiana</td>
-<td>54.3%</td>
-<td>68.7%</td>
-<td>−14.5 pp</td>
+<td>66.1%</td>
+<td>57.4%</td>
+<td>+8.7 pp</td>
+<td>434</td>
+</tr>
+<tr class="odd">
+<td>As-expected</td>
+<td>Rock Island</td>
+<td>Illinois</td>
+<td>61.1%</td>
+<td>61.0%</td>
+<td>≈+0.1 pp</td>
+<td>214</td>
+</tr>
+<tr class="even">
+<td>As-expected</td>
+<td>Rusk</td>
+<td>Wisconsin</td>
+<td>73.6%</td>
+<td>73.6%</td>
+<td>≈+0.1 pp</td>
+<td>212</td>
+</tr>
+<tr class="odd">
+<td>Under-performer</td>
+<td>Lawrence</td>
+<td>Illinois</td>
+<td>50.9%</td>
+<td>57.5%</td>
+<td>−6.6 pp</td>
+<td>7</td>
+</tr>
+<tr class="even">
+<td>Under-performer</td>
+<td>Gogebic</td>
+<td>Michigan</td>
+<td>70.3%</td>
+<td>79.7%</td>
+<td>−9.4 pp</td>
+<td>3</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Note on excluded counties:</strong> the two most extreme
+underperformers in Model 4 — Noble OH (rank 1) and Gratiot MI (rank 5) —
+were excluded from case selection because both host substantial state
+correctional facilities (Noble Correctional Institution; Mid-Michigan
+Correctional Facility). Their incarcerated populations inflate the CVAP
+denominator while being disenfranchised from voting under state law,
+mechanically depressing the turnout rate. This denominator artifact is
+discussed as a measurement caveat in the appendix.</p>
+<p><strong>Note on prior selection:</strong> an earlier round of
+case-study work used a different 6 (Montmorency MI, Trempealeau WI,
+Clinton OH, DeKalb IL, Brown IL, Vanderburgh IN) drawn from Model 1
+residuals. After expanding to Model 4 (adding state FE, age, and
+corrected race variables), several of those original cases attenuated or
+shifted category, and the case selection was refreshed. Original-six
+analytic notes preserved in screenshots; not used in current
+write-up.</p>
 <hr />
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
 <ul>
 <li><strong>Predictors:</strong> 2024 ACS 5-Year estimates, retrieved
-via <code>tidycensus</code></li>
+via <code>tidycensus</code>
+<ul>
+<li>Education / language / disability / internet — original CLC
+pull</li>
+<li>Poverty — table B17001</li>
+<li>Hispanic / Latino — table B03003 (corrected; earlier extract was
+constant-100 bug)</li>
+<li>American Indian / Alaska Native — table B02001</li>
+<li>Age structure (18–24, 65+) — table B01001</li>
+</ul></li>
 <li><strong>Turnout numerators:</strong> State election commissions (IL,
 IN, OH, WI, MI)</li>
 <li><strong>Turnout denominator:</strong> CVAP Special Tabulation</li>
 <li><strong>Merge key:</strong> County GEOID</li>
-<li><strong>Cached data object:</strong> <code>data/df_pct.rds</code>
-(loaded in <code>index.Rmd</code> setup chunk)</li>
+<li><strong>Cached data objects (in <code>data/</code>):</strong>
+<ul>
+<li><code>df_pct.rds</code> — base feature dataset (44 cols after model4
+update)</li>
+<li><code>df_pct_with_predictions.rds</code> — same dataset +
+predicted/residual/rank for all 4 models (used by website pages)</li>
+<li><code>model1.rds</code>, <code>model2.rds</code>,
+<code>model3.rds</code>, <code>model4.rds</code> — fitted lm
+objects</li>
+<li><code>selected_counties.rds</code> / <code>.csv</code> — the 6 case
+studies subset</li>
+<li>Various comparison CSVs for residual/coefficient/fit comparison</li>
+</ul></li>
+<li><strong>Data pipeline:</strong> <code>update_data_new.R</code> in
+the Capstone folder pulls ACS, refits all four models, writes outputs to
+both <code>Capstone/data/</code> and <code>midwestturnout/data/</code>.
+Re-run that script whenever spec or input changes.</li>
 </ul>
 <hr />
 </div>
@@ -511,13 +578,23 @@ Pages.</li>
 <h2>Open questions / what’s next</h2>
 <p><em>(Update this section every session — it’s the single most useful
 thing for picking up where we left off.)</em></p>
-<p><strong>Picking up here (paused 2026-04-25):</strong> - [ ] Replace
-filler/placeholder copy across the <code>.Rmd</code> pages with Sam’s
-own writing - [ ] Continue formatting edits to <code>custom.css</code>
-and the styled HTML blocks (hero, county cards, callouts, etc.) -
-Suggested order when resuming: pick one page at a time, swap real text
-in, render the site (<code>rmarkdown::render_site()</code>), tweak CSS
-as issues surface.</p>
+<p><strong>Picking up here (paused 2026-05-01):</strong> - Model
+framework expanded to 4 specs (m1 → m2 → m3 with state FE → m4 with age
++ corrected race vars) - Case selection refreshed to new 6 counties
+drawn from Model 4 residuals - Website data layer fully updated
+(<code>midwestturnout/data/</code> has all 4 models + selected_counties)
+- [ ] Update <code>index.Rmd</code> — hero scatter tier mappings, 6
+county-cards HTML, model narrative, data sources table - [ ] Update
+<code>model.Rmd</code> — major rework: show progression across all 4
+models (Option A1) - [ ] Update <code>case-studies.Rmd</code> — replace
+structural elements (cards, predictor charts, setup chunk) for new 6;
+qualitative analysis text remains pending Sam’s research on the new
+counties - [ ] Audit / update <code>synthesis.Rmd</code>,
+<code>explore.Rmd</code>, <code>descriptive.Rmd</code>,
+<code>about.Rmd</code> for old county references - [ ] Knit + visually
+verify each page after edits - Suggested order: PROJECT_NOTES → index →
+model → about → synthesis/explore/descriptive → case-studies (last,
+blocks on qual research)</p>
 <hr />
 </div>
 <div id="how-to-use-this-file" class="section level2">

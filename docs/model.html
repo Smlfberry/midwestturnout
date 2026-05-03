@@ -276,34 +276,206 @@ $(document).ready(function () {
 <h2>Model Specification</h2>
 <p>This analysis uses <strong>Ordinary Least Squares (OLS)
 regression</strong> to model county-level voter turnout rates as a
-function of five structural predictors from the American Community
-Survey. The unit of analysis is the county; the outcome variable is the
+function of structural predictors from the American Community Survey.
+The unit of analysis is the county; the outcome variable is the
 county-level turnout rate calculated using CVAP denominators.</p>
-<p>The model takes the form:</p>
+<p>Rather than relying on a single specification, the analysis builds up
+four nested models. Each adds variables to its predecessor, and
+comparing across them shows which findings are robust and which are
+artifacts of model specification.</p>
+<p><strong>Model 1 — original CLC-derived structural predictors (5
+variables):</strong></p>
 <p><span class="math display">\[\text{Turnout}_i = \beta_0 +
 \beta_1(\text{Bachelor&#39;s}_i) + \beta_2(\text{Internet}_i) +
 \beta_3(\text{LEP}_i) + \beta_4(\text{Disability}_i) +
 \beta_5(\text{Poverty}_i) + \varepsilon_i\]</span></p>
-<p>where <span class="math inline">\(i\)</span> indexes counties and
-<span class="math inline">\(\varepsilon_i\)</span> is the residual — the
-quantity of primary analytic interest.</p>
+<p><strong>Model 2 — adds lower-tail education and racial composition (7
+variables):</strong> adds % no high school diploma and % Black or
+African American to Model 1.</p>
+<p><strong>Model 3 — adds state fixed effects:</strong> adds a
+categorical indicator for state, allowing the intercept to vary by state
+and absorbing state-level institutional context (registration rules,
+ballot access, election administration).</p>
+<p><strong>Model 4 — comprehensive specification:</strong> adds %
+Hispanic / Latino, % American Indian / Alaska Native, % age 18–24, and %
+age 65+ to Model 3. This is the preferred specification and drives case
+selection.</p>
+<p>In each model, <span class="math inline">\(i\)</span> indexes
+counties and <span class="math inline">\(\varepsilon_i\)</span> is the
+residual — the quantity of primary analytic interest.</p>
 <div class="callout">
-<p><strong>Why OLS?</strong> The goal of this model is not prediction
-accuracy per se, but residual interpretation. OLS produces easily
-interpretable residuals in the original units (percentage points of
-turnout) and makes assumptions transparent. The model is intentionally
-parsimonious — omitted variable bias is expected, and its signature in
-the residuals is the point of the qualitative analysis.</p>
+<p><strong>Why OLS?</strong> The goal is not prediction accuracy per se,
+but residual interpretation. OLS produces easily interpretable residuals
+in the original units (percentage points of turnout) and makes
+assumptions transparent. Comparing residuals across nested
+specifications surfaces which county-level outliers persist as the model
+becomes more comprehensive — those persistent outliers are the strongest
+candidates for qualitative investigation.</p>
 </div>
 <hr />
 <p><span class="section-label">Model Results</span></p>
 </div>
-<div id="coefficient-estimates" class="section level2">
-<h2>Coefficient Estimates</h2>
+<div id="model-fit-across-specifications" class="section level2">
+<h2>Model Fit Across Specifications</h2>
+<table class="table table-striped table-hover" style="font-size: 13px; margin-left: auto; margin-right: auto;">
+<caption style="font-size: initial !important;">
+Model fit statistics across the four nested specifications. RMSE
+expressed in percentage points of turnout.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Model
+</th>
+<th style="text-align:right;">
+R²
+</th>
+<th style="text-align:right;">
+Adj. R²
+</th>
+<th style="text-align:right;">
+RMSE (pp)
+</th>
+<th style="text-align:right;">
+AIC
+</th>
+<th style="text-align:right;">
+BIC
+</th>
+<th style="text-align:right;">
+df (residual)
+</th>
+<th style="text-align:right;">
+N
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Model 1: CLC framework (5 vars)
+</td>
+<td style="text-align:right;">
+0.440
+</td>
+<td style="text-align:right;">
+0.434
+</td>
+<td style="text-align:right;">
+6.32
+</td>
+<td style="text-align:right;">
+-1165.4
+</td>
+<td style="text-align:right;">
+-1136.8
+</td>
+<td style="text-align:right;">
+431
+</td>
+<td style="text-align:right;">
+437
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model 2: + no HS + Black
+</td>
+<td style="text-align:right;">
+0.543
+</td>
+<td style="text-align:right;">
+0.536
+</td>
+<td style="text-align:right;">
+5.72
+</td>
+<td style="text-align:right;">
+-1250.4
+</td>
+<td style="text-align:right;">
+-1213.7
+</td>
+<td style="text-align:right;">
+429
+</td>
+<td style="text-align:right;">
+437
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model 3: + state fixed effects
+</td>
+<td style="text-align:right;">
+0.813
+</td>
+<td style="text-align:right;">
+0.808
+</td>
+<td style="text-align:right;">
+3.68
+</td>
+<td style="text-align:right;">
+-1631.7
+</td>
+<td style="text-align:right;">
+-1578.6
+</td>
+<td style="text-align:right;">
+425
+</td>
+<td style="text-align:right;">
+437
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Model 4: full (age + Hispanic + AI/AN)
+</td>
+<td style="text-align:right;">
+0.860
+</td>
+<td style="text-align:right;">
+0.855
+</td>
+<td style="text-align:right;">
+3.19
+</td>
+<td style="text-align:right;">
+-1752.2
+</td>
+<td style="text-align:right;">
+-1682.8
+</td>
+<td style="text-align:right;">
+421
+</td>
+<td style="text-align:right;">
+437
+</td>
+</tr>
+</tbody>
+</table>
+<p>The largest fit gain comes from adding <strong>state fixed
+effects</strong> (Model 2 → Model 3): adjusted R² rises from roughly
+0.54 to 0.81, indicating that state-level institutional context absorbs
+much of the unexplained variance. Adding <strong>age structure and
+corrected race variables</strong> (Model 3 → Model 4) yields a further
+gain to roughly 0.86 — meaningful but smaller, suggesting that state
+context is the single most important addition. The progression also
+confirms why Model 4 is the preferred specification for case selection:
+outliers identified under Model 4 have already been adjusted for both
+state context and demographic detail.</p>
+<hr />
+</div>
+<div id="coefficient-estimates-model-4" class="section level2">
+<h2>Coefficient Estimates — Model 4</h2>
 <table class="table table-striped table-hover" style="font-size: 13px; margin-left: auto; margin-right: auto;border-bottom: 0;">
 <caption style="font-size: initial !important;">
-OLS regression coefficients. Outcome: county-level turnout rate (CVAP
-denominator). N = counties across IL, IN, OH, WI, MI.
+Model 4 OLS coefficients (state fixed effects suppressed for
+readability). Outcome: county-level turnout rate (CVAP denominator). N =
+counties across IL, IN, OH, WI, MI.
 </caption>
 <thead>
 <tr>
@@ -335,19 +507,19 @@ p-value
 % Bachelor’s Degree or Higher
 </td>
 <td style="text-align:right;">
-0.009
+0.0053
 </td>
 <td style="text-align:right;">
-0.001
+0.0006
 </td>
 <td style="text-align:right;">
-0.007
+0.0042
 </td>
 <td style="text-align:right;">
-0.011
+0.0064
 </td>
 <td style="text-align:right;">
-0.000
+0.0000
 </td>
 <td style="text-align:left;">
 ***
@@ -355,24 +527,162 @@ p-value
 </tr>
 <tr>
 <td style="text-align:left;">
+% No High School Diploma
+</td>
+<td style="text-align:right;">
+-0.0066
+</td>
+<td style="text-align:right;">
+0.0008
+</td>
+<td style="text-align:right;">
+-0.0082
+</td>
+<td style="text-align:right;">
+-0.0050
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+% Black or African American
+</td>
+<td style="text-align:right;">
+-0.0021
+</td>
+<td style="text-align:right;">
+0.0004
+</td>
+<td style="text-align:right;">
+-0.0028
+</td>
+<td style="text-align:right;">
+-0.0014
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+% Hispanic or Latino
+</td>
+<td style="text-align:right;">
+-0.0002
+</td>
+<td style="text-align:right;">
+0.0006
+</td>
+<td style="text-align:right;">
+-0.0013
+</td>
+<td style="text-align:right;">
+0.0010
+</td>
+<td style="text-align:right;">
+0.7898
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+% American Indian / Alaska Native
+</td>
+<td style="text-align:right;">
+-0.0021
+</td>
+<td style="text-align:right;">
+0.0004
+</td>
+<td style="text-align:right;">
+-0.0028
+</td>
+<td style="text-align:right;">
+-0.0013
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+% Age 18–24
+</td>
+<td style="text-align:right;">
+-0.0065
+</td>
+<td style="text-align:right;">
+0.0007
+</td>
+<td style="text-align:right;">
+-0.0079
+</td>
+<td style="text-align:right;">
+-0.0050
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:left;">
+***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+% Age 65+
+</td>
+<td style="text-align:right;">
+0.0014
+</td>
+<td style="text-align:right;">
+0.0006
+</td>
+<td style="text-align:right;">
+0.0002
+</td>
+<td style="text-align:right;">
+0.0027
+</td>
+<td style="text-align:right;">
+0.0266
+</td>
+<td style="text-align:left;">
+<ul>
+<li></td>
+</tr>
+<tr>
+<td style="text-align:left;">
 % Households with Internet
 </td>
 <td style="text-align:right;">
--0.001
+-0.0011
 </td>
 <td style="text-align:right;">
-0.001
+0.0006
 </td>
 <td style="text-align:right;">
--0.003
+-0.0022
 </td>
 <td style="text-align:right;">
-0.001
+0.0001
 </td>
 <td style="text-align:right;">
-0.182
+0.0670
 </td>
 <td style="text-align:left;">
+†
 </td>
 </tr>
 <tr>
@@ -380,22 +690,21 @@ p-value
 % Limited English Proficiency
 </td>
 <td style="text-align:right;">
--0.012
+-0.0004
 </td>
 <td style="text-align:right;">
-0.002
+0.0016
 </td>
 <td style="text-align:right;">
--0.016
+-0.0034
 </td>
 <td style="text-align:right;">
--0.009
+0.0027
 </td>
 <td style="text-align:right;">
-0.000
+0.8071
 </td>
 <td style="text-align:left;">
-***
 </td>
 </tr>
 <tr>
@@ -403,22 +712,21 @@ p-value
 % Population with a Disability
 </td>
 <td style="text-align:right;">
-0.006
+0.0005
 </td>
 <td style="text-align:right;">
-0.001
+0.0009
 </td>
 <td style="text-align:right;">
-0.003
+-0.0012
 </td>
 <td style="text-align:right;">
-0.008
+0.0023
 </td>
 <td style="text-align:right;">
-0.000
+0.5647
 </td>
 <td style="text-align:left;">
-***
 </td>
 </tr>
 <tr>
@@ -426,19 +734,19 @@ p-value
 % Below Poverty Line
 </td>
 <td style="text-align:right;">
--0.009
+-0.0034
 </td>
 <td style="text-align:right;">
-0.001
+0.0007
 </td>
 <td style="text-align:right;">
--0.011
+-0.0049
 </td>
 <td style="text-align:right;">
--0.007
+-0.0020
 </td>
 <td style="text-align:right;">
-0.000
+0.0000
 </td>
 <td style="text-align:left;">
 ***
@@ -457,59 +765,62 @@ p-value
 </td>
 </tr>
 </tfoot>
-</table>
-<p><strong>Model fit:</strong> R² = 0.44, Adjusted R² = 0.434, RMSE =
-0.06 percentage points. The model explains approximately 44% of variance
+</table></li>
+</ul>
+<p><strong>Model 4 fit:</strong> R² = 0.86, Adjusted R² = 0.855, RMSE =
+3.13 percentage points. The model explains approximately 86% of variance
 in county-level turnout rates.</p>
 <hr />
 </div>
-<div id="coefficient-plot" class="section level2">
-<h2>Coefficient Plot</h2>
+<div id="coefficient-plot-model-4" class="section level2">
+<h2>Coefficient Plot — Model 4</h2>
 <div class="figure">
-<img src="model_files/figure-html/coef-plot-1.png" alt="Point estimates and 95% confidence intervals. Estimates represent percentage-point change in turnout rate per one-unit change in predictor." width="1200" />
+<img src="model_files/figure-html/coef-plot-1.png" alt="Model 4 point estimates and 95% confidence intervals (state fixed effects suppressed). Estimates represent change in turnout rate per one-percentage-point change in predictor." width="1200" />
 <p class="caption">
-Point estimates and 95% confidence intervals. Estimates represent
-percentage-point change in turnout rate per one-unit change in
-predictor.
+Model 4 point estimates and 95% confidence intervals (state fixed
+effects suppressed). Estimates represent change in turnout rate per
+one-percentage-point change in predictor.
 </p>
 </div>
 <hr />
 <p><span class="section-label">Residuals</span></p>
 </div>
-<div id="residual-distribution" class="section level2">
-<h2>Residual Distribution</h2>
-<p>The distribution of residuals reveals whether the model
-systematically over- or under-predicts for any subset of counties. A
-well-behaved residual distribution should be approximately normal with
-mean zero.</p>
+<div id="residual-distribution-model-4" class="section level2">
+<h2>Residual Distribution — Model 4</h2>
+<p>The distribution of Model 4 residuals reveals whether the
+comprehensive specification systematically over- or under-predicts for
+any subset of counties. A well-behaved residual distribution should be
+approximately normal with mean zero.</p>
 <div class="figure">
-<img src="model_files/figure-html/residual-hist-1.png" alt="Distribution of model residuals (actual − predicted turnout rate, in percentage points). Counties selected as case studies are marked." width="1200" />
+<img src="model_files/figure-html/residual-hist-1.png" alt="Distribution of Model 4 residuals (actual − predicted turnout rate, in percentage points). Counties selected as case studies are marked." width="1200" />
 <p class="caption">
-Distribution of model residuals (actual − predicted turnout rate, in
+Distribution of Model 4 residuals (actual − predicted turnout rate, in
 percentage points). Counties selected as case studies are marked.
 </p>
 </div>
 <hr />
 </div>
-<div id="predicted-vs.-actual-turnout" class="section level2">
-<h2>Predicted vs. Actual Turnout</h2>
+<div id="predicted-vs.-actual-turnout-model-4" class="section level2">
+<h2>Predicted vs. Actual Turnout — Model 4</h2>
 <div class="figure">
-<img src="model_files/figure-html/pred-actual-1.png" alt="Each point is a county. The dashed line represents perfect prediction (residual = 0). Points above the line over-performed; points below under-performed." width="1200" />
+<img src="model_files/figure-html/pred-actual-1.png" alt="Each point is a county. The dashed line represents perfect prediction (residual = 0). Points above the line over-performed; points below under-performed. Predictions from Model 4." width="1200" />
 <p class="caption">
 Each point is a county. The dashed line represents perfect prediction
 (residual = 0). Points above the line over-performed; points below
-under-performed.
+under-performed. Predictions from Model 4.
 </p>
 </div>
 <hr />
 <p><span class="section-label">Case Selection</span></p>
 </div>
-<div id="selected-counties-full-statistics" class="section level2">
-<h2>Selected Counties: Full Statistics</h2>
+<div id="selected-counties-full-statistics-model-4"
+class="section level2">
+<h2>Selected Counties: Full Statistics — Model 4</h2>
 <table class="table table-striped table-hover" style="font-size: 13px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
-The six case-study counties with model-derived statistics. Residuals in
-percentage points.
+The six case-study counties with Model 4 statistics. Residuals in
+percentage points. Rank out of 437 counties (1 = most underperforming,
+437 = most overperforming).
 </caption>
 <thead>
 <tr>
@@ -531,140 +842,171 @@ Predicted (%)
 <th style="text-align:right;">
 Residual (pp)
 </th>
+<th style="text-align:right;">
+Rank (m4)
+</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-Montmorency
+<td style="text-align:left;background-color: rgba(232, 239, 237, 255) !important;">
+Jasper
 </td>
-<td style="text-align:left;">
-Michigan
+<td style="text-align:left;background-color: rgba(232, 239, 237, 255) !important;">
+Illinois
 </td>
-<td style="text-align:left;">
-Near-Expected
+<td style="text-align:left;background-color: rgba(232, 239, 237, 255) !important;">
+Over-Performer
 </td>
-<td style="text-align:right;">
-0.80
+<td style="text-align:right;background-color: rgba(232, 239, 237, 255) !important;">
+77.7
 </td>
-<td style="text-align:right;">
-0.64
+<td style="text-align:right;background-color: rgba(232, 239, 237, 255) !important;">
+66.3
 </td>
-<td style="text-align:right;">
-0.16
+<td style="text-align:right;background-color: rgba(232, 239, 237, 255) !important;">
+11.4
+</td>
+<td style="text-align:right;background-color: rgba(232, 239, 237, 255) !important;">
+437
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: rgba(232, 239, 237, 255) !important;">
+Martin
+</td>
+<td style="text-align:left;background-color: rgba(232, 239, 237, 255) !important;">
+Indiana
+</td>
+<td style="text-align:left;background-color: rgba(232, 239, 237, 255) !important;">
+Over-Performer
+</td>
+<td style="text-align:right;background-color: rgba(232, 239, 237, 255) !important;">
+66.1
+</td>
+<td style="text-align:right;background-color: rgba(232, 239, 237, 255) !important;">
+57.4
+</td>
+<td style="text-align:right;background-color: rgba(232, 239, 237, 255) !important;">
+8.7
+</td>
+<td style="text-align:right;background-color: rgba(232, 239, 237, 255) !important;">
+434
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-Trempealeau
+Rock Island
+</td>
+<td style="text-align:left;">
+Illinois
+</td>
+<td style="text-align:left;">
+As-Expected
+</td>
+<td style="text-align:right;">
+61.1
+</td>
+<td style="text-align:right;">
+61.0
+</td>
+<td style="text-align:right;">
+0.1
+</td>
+<td style="text-align:right;">
+214
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rusk
 </td>
 <td style="text-align:left;">
 Wisconsin
 </td>
 <td style="text-align:left;">
-Near-Expected
+As-Expected
 </td>
 <td style="text-align:right;">
-0.75
+73.6
 </td>
 <td style="text-align:right;">
-0.61
+73.6
 </td>
 <td style="text-align:right;">
-0.14
+0.1
+</td>
+<td style="text-align:right;">
+212
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-Clinton
+<td style="text-align:left;background-color: rgba(236, 233, 240, 255) !important;">
+Lawrence
 </td>
-<td style="text-align:left;">
-Ohio
-</td>
-<td style="text-align:left;">
-Near-Expected
-</td>
-<td style="text-align:right;">
-0.66
-</td>
-<td style="text-align:right;">
-0.66
-</td>
-<td style="text-align:right;">
-0.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-DeKalb
-</td>
-<td style="text-align:left;">
+<td style="text-align:left;background-color: rgba(236, 233, 240, 255) !important;">
 Illinois
 </td>
-<td style="text-align:left;">
-Near-Expected
+<td style="text-align:left;background-color: rgba(236, 233, 240, 255) !important;">
+Under-Performer
 </td>
-<td style="text-align:right;">
-0.63
+<td style="text-align:right;background-color: rgba(236, 233, 240, 255) !important;">
+50.9
 </td>
-<td style="text-align:right;">
-0.63
+<td style="text-align:right;background-color: rgba(236, 233, 240, 255) !important;">
+57.5
 </td>
-<td style="text-align:right;">
-0.00
+<td style="text-align:right;background-color: rgba(236, 233, 240, 255) !important;">
+-6.6
 </td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Vanderburgh
-</td>
-<td style="text-align:left;">
-Indiana
-</td>
-<td style="text-align:left;">
-Near-Expected
-</td>
-<td style="text-align:right;">
-0.54
-</td>
-<td style="text-align:right;">
-0.69
-</td>
-<td style="text-align:right;">
--0.14
+<td style="text-align:right;background-color: rgba(236, 233, 240, 255) !important;">
+7
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-Brown
+<td style="text-align:left;background-color: rgba(236, 233, 240, 255) !important;">
+Gogebic
 </td>
-<td style="text-align:left;">
-Illinois
+<td style="text-align:left;background-color: rgba(236, 233, 240, 255) !important;">
+Michigan
 </td>
-<td style="text-align:left;">
-Near-Expected
+<td style="text-align:left;background-color: rgba(236, 233, 240, 255) !important;">
+Under-Performer
 </td>
-<td style="text-align:right;">
-0.48
+<td style="text-align:right;background-color: rgba(236, 233, 240, 255) !important;">
+70.3
 </td>
-<td style="text-align:right;">
-0.64
+<td style="text-align:right;background-color: rgba(236, 233, 240, 255) !important;">
+79.7
 </td>
-<td style="text-align:right;">
--0.16
+<td style="text-align:right;background-color: rgba(236, 233, 240, 255) !important;">
+-9.4
+</td>
+<td style="text-align:right;background-color: rgba(236, 233, 240, 255) !important;">
+3
 </td>
 </tr>
 </tbody>
 </table>
+<p>The selection pairs <strong>one extreme + one moderate</strong>
+county in each tail (over- and under-performers) so the qualitative
+analysis can show the pattern holds beyond just the most extreme
+outliers. The two as-expected counties — Rock Island (IL) and Clark (IN)
+— sit adjacent to the median rank with residuals near zero, providing
+clean baselines where Model 4 predicts almost exactly right.</p>
 <hr />
 <div class="callout">
 <p><strong>Limitations</strong> This model is cross-sectional and
 observational. Coefficients should not be interpreted as causal effects.
 OLS assumes linearity, homoscedasticity, and no perfect
 multicollinearity; these assumptions are assessed but not guaranteed to
-hold across all counties. The model uses 2024 ACS data as a proxy for
-2020 structural conditions; temporal mismatch may introduce measurement
-error for rapidly changing counties.</p>
+hold across all counties. Model 4 includes state fixed effects but not
+interactions between state and substantive predictors — the marginal
+effect of each predictor is constrained to be the same in every state.
+Some predictors (e.g., percent Hispanic, percent limited English)
+attenuate to non-significance in the full model, likely because related
+variables (state context, age structure) absorb shared variance; this is
+expected in nested-spec progressions.</p>
 </div>
 <hr />
 <div class="site-footer">

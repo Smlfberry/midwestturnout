@@ -2,7 +2,7 @@
 
 > Living notes file for Sam's UChicago capstone. Read this first at the start of every Claude session — it's the cheapest way to load context.
 
-_Last updated: 2026-04-25_
+_Last updated: 2026-05-01_
 
 ---
 
@@ -15,7 +15,7 @@ _Last updated: 2026-04-25_
 
 **One-line pitch:** A county-level OLS model of 2024 general election turnout across IL, IN, OH, WI, MI, using residuals to flag over- and under-performing counties — followed by qualitative case studies of six counties to investigate *why*.
 
-**Scale:** 5 states · 437 counties · 6 case studies · 2 models · 7 predictors (Model 2)
+**Scale:** 5 states · 437 counties · 6 case studies · 4 models · 12 predictors (Model 4)
 
 ---
 
@@ -41,43 +41,70 @@ Theme: `flatly` (Bootswatch, via `html_document`) with `custom.css` overriding.
 
 ## Models
 
-**Model 1** — five structural ACS predictors:
+The analysis builds up four nested OLS models. Each adds variables to its predecessor; comparing across them shows which findings are robust and which are model-spec artifacts.
+
+**Model 1** — original CLC-derived structural predictors (5 variables):
 - % Bachelor's+ (B15003)
 - % Households with internet access (B28002)
 - % Limited English proficiency (B16004)
 - % With a disability (B18101)
 - % Below poverty line (B17001)
 
-**Model 2** — Model 1 + two predictors as a theoretically motivated robustness check informed by prior CLC findings:
+**Model 2** — Model 1 + lower-tail education and racial composition (7 variables):
 - % No high school diploma (B15003) — lower-tail educational disadvantage
 - % Black or African American (B02001) — racial composition / suppression exposure
 
+**Model 3** — Model 2 + state fixed effects (7 substantive predictors + 4 state dummies). Adjusts case identification for state-level institutional context (registration rules, ballot access, party competition).
+
+**Model 4** — full comprehensive specification (12 predictors + state FE):
+- % Hispanic / Latino (B03003)
+- % American Indian / Alaska Native (B02001)
+- % Age 18–24 (B01001) — captures college-town age structure
+- % Age 65+ (B01001) — captures retirement-aged share
+
 **Outcome:** Turnout rate, 2024 general election, denominator = **CVAP** (Citizen Voting Age Population, ACS Special Tabulation).
 
-Residuals from **Model 1** drive case selection.
+Residuals from **Model 4** drive case selection. Earlier models (1–3) are presented as a methodological progression showing how adding state context and demographic detail shifts which counties stand out.
 
 ---
 
 ## The six case-study counties
 
-| Tier            | County             | State      | Turnout | Predicted | Residual  |
-| --------------- | ------------------ | ---------- | ------- | --------- | --------- |
-| Over-performer  | Montmorency        | Michigan   | 80.1%   | 63.8%     | +16.2 pp  |
-| Over-performer  | Trempealeau        | Wisconsin  | 75.3%   | 60.9%     | +14.5 pp  |
-| As-expected     | Clinton            | Ohio       | 65.7%   | 65.7%     | ≈0.0 pp   |
-| As-expected     | DeKalb             | Illinois   | 63.2%   | 63.2%     | ≈0.0 pp   |
-| Under-performer | Brown              | Illinois   | 47.8%   | 64.2%     | −16.4 pp  |
-| Under-performer | Vanderburgh        | Indiana    | 54.3%   | 68.7%     | −14.5 pp  |
+Selected from Model 4 residuals. The selection picks **one extreme + one moderate** from each tail, rather than just the two most extreme cases — this lets the analysis show that the pattern holds beyond just outliers. The two middle counties sit near the median rank with residuals close to zero.
+
+| Tier            | County        | State     | Turnout | Predicted (m4) | Residual (m4) | Rank (m4) |
+| --------------- | ------------- | --------- | ------- | -------------- | ------------- | --------- |
+| Over-performer  | Jasper        | Illinois  | 77.7%   | 66.3%          | +11.4 pp      | 437 (top) |
+| Over-performer  | Martin        | Indiana   | 66.1%   | 57.4%          | +8.7 pp       | 434       |
+| As-expected     | Rock Island   | Illinois  | 61.1%   | 61.0%          | ≈+0.1 pp      | 214       |
+| As-expected     | Rusk          | Wisconsin | 73.6%   | 73.6%          | ≈+0.1 pp      | 212       |
+| Under-performer | Lawrence      | Illinois  | 50.9%   | 57.5%          | −6.6 pp       | 7         |
+| Under-performer | Gogebic       | Michigan  | 70.3%   | 79.7%          | −9.4 pp       | 3         |
+
+**Note on excluded counties:** the two most extreme underperformers in Model 4 — Noble OH (rank 1) and Gratiot MI (rank 5) — were excluded from case selection because both host substantial state correctional facilities (Noble Correctional Institution; Mid-Michigan Correctional Facility). Their incarcerated populations inflate the CVAP denominator while being disenfranchised from voting under state law, mechanically depressing the turnout rate. This denominator artifact is discussed as a measurement caveat in the appendix.
+
+**Note on prior selection:** an earlier round of case-study work used a different 6 (Montmorency MI, Trempealeau WI, Clinton OH, DeKalb IL, Brown IL, Vanderburgh IN) drawn from Model 1 residuals. After expanding to Model 4 (adding state FE, age, and corrected race variables), several of those original cases attenuated or shifted category, and the case selection was refreshed. Original-six analytic notes preserved in screenshots; not used in current write-up.
 
 ---
 
 ## Data
 
 - **Predictors:** 2024 ACS 5-Year estimates, retrieved via `tidycensus`
+  - Education / language / disability / internet — original CLC pull
+  - Poverty — table B17001
+  - Hispanic / Latino — table B03003 (corrected; earlier extract was constant-100 bug)
+  - American Indian / Alaska Native — table B02001
+  - Age structure (18–24, 65+) — table B01001
 - **Turnout numerators:** State election commissions (IL, IN, OH, WI, MI)
 - **Turnout denominator:** CVAP Special Tabulation
 - **Merge key:** County GEOID
-- **Cached data object:** `data/df_pct.rds` (loaded in `index.Rmd` setup chunk)
+- **Cached data objects (in `data/`):**
+  - `df_pct.rds` — base feature dataset (44 cols after model4 update)
+  - `df_pct_with_predictions.rds` — same dataset + predicted/residual/rank for all 4 models (used by website pages)
+  - `model1.rds`, `model2.rds`, `model3.rds`, `model4.rds` — fitted lm objects
+  - `selected_counties.rds` / `.csv` — the 6 case studies subset
+  - Various comparison CSVs for residual/coefficient/fit comparison
+- **Data pipeline:** `update_data_new.R` in the Capstone folder pulls ACS, refits all four models, writes outputs to both `Capstone/data/` and `midwestturnout/data/`. Re-run that script whenever spec or input changes.
 
 ---
 
@@ -118,10 +145,16 @@ midwestturnout/
 
 _(Update this section every session — it's the single most useful thing for picking up where we left off.)_
 
-**Picking up here (paused 2026-04-25):**
-- [ ] Replace filler/placeholder copy across the `.Rmd` pages with Sam's own writing
-- [ ] Continue formatting edits to `custom.css` and the styled HTML blocks (hero, county cards, callouts, etc.)
-- Suggested order when resuming: pick one page at a time, swap real text in, render the site (`rmarkdown::render_site()`), tweak CSS as issues surface.
+**Picking up here (paused 2026-05-01):**
+- Model framework expanded to 4 specs (m1 → m2 → m3 with state FE → m4 with age + corrected race vars)
+- Case selection refreshed to new 6 counties drawn from Model 4 residuals
+- Website data layer fully updated (`midwestturnout/data/` has all 4 models + selected_counties)
+- [ ] Update `index.Rmd` — hero scatter tier mappings, 6 county-cards HTML, model narrative, data sources table
+- [ ] Update `model.Rmd` — major rework: show progression across all 4 models (Option A1)
+- [ ] Update `case-studies.Rmd` — replace structural elements (cards, predictor charts, setup chunk) for new 6; qualitative analysis text remains pending Sam's research on the new counties
+- [ ] Audit / update `synthesis.Rmd`, `explore.Rmd`, `descriptive.Rmd`, `about.Rmd` for old county references
+- [ ] Knit + visually verify each page after edits
+- Suggested order: PROJECT_NOTES → index → model → about → synthesis/explore/descriptive → case-studies (last, blocks on qual research)
 
 ---
 

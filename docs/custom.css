@@ -5,22 +5,40 @@
 
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
-/* === TOKENS === */
+/* === TOKENS — Civic Editorial palette ===
+   Mix of "Civic Modern" + "Academic Bold". Bone background, oxblood
+   brand, midnight navy for links, mustard ochre accent. Diverging
+   residual scale uses plum-to-amber (colorblind-safe; avoids red/blue
+   partisan reading and red/green deficiency issues). */
 :root {
-  --ink:         #1c1c1e;
-  --page:        #ffffff;
-  --page-alt:    #f5f5f0;
-  --accent:      #1a4a8a;      /* institutional navy */
-  --accent2:     #6e5d83;      /* dusty plum — under-performer (subdued, non-political) */
-  --accent3:     #3a7d72;      /* sage teal — over-performer (earthy, non-political) */
-  --neutral:     #888580;
-  --rule:        #e0ddd8;
-  --text-body:   #2d2d2d;
-  --text-mid:    #555550;
-  --text-light:  #888580;
+  --ink:         #1a1a1a;      /* warm black */
+  --page:        #f7f4ed;      /* bone */
+  --page-alt:    #ede6d4;      /* deeper linen */
+  --rule:        #d8d0c0;      /* warm tan divider */
+
+  --brand:       #6e1f2e;      /* oxblood — primary site identity */
+  --accent:      #1d2d4d;      /* midnight navy — links, methodology */
+  --accent-warm: #c89b3b;      /* mustard ochre — emphasis, trend lines */
+
+  /* Residual diverging scale (colorblind-safe plum ↔ amber) */
+  --under:       #5e2e6e;      /* deep plum */
+  --mid:         #a09387;      /* warm gray */
+  --over:        #b8772e;      /* burnt amber */
+
+  /* Legacy aliases — keep so existing class refs still resolve.
+     Most components have been re-mapped to new tokens above. */
+  --accent2:     var(--under);
+  --accent3:     var(--over);
+  --neutral:     var(--mid);
+
+  --text-body:   #2a2625;
+  --text-mid:    #5a544a;
+  --text-light:  #8c857a;
+
   --mono:        'IBM Plex Mono', monospace;
   --sans:        'IBM Plex Sans', system-ui, sans-serif;
   --serif:       'IBM Plex Serif', Georgia, serif;
+
   --max-w:       1250px;
   --gutter:      2rem;
 }
@@ -39,12 +57,12 @@ body {
 
 /* === NAVBAR — flatly override === */
 .navbar-default {
-  background-color: #1c1c1e !important;
-  border-color: #1a4a8a !important;
+  background-color: var(--ink) !important;
+  border-bottom: 3px solid var(--brand) !important;
 }
 
 .navbar-default .navbar-brand {
-  color: #ffffff !important;
+  color: var(--page) !important;
   font-family: var(--sans);
   font-weight: 600;
   font-size: 1.1rem;
@@ -66,15 +84,15 @@ body {
 }
 
 .navbar-default .navbar-nav > li > a {
-  color: rgba(255,255,255,0.75) !important;
+  color: rgba(247,244,237,0.75) !important;   /* bone, 75% opacity */
   font-family: var(--sans);
   font-size: 1.05rem;
 }
 
 .navbar-default .navbar-nav > li > a:hover,
 .navbar-default .navbar-nav > li.active > a {
-  color: #ffffff !important;
-  background-color: #1a4a8a !important;
+  color: var(--page) !important;
+  background-color: var(--brand) !important;
 }
 
 /* === PAGE WRAPPER === */
@@ -91,9 +109,10 @@ body {
 
 /* === HERO / LANDING === */
 .site-hero {
-  background: linear-gradient(180deg, #f5efe6 0%, #faf6ee 100%);
+  background: linear-gradient(180deg, var(--page-alt) 0%, var(--page) 100%);
   padding: 3rem 2.5rem 2.75rem;
   border-radius: 3px;
+  border-top: 4px solid var(--brand);
   border-bottom: 1px solid var(--rule);
   margin-bottom: 3rem;
 }
@@ -148,29 +167,31 @@ body {
   font-family: var(--sans);
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--brand);
   margin-bottom: 1rem;
   display: block;
 }
 
 .site-hero h1 {
   font-family: var(--serif);
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2rem, 5vw, 3.15rem);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.18;
   color: var(--ink);
   margin-bottom: 1.25rem;
   max-width: 680px;
+  letter-spacing: -0.005em;
 }
 
 .site-hero .dek {
-  font-family: var(--sans);
-  font-size: 1.35rem;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.32rem;
   font-weight: 400;
-  line-height: 1.6;
-  color: var(--text-body);
+  line-height: 1.55;
+  color: var(--text-mid);
   max-width: 680px;
   margin-bottom: 1.75rem;
 }
@@ -203,10 +224,10 @@ body {
 .stat-item:last-child { border-right: none; }
 
 .stat-item .stat-num {
-  font-family: var(--sans);
+  font-family: var(--serif);
   font-size: 2.1rem;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--brand);
   line-height: 1;
   display: block;
   margin-bottom: 0.4rem;
@@ -240,9 +261,9 @@ h4 { font-size: 1rem; font-family: var(--sans); font-weight: 600; letter-spacing
   font-family: var(--sans);
   font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--brand);
   display: block;
   margin-bottom: 0.4rem;
   margin-top: 3rem;
@@ -261,7 +282,7 @@ a:hover { border-bottom-color: var(--accent); }
 /* === CALLOUT BOXES === */
 .callout {
   border-left: 4px solid var(--accent);
-  background: #eef2f8;
+  background: #eaeef5;     /* pale navy tint */
   padding: 1.4rem 1.65rem;
   margin: 1.75rem 0;
   font-family: var(--sans);
@@ -272,13 +293,13 @@ a:hover { border-bottom-color: var(--accent); }
 }
 
 .callout.finding {
-  border-left-color: var(--accent3);
-  background: #e8efed;     /* pale sage */
+  border-left-color: var(--over);
+  background: #f5ecdc;     /* pale amber */
 }
 
 .callout.warning {
-  border-left-color: var(--accent2);
-  background: #ece9f0;     /* pale plum */
+  border-left-color: var(--under);
+  background: #ede5f0;     /* pale plum */
 }
 
 .callout strong {
@@ -316,9 +337,9 @@ a:hover { border-bottom-color: var(--accent); }
   height: 100%;
 }
 
-.county-card.over::before  { background: var(--accent3); }
-.county-card.middle::before { background: var(--neutral); }
-.county-card.under::before  { background: var(--accent2); }
+.county-card.over::before  { background: var(--over); }
+.county-card.middle::before { background: var(--mid); }
+.county-card.under::before  { background: var(--under); }
 
 .county-card .card-label {
   font-family: var(--sans);
@@ -330,8 +351,8 @@ a:hover { border-bottom-color: var(--accent); }
   margin-bottom: 0.65rem;
 }
 
-.county-card.over  .card-label { color: var(--accent3); }
-.county-card.under .card-label { color: var(--accent2); }
+.county-card.over  .card-label { color: var(--over); }
+.county-card.under .card-label { color: var(--under); }
 
 .county-card .card-name {
   font-family: var(--serif);
@@ -364,9 +385,9 @@ a:hover { border-bottom-color: var(--accent); }
   margin-top: 0.25rem;
 }
 
-.county-card.over  .card-residual { color: var(--accent3); }
-.county-card.under .card-residual { color: var(--accent2); }
-.county-card.middle .card-residual { color: var(--neutral); }
+.county-card.over  .card-residual { color: var(--over); }
+.county-card.under .card-residual { color: var(--under); }
+.county-card.middle .card-residual { color: var(--mid); }
 
 /* === TABLES === */
 table {
@@ -456,7 +477,7 @@ figcaption, .figure-caption, .caption {
 /* kable() renders the `caption =` argument as a <caption> element on the table */
 table caption,
 caption {
-  font-family: var(--sans);
+  font-family: var(--serif);
   font-size: 1rem;
   color: var(--text-mid);
   font-style: italic;
@@ -518,7 +539,7 @@ img {
 .site-footer {
   margin-top: 5rem;
   padding-top: 1.5rem;
-  border-top: 2px solid var(--ink);
+  border-top: 2px solid var(--brand);
   font-family: var(--sans);
   font-size: 0.92rem;
   color: var(--text-light);

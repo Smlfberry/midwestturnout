@@ -272,138 +272,166 @@ $(document).ready(function () {
 <p><span class="section-label">Case Studies</span></p>
 <div id="six-counties-three-stories" class="section level1">
 <h1>Six Counties, Three Stories</h1>
-<p>The six case-study counties represent three distinct patterns
+<p>The six case-study counties were drawn from Model 4 residuals — the
+comprehensive specification — and represent three distinct patterns
 relative to model predictions. <strong>Over-performers</strong> suggest
-that something beyond demographics — institutional access, civic
-infrastructure, political context — is mobilizing voters.
+something beyond demographics is mobilizing voters: institutional
+access, civic infrastructure, or political context.
 <strong>As-expected</strong> counties serve as baselines where
 structural conditions straightforwardly predict participation.
 <strong>Under-performers</strong> raise questions about suppression,
 disengagement, or barriers not captured by the model.</p>
+<p>In each tail, one county represents the most extreme case and the
+second a more moderate outlier — letting the analysis show that the
+pattern holds beyond the very furthest tails. The two as-expected
+counties sit adjacent to the median rank with residuals near zero.</p>
 <p>Each county profile includes: (1) key model statistics, (2) a
-comparison of predictors against the state average, and (3) qualitative
-findings from secondary source analysis.</p>
+comparison of the five original CLC framework predictors against the
+state average, and (3) qualitative findings from secondary source
+analysis.</p>
 <hr />
 </div>
 <div id="over-performers" class="section level1 tabset">
 <h1 class="tabset">Over-Performers</h1>
-<div id="montmorency-county-mi" class="section level2">
-<h2>Montmorency County, MI</h2>
+<div id="jasper-county-il" class="section level2">
+<h2>Jasper County, IL</h2>
 <div class="county-card over" style="margin-bottom:1.5rem;">
 <div class="card-label">
-Over-Performer · Michigan
+Over-Performer · Extreme · Illinois
 </div>
 <div class="card-name">
-Montmorency County
+Jasper County
 </div>
 <div class="card-stat">
-Actual turnout: <strong>80.1%</strong>  |  Predicted: 63.8%
+Actual turnout: <strong>77.7%</strong>  |  Predicted: 66.3%
 </div>
 <div class="card-residual">
-Residual: +16.2 percentage points
+Residual: +11.4 percentage points  ·  Rank 437 of 437
 </div>
 </div>
 <div id="predictor-profile" class="section level3">
 <h3>Predictor Profile</h3>
 <div class="figure">
-<img src="case-studies_files/figure-html/montmorency-bar-1.png" alt="County values vs. Michigan state average for all five model predictors." width="1125" />
+<img src="case-studies_files/figure-html/jasper-bar-1.png" alt="County values vs. Illinois state average for the five framework predictors." width="1125" />
 <p class="caption">
-County values vs. Michigan state average for all five model predictors.
+County values vs. Illinois state average for the five framework
+predictors.
 </p>
 </div>
 </div>
 <div id="qualitative-analysis" class="section level3">
 <h3>Qualitative Analysis</h3>
-<p>Montmorency County is among the smallest counties in Michigan —
-population approximately 9,000, median age 56, 92% white, with an 18%
-poverty rate higher than the state average and near-average educational
-attainment. By demographic profile alone, the model predicts moderate
-turnout. Yet Montmorency achieves 80.1% — the highest residual in the
-dataset at +16.2 percentage points.</p>
-<p>Michigan’s institutional environment is the critical backdrop.
-Following Proposal 2022-2, Michigan voters approved nine days of early
-in-person voting, secure ballot drop boxes for every 5,000 voters, and
-the option to join a permanent vote-by-mail list. The Michigan
-Department of State’s 2024 Election Report ranked Michigan third in the
-nation for eligible voter turnout at 74.6% — and attributed gains
-directly to expanded access. Montmorency’s 50.9% mail or early vote
-share sits at the state median, suggesting the county is fully utilizing
-these expanded options.</p>
-<p>Beyond institutional access, two county-specific factors likely
-contribute. First, Montmorency’s older population — median age 56 — is a
-turnout asset not captured by the model. Age is one of the strongest
-individual-level predictors of voting, and the model’s omission of age
-structure likely systematically underpredicts turnout in older counties.
-Second, Montmorency leans liberal in a predominantly conservative rural
-Michigan context — a politically engaged minority community may maintain
-higher mobilization energy than the structural variables suggest.</p>
+<p>Jasper County, Illinois has a turnout rate of <strong>77.7%</strong>
+compared to a predicted rate of <strong>66.3%</strong>, a <strong>+11.4
+percentage point</strong> gap and the single most overperforming county
+in the dataset (rank 437 of 437). Despite the magnitude of this
+residual, no formal mobilizing institution stands out — there is no
+identifiable GOTV organization, no notable civic association, and no
+documented voter-mobilization initiative.</p>
+<p>Jasper’s overperformance is better understood as reflecting
+<strong>informal social capital</strong> rather than identifiable
+mobilizing organizations. With a population of approximately 9,300 —
+entirely rural — Jasper has the demographic profile and tight community
+structure that the political science literature consistently links to
+elevated rural turnout. In small communities, voting is socially
+visible: neighbors know whether their neighbors voted, religious
+institutions disseminate election information and apply normative
+pressure, and the perceived consequence of any individual vote is
+amplified by smaller electorates.</p>
+<p>Jasper also sits in a context of relative economic momentum. Its
+inflation-adjusted GDP grew approximately 29% between 2018 and 2022,
+dramatically outpacing Illinois’s 1% statewide growth rate over the same
+period. Local development organizations such as Jasper County Economic
+Development Inc. (JEDI), established in 2012, signal community
+coordination and forward-looking civic infrastructure. Strong Republican
+identification provides additional partisan mobilization energy in a
+county whose political culture is unambiguous.</p>
+<p>None of these factors maps cleanly onto a single formal mobilizing
+institution. Rather, they constitute the kind of dense informal civic
+environment that drives rural overperformance in turnout models — a
+pattern documented in the literature on rural social capital and voter
+participation.</p>
 <div class="callout finding">
-<p><strong>Key Finding</strong> Montmorency’s over-performance likely
-reflects a combination of Michigan’s permissive institutional access
-environment and an older population whose high participation propensity
-is not captured by the model’s demographic predictors. The residual may
-partly reflect a model specification gap — age — rather than purely
-unexplained civic factors.</p>
+<p><strong>Key Finding</strong> Jasper’s overperformance reflects
+informal rural social capital rather than identifiable formal
+institutions. Tight community networks, normative voting pressure,
+religious and partisan mobilization channels, and economic momentum
+together produce turnout substantially above what demographic and
+structural variables alone would predict.</p>
 </div>
 <hr />
 </div>
 </div>
-<div id="trempealeau-county-wi" class="section level2">
-<h2>Trempealeau County, WI</h2>
+<div id="martin-county-in" class="section level2">
+<h2>Martin County, IN</h2>
 <div class="county-card over" style="margin-bottom:1.5rem;">
 <div class="card-label">
-Over-Performer · Wisconsin
+Over-Performer · Moderate · Indiana
 </div>
 <div class="card-name">
-Trempealeau County
+Martin County
 </div>
 <div class="card-stat">
-Actual turnout: <strong>75.3%</strong>  |  Predicted: 60.9%
+Actual turnout: <strong>66.1%</strong>  |  Predicted: 57.4%
 </div>
 <div class="card-residual">
-Residual: +14.5 percentage points
+Residual: +8.7 percentage points  ·  Rank 434 of 437
 </div>
 </div>
 <div id="predictor-profile-1" class="section level3">
 <h3>Predictor Profile</h3>
 <div class="figure">
-<img src="case-studies_files/figure-html/trempealeau-bar-1.png" alt="County values vs. Wisconsin state average for all five model predictors." width="1125" />
+<img src="case-studies_files/figure-html/martin-bar-1.png" alt="County values vs. Indiana state average for the five framework predictors." width="1125" />
 <p class="caption">
-County values vs. Wisconsin state average for all five model predictors.
+County values vs. Indiana state average for the five framework
+predictors.
 </p>
 </div>
 </div>
 <div id="qualitative-analysis-1" class="section level3">
 <h3>Qualitative Analysis</h3>
-<p>Trempealeau County is a rural agricultural county of approximately
-30,800 in western Wisconsin along the Mississippi River. It is 92%
-white, lower income than the state average, and predominantly Republican
-— atypical for Wisconsin, which skews more educated and Democratic
-overall. By the model’s structural predictions, Trempealeau should
-perform somewhere near the middle of the distribution. Instead it
-achieves 75.3% turnout — a +14.5 percentage point residual.</p>
-<p>Wisconsin’s institutional environment is the most important
-explanatory factor. Wisconsin permits same-day voter registration,
-no-excuse absentee voting, online registration, early voting, and keeps
-polls open until 8pm. These features benefit all counties, but may
-disproportionately help counties like Trempealeau whose lower-income,
-lower-education profile would otherwise predict suppressed
-participation.</p>
-<p>Critically, Trempealeau’s over-performance is analytically important
-because it challenges the assumption that rural, lower-income,
-Republican-leaning counties are structurally low-turnout. In Wisconsin’s
-permissive access environment, this demographic profile does not
-translate to low participation. This suggests institutional access can
-compensate for structural disadvantage — a finding that persists even in
-the more fully specified Model 2, where Trempealeau’s residual remains
-substantial at +9.2 percentage points.</p>
+<p>Martin County, Indiana has a turnout rate of <strong>66.1%</strong>
+compared to a predicted rate of <strong>57.4%</strong>, a <strong>+8.7
+percentage point</strong> gap (rank 434 of 437). This is particularly
+striking given Indiana’s broader voting environment: Indiana ranks 50th
+of 51 nationally on the Indiana Bar Foundation Civic Index for voter
+turnout, and the state imposes some of the most restrictive
+registration, identification, and absentee voting rules in the
+Midwest.</p>
+<p>Martin’s overperformance is best understood as a
+<strong>compositional effect rather than a mobilization effect</strong>.
+Naval Surface Warfare Center Crane Division (NSWC Crane), located within
+the county, employs roughly 6,500 federal civilian employees and
+contractors, including over 3,000 STEM workers and approximately 1,000
+engineers. The base has hired more than 1,300 personnel in the last
+three years alone. Average wages in Martin County are approximately 6%
+above the national average — atypical for a rural county and reflective
+of Crane’s concentration of high-skill federal employment.</p>
+<p>In a county of fewer than 10,000 residents, this federal workforce
+radically reshapes who actually lives there. The model sees Martin as a
+rural Indiana county; in practice, its effective workforce composition
+resembles a federal research community embedded in a rural setting.
+Federal employees, particularly those in technical and professional
+roles, vote at consistently higher rates than the general population,
+and the model’s standard demographic predictors — education, internet
+access, poverty, age — do not fully capture this concentration of
+federally-employed, professionally-engaged residents.</p>
+<p>Local development organizations such as the Martin County Alliance
+reinforce this picture of community stability and coordination, and
+rising property values (approximately 6% in 2023–2024) signal continued
+economic confidence. Together, Crane’s workforce concentration and the
+surrounding civic-economic infrastructure produce a county whose
+civic-engagement propensities exceed what its rural geography and
+standard demographic measures would suggest.</p>
 <div class="callout finding">
-<p><strong>Key Finding</strong> Trempealeau provides the clearest
-evidence that permissive state voting access policies can compensate for
-structural demographic disadvantage. A rural, lower-income,
-lower-education county outperforms its predictions substantially — and
-continues to do so even after race and lower-tail education are added to
-the model.</p>
+<p><strong>Key Finding</strong> Martin’s residual is less about <em>what
+mobilizes voters</em> than about <em>who lives there</em>. NSWC Crane’s
+federal workforce — 6,500 employees in a county of fewer than 10,000 —
+reshapes the effective demographic profile of Martin County beyond what
+standard ACS predictors capture. This case illustrates how the presence
+of a major federal institution can drive higher-than-expected turnout
+through compositional rather than mobilizational mechanisms, even within
+a state environment otherwise hostile to participation.</p>
 </div>
 <hr />
 </div>
@@ -411,104 +439,121 @@ the model.</p>
 </div>
 <div id="as-expected" class="section level1 tabset">
 <h1 class="tabset">As-Expected</h1>
-<div id="clinton-county-oh" class="section level2">
-<h2>Clinton County, OH</h2>
-<div class="county-card middle" style="margin-bottom:1.5rem;">
-<div class="card-label">
-As-Expected · Ohio
-</div>
-<div class="card-name">
-Clinton County
-</div>
-<div class="card-stat">
-Actual turnout: <strong>65.7%</strong>  |  Predicted: 65.7%
-</div>
-<div class="card-residual">
-Residual: ≈-0.02 percentage points
-</div>
-</div>
-<div id="predictor-profile-2" class="section level3">
-<h3>Predictor Profile</h3>
-<div class="figure">
-<img src="case-studies_files/figure-html/clinton-bar-1.png" alt="County values vs. Ohio state average for all five model predictors." width="1125" />
-<p class="caption">
-County values vs. Ohio state average for all five model predictors.
-</p>
-</div>
-</div>
-<div id="qualitative-analysis-2" class="section level3">
-<h3>Qualitative Analysis</h3>
-<p>Clinton County, Ohio is this project’s most precisely predicted
-county — a residual of essentially zero in both model specifications.
-With a population of approximately 40,000, 92% white, 12% poverty,
-agricultural character, and reliably Republican voting history, Clinton
-fits the model’s expectations almost perfectly at 65.7% turnout.</p>
-<p>No unusual mobilizing or suppressing factors are evident. Clinton has
-no competitive local races driving exceptional turnout, no notable civic
-infrastructure beyond Ohio’s standard voting environment, and no
-documented access barriers beyond the state baseline. Notably, Clinton
-is whiter and has lower educational attainment than the Ohio average —
-yet still performs exactly as predicted, validating the model’s ability
-to handle rural, white, lower-education Ohio counties without systematic
-bias.</p>
-<div class="callout">
-<p><strong>Key Finding</strong> Clinton County is what “expected” looks
-like — a demographically typical rural Ohio county where structural
-conditions straightforwardly predict participation. Its near-zero
-residual in both model specifications serves as a validation check for
-the modeling approach.</p>
-</div>
-<hr />
-</div>
-</div>
-<div id="dekalb-county-il" class="section level2">
-<h2>DeKalb County, IL</h2>
+<div id="rock-island-county-il" class="section level2">
+<h2>Rock Island County, IL</h2>
 <div class="county-card middle" style="margin-bottom:1.5rem;">
 <div class="card-label">
 As-Expected · Illinois
 </div>
 <div class="card-name">
-DeKalb County
+Rock Island County
 </div>
 <div class="card-stat">
-Actual turnout: <strong>63.2%</strong>  |  Predicted: 63.2%
+Actual turnout: <strong>61.1%</strong>  |  Predicted: 61%
 </div>
 <div class="card-residual">
-Residual: ≈-0.04 percentage points
+Residual: ≈0.06 percentage points  ·  Rank 214 of 437 (near median)
+</div>
+</div>
+<div id="predictor-profile-2" class="section level3">
+<h3>Predictor Profile</h3>
+<div class="figure">
+<img src="case-studies_files/figure-html/rockisland-bar-1.png" alt="County values vs. Illinois state average for the five framework predictors." width="1125" />
+<p class="caption">
+County values vs. Illinois state average for the five framework
+predictors.
+</p>
+</div>
+</div>
+<div id="qualitative-analysis-2" class="section level3">
+<h3>Qualitative Analysis</h3>
+<p>Rock Island County, Illinois has a turnout rate of
+<strong>61.1%</strong> compared to a predicted rate of
+<strong>61.0%</strong> — essentially zero residual (rank 214 of 437,
+near the median). Unlike the over- and under-performers, the analytic
+question for Rock Island is not <em>why is it an outlier</em> but
+<em>why does the model predict it so cleanly</em>.</p>
+<p>Rock Island is part of the Quad Cities metropolitan area along the
+Mississippi River, a mid-sized urban-industrial county of approximately
+145,000 residents. It is demographically diverse, with a substantial
+Latino population, an established Black community, and a mixed
+manufacturing-and-services economy anchored partly by Rock Island
+Arsenal (a federal Army installation). Politically, the county has
+historically leaned Democratic but has been competitive in recent
+cycles.</p>
+<p>No unusual mobilizing or suppressing factors are evident. Standard
+institutional features — Illinois’s moderately accessible voting
+environment, no exceptional civic infrastructure, no documented access
+barriers — apply uniformly. The county’s structural complexity (urban,
+diverse, federally-employed in part, industrial) is precisely the kind
+of profile that could reveal model bias if the framework were
+systematically over- or under-predicting for diverse urban-edge
+counties. That Rock Island lands almost exactly on the predicted line
+validates that the model handles this profile without bias.</p>
+<div class="callout">
+<p><strong>Key Finding</strong> Rock Island serves as a validation case.
+Its near-zero residual indicates that the comprehensive model framework
+adequately captures turnout dynamics in structurally complex,
+demographically diverse urban-edge counties — a non-trivial result given
+the model’s primary calibration on rural Midwestern counties.</p>
+</div>
+<hr />
+</div>
+</div>
+<div id="rusk-county-wi" class="section level2">
+<h2>Rusk County, WI</h2>
+<div class="county-card middle" style="margin-bottom:1.5rem;">
+<div class="card-label">
+As-Expected · Wisconsin
+</div>
+<div class="card-name">
+Rusk County
+</div>
+<div class="card-stat">
+Actual turnout: <strong>73.6%</strong>  |  Predicted: 73.6%
+</div>
+<div class="card-residual">
+Residual: ≈0.05 percentage points  ·  Rank 212 of 437 (near median)
 </div>
 </div>
 <div id="predictor-profile-3" class="section level3">
 <h3>Predictor Profile</h3>
 <div class="figure">
-<img src="case-studies_files/figure-html/dekalb-bar-1.png" alt="County values vs. Illinois state average for all five model predictors." width="1125" />
+<img src="case-studies_files/figure-html/rusk-bar-1.png" alt="County values vs. Wisconsin state average for the five framework predictors." width="1125" />
 <p class="caption">
-County values vs. Illinois state average for all five model predictors.
+County values vs. Wisconsin state average for the five framework
+predictors.
 </p>
 </div>
 </div>
 <div id="qualitative-analysis-3" class="section level3">
 <h3>Qualitative Analysis</h3>
-<p>DeKalb County, Illinois is home to Northern Illinois University and
-has a population of approximately 100,000 — the largest of the six case
-counties. It is politically competitive, having voted for Harris in
-2024, and demographically diverse with roughly 13.5% Hispanic and 8-9%
-Black residents alongside a 71-74% white population.</p>
-<p>DeKalb’s near-zero residual in both model specifications is
-analytically interesting as a canceling-out story. The student
-population likely inflates the CVAP denominator while registering and
-voting at lower rates than permanent residents — a dynamic partially
-captured by the model’s education and internet variables.
-Simultaneously, the competitive political environment drives
-mobilization from both parties, keeping turnout at predicted levels
-without pushing it above them. The result is a county where multiple
-forces balance each other out to produce almost exactly the structural
-prediction.</p>
+<p>Rusk County, Wisconsin has a turnout rate of <strong>73.6%</strong>
+compared to a predicted rate of <strong>73.6%</strong> — a residual of
+essentially zero (rank 212 of 437, near the median). Unlike the over-
+and under-performers, the analytic question for Rusk is why the model
+predicts it so cleanly, not why it stands out.</p>
+<p>Rusk is a small, predominantly rural county of approximately 14,000
+residents in northwestern Wisconsin. It is overwhelmingly white,
+lower-income than the state average, and economically anchored by
+agriculture, light manufacturing, and forestry. Wisconsin’s
+institutional voting environment — same-day registration, no-excuse
+absentee, late polling hours — applies uniformly, and Rusk shows no
+exceptional local civic infrastructure or unusual mobilization
+activity.</p>
+<p>Rusk’s near-zero residual indicates that the model captures rural
+Wisconsin counties cleanly when neither unusual civic capacity (like
+Jasper IL) nor unusual barriers or institutional erosion (like Gogebic
+MI just across the state line) is present. It is a quiet baseline case —
+the model’s structural predictions translate directly into observed
+turnout when the surrounding conditions are typical for the region.</p>
 <div class="callout">
-<p><strong>Key Finding</strong> DeKalb illustrates how competing forces
-— student population churn, demographic diversity, and competitive
-elections — can balance each other to produce exactly expected turnout.
-It represents a structurally complex county that the model nonetheless
-predicts well.</p>
+<p><strong>Key Finding</strong> Rusk serves as a rural validation case.
+Its near-zero residual confirms that the comprehensive model framework
+adequately captures turnout dynamics in structurally typical rural
+counties without unusual mobilizing or suppressing factors. Paired with
+Rock Island, the two as-expected cases demonstrate the model’s
+consistency across both rural and urban-edge contexts.</p>
 </div>
 <hr />
 </div>
@@ -516,136 +561,140 @@ predicts well.</p>
 </div>
 <div id="under-performers" class="section level1 tabset">
 <h1 class="tabset">Under-Performers</h1>
-<div id="brown-county-il" class="section level2">
-<h2>Brown County, IL</h2>
+<div id="lawrence-county-il" class="section level2">
+<h2>Lawrence County, IL</h2>
 <div class="county-card under" style="margin-bottom:1.5rem;">
 <div class="card-label">
-Under-Performer · Illinois
+Under-Performer · Moderate · Illinois
 </div>
 <div class="card-name">
-Brown County
+Lawrence County
 </div>
 <div class="card-stat">
-Actual turnout: <strong>47.8%</strong>  |  Predicted: 64.2%
+Actual turnout: <strong>50.9%</strong>  |  Predicted: 57.5%
 </div>
 <div class="card-residual">
-Residual: -16.4 percentage points
+Residual: -6.6 percentage points  ·  Rank 7 of 437
 </div>
 </div>
 <div id="predictor-profile-4" class="section level3">
 <h3>Predictor Profile</h3>
 <div class="figure">
-<img src="case-studies_files/figure-html/brown-bar-1.png" alt="County values vs. Illinois state average for all five model predictors." width="1125" />
+<img src="case-studies_files/figure-html/lawrence-bar-1.png" alt="County values vs. Illinois state average for the five framework predictors." width="1125" />
 <p class="caption">
-County values vs. Illinois state average for all five model predictors.
+County values vs. Illinois state average for the five framework
+predictors.
 </p>
 </div>
 </div>
 <div id="qualitative-analysis-4" class="section level3">
 <h3>Qualitative Analysis</h3>
-<p>Brown County, Illinois is among the most striking cases in the
-dataset — a 47.8% turnout rate that is alarming in absolute terms, and
-the largest negative residual in Model 1 at -16.4 percentage points.
-With a population of approximately 6,000, Brown is the smallest case
-county and one of the smallest in the five-state region.</p>
-<p>Demographically, Brown is unusual for rural Illinois: 74% white with
-a 14% Black population — high for a county of its size and location —
-and 23% of residents lacking a high school diploma, one of the most
-extreme lower-tail education profiles in the dataset. These features are
-not fully captured by Model 1, which uses bachelor’s degree attainment
-rather than the lower tail of the education distribution.</p>
-<p>This interpretation is confirmed by Model 2. When racial composition
-(pct_black) and lower-tail education (pct_no_hs) are added to the model,
-Brown’s residual collapses from -16.4 to near zero (+1.5 percentage
-points). This is the most important methodological finding in the case
-study analysis: Brown County was not genuinely anomalous — Model 1 was
-underspecified for this demographic profile. The large Black population
-share and severe educational disadvantage were suppressing turnout in
-ways the bachelor’s variable alone could not capture.</p>
-<p>Illinois’s institutional context adds a secondary layer. Illinois
-requires registration 28 days before the election with no same-day
-registration option, which compounds population decline effects — a
-shrinking rural county accumulates lapsed registrations with no
-mechanism to re-engage voters on Election Day.</p>
+<p>Lawrence County, Illinois has a turnout rate of
+<strong>50.9%</strong> compared to a predicted rate of
+<strong>57.5%</strong>, a <strong>−6.6 percentage point</strong> gap
+(rank 7 of 437). Lawrence’s profile is unusual in ways that make its
+underperformance analytically informative. Despite low income and modest
+educational attainment, the county has a high homeownership rate (71.8%)
+and very low median property values ($99,100) — typically a
+turnout-positive combination, since homeownership predicts political
+stability and embeddedness. The county also operates one of only eight
+Foreign Trade Zones in Illinois, indicating some institutional economic
+infrastructure.</p>
+<p>Yet despite these latent advantages, no identifiable local civic
+infrastructure activates them. There is no documented GOTV organization,
+no notable civic association, and no evidence of organized
+voter-mobilization activity. The Republican partisan environment
+provides some ambient mobilization, but no formal organizational channel
+translates Lawrence’s stable-population, homeowning profile into
+participation.</p>
+<p>Lawrence parallels Gogebic in suggesting that demographic and
+structural conditions are <em>not sufficient</em> on their own.
+Gogebic’s mobilizing institutions eroded; Lawrence’s may never have been
+present. Together, the two cases support a complementary argument: civic
+infrastructure is the missing variable. Where it is present (whether
+formally as in Martin’s Crane workforce, or informally as in Jasper’s
+rural social capital), turnout exceeds prediction. Where it is absent or
+eroded, turnout falls short — even when other structural conditions
+(homeownership, partisan alignment, economic stability) would suggest
+higher participation potential.</p>
 <div class="callout warning">
-<p><strong>Key Finding</strong> Brown County’s dramatic
-under-performance in Model 1 is largely resolved by Model 2 — revealing
-a model specification issue rather than a genuinely unexplained civic
-phenomenon. Adding racial composition and lower-tail education
-substantially explains the residual, making Brown County the primary
-evidence for why race and education distribution matter independently in
-turnout modeling.</p>
+<p><strong>Key Finding</strong> Lawrence’s underperformance illustrates
+that latent turnout potential — high homeownership, partisan alignment,
+modest economic infrastructure — does not translate into actual
+participation without complementary civic infrastructure. The absence of
+identifiable mobilizing organizations or civic associations leaves the
+county’s structural advantages unactivated.</p>
 </div>
 <hr />
 </div>
 </div>
-<div id="vanderburgh-county-in" class="section level2">
-<h2>Vanderburgh County, IN</h2>
+<div id="gogebic-county-mi" class="section level2">
+<h2>Gogebic County, MI</h2>
 <div class="county-card under" style="margin-bottom:1.5rem;">
 <div class="card-label">
-Under-Performer · Indiana
+Under-Performer · Extreme · Michigan
 </div>
 <div class="card-name">
-Vanderburgh County
+Gogebic County
 </div>
 <div class="card-stat">
-Actual turnout: <strong>54.3%</strong>  |  Predicted: 68.7%
+Actual turnout: <strong>70.3%</strong>  |  Predicted: 79.7%
 </div>
 <div class="card-residual">
-Residual: -14.5 percentage points
+Residual: -9.4 percentage points  ·  Rank 3 of 437
 </div>
 </div>
 <div id="predictor-profile-5" class="section level3">
 <h3>Predictor Profile</h3>
 <div class="figure">
-<img src="case-studies_files/figure-html/vanderburgh-bar-1.png" alt="County values vs. Indiana state average for all five model predictors." width="1125" />
+<img src="case-studies_files/figure-html/gogebic-bar-1.png" alt="County values vs. Michigan state average for the five framework predictors." width="1125" />
 <p class="caption">
-County values vs. Indiana state average for all five model predictors.
+County values vs. Michigan state average for the five framework
+predictors.
 </p>
 </div>
 </div>
 <div id="qualitative-analysis-5" class="section level3">
 <h3>Qualitative Analysis</h3>
-<p>Vanderburgh County is home to Evansville, Indiana’s third-largest
-city, with a population of approximately 180,000. It is the most urban
-of the six case counties and the only one where an urban context
-combines with a highly restrictive state institutional environment. Its
-Model 1 residual of -14.5 percentage points makes it the second-largest
-under-performer in the dataset — and crucially, this residual persists
-at -11.8 percentage points even in the more fully specified Model 2.
-Unlike Brown County, Vanderburgh’s under-performance is not resolved by
-adding demographic controls.</p>
-<p>Vanderburgh is not an isolated Indiana anomaly. Six of the bottom ten
-residuals in the dataset belong to Indiana counties — including
-Hendricks, Vigo, Madison, Miami, Putnam, and LaGrange alongside
-Vanderburgh. This clustering strongly suggests a state-level
-institutional effect rather than county-specific factors.</p>
-<p>Indiana’s voting environment is among the most restrictive in the
-Midwest. The state requires strict photo identification to vote in
-person and to request an absentee ballot by mail. Absentee voting is not
-available without excuse — voters must qualify under specific conditions
-including absence from county, disability, or age 65+. Indiana has no
-same-day registration, requiring voters to register 29 days before the
-election. These compounding barriers are directly consistent with the
-suppression mechanisms documented by Hajnal, Lajevardi, and Nielson
-(2017), who found that strict identification laws have disproportionate
-negative effects on racial and ethnic minority voters.</p>
-<p>The Evansville NewsLab, a local civic journalism initiative,
-independently identified low voter turnout as a primary community
-concern and has launched an active GOTV campaign targeting Gen Z voters,
-immigrant communities (Latino, Haitian Creole, and Marshallese
-residents), and Black voters through partnerships with the League of
-Women Voters and local Black-owned media. This local acknowledgment
-validates the quantitative finding and suggests the suppression pattern
-is recognized on the ground.</p>
+<p>Gogebic County, Michigan has a turnout rate of <strong>70.3%</strong>
+compared to a predicted rate of <strong>79.7%</strong>, a <strong>−9.4
+percentage point</strong> gap (rank 3 of 437). While the model accounts
+for demographic and structural characteristics, turnout is substantially
+lower than expected.</p>
+<p>What distinguishes Gogebic is its political trajectory. Historically,
+the county was part of a cluster of union-oriented, Democratic-leaning
+counties in Michigan’s Upper Peninsula. However, like many similar
+areas, Gogebic has undergone a clear political realignment in recent
+elections, shifting from supporting Barack Obama to consistently voting
+for Donald Trump. Of the 7,038 households in Gogebic County in 2023, 17%
+earned below the Federal Poverty Level and 33% were ALICE households —
+earning above the FPL but unable to afford basic needs — leaving 50% of
+households below the ALICE Threshold. Turnout dropped by 6.5 percentage
+points from 2020 to 2024, a steeper decline than most peer counties.</p>
+<p>This transition likely reflects a broader erosion of the
+institutional and organizational structures that historically supported
+voter participation. Union networks and local party organizations, which
+once played a central role in mobilizing voters, have weakened over
+time. While political preferences have shifted, these mobilizing
+structures have not been fully replaced, potentially resulting in lower
+levels of engagement and turnout. Local nonprofit infrastructure exists
+(197 tax-exempt organizations registered in the county), but no
+identifiable civic organization is positioned to fill the mobilization
+role unions and local parties once played.</p>
+<p>Gogebic’s case suggests that political realignment may disrupt
+established patterns of civic participation. Even as partisan alignment
+changes, the decline of historical mobilization institutions can lead to
+reduced turnout, highlighting the importance of organizational
+infrastructure in sustaining participation beyond demographic
+factors.</p>
 <div class="callout warning">
-<p><strong>Key Finding</strong> Vanderburgh’s persistent
-under-performance across both model specifications — combined with
-Indiana’s dominance of the bottom residual distribution — points to
-state-level institutional barriers as the primary suppressing factor.
-This is the strongest evidence in the case study analysis for the
-institutional access argument, and has direct implications for CLC’s
-Indiana expansion strategy.</p>
+<p><strong>Key Finding</strong> Gogebic’s underperformance illustrates
+how political realignment can outpace the rebuilding of mobilizing
+infrastructure. The unions and party organizations that historically
+delivered voters in this Upper Peninsula county have weakened, but new
+institutional channels have not emerged to replace them — a pattern with
+broad implications for declining-Democratic, realigning rural counties
+across the Midwest.</p>
 </div>
 <hr />
 <p><span class="section-label">Cross-County Patterns</span></p>
@@ -655,10 +704,10 @@ Indiana expansion strategy.</p>
 <div id="comparing-across-cases" class="section level1">
 <h1>Comparing Across Cases</h1>
 <div class="figure">
-<img src="case-studies_files/figure-html/cross-county-1.png" alt="All six case-study counties plotted across the five model predictors, with state average benchmarks." width="1125" />
+<img src="case-studies_files/figure-html/cross-county-1.png" alt="All six case-study counties plotted across the five framework predictors, with state-tier benchmarks." width="1125" />
 <p class="caption">
-All six case-study counties plotted across the five model predictors,
-with state average benchmarks.
+All six case-study counties plotted across the five framework
+predictors, with state-tier benchmarks.
 </p>
 </div>
 <hr />

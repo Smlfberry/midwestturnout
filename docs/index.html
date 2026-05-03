@@ -317,14 +317,20 @@ investigating why through qualitative case analysis.</p>
 survey data — it captures the aggregate civic environment in which
 participation decisions are made, and surfaces variation that
 individual-level models can obscure.</p>
-<p>This project builds two OLS regression models predicting county-level
-turnout rates in the 2024 general election across Illinois, Indiana,
-Ohio, Wisconsin, and Michigan. Model 1 uses five structural predictors
-drawn from the American Community Survey. Model 2 adds racial
+<p>This project builds four nested OLS regression models predicting
+county-level turnout rates in the 2024 general election across Illinois,
+Indiana, Ohio, Wisconsin, and Michigan. Model 1 uses five structural
+predictors drawn from the American Community Survey. Model 2 adds racial
 composition and lower-tail educational attainment as a theoretically
 motivated robustness check informed by the prior CLC descriptive
-findings. Residuals from these models identify counties that perform
-<em>better or worse than their structural conditions predict</em>.</p>
+findings. Model 3 introduces state fixed effects, adjusting case
+identification for state-level institutional context. Model 4 — the
+comprehensive specification — adds Hispanic, American Indian / Alaska
+Native, and age-structure variables. Residuals from Model 4 identify
+counties that perform <em>better or worse than their structural
+conditions predict</em>; comparing across all four models distinguishes
+robust outliers from those whose extremity reflects model
+misspecification.</p>
 <p>Those residuals are the core analytic object. Counties with the
 largest positive residuals are “over-performers”: something beyond their
 demographics is driving participation. Counties with the largest
@@ -346,109 +352,112 @@ what</em>.</p>
 <h2>The Six Counties</h2>
 <p>Two counties from each tier — over-performers, as-expected, and
 under-performers — were selected for in-depth qualitative analysis.
-Selection balanced geographic spread across states and was based on
-residuals from Model 1.</p>
+Selection draws from Model 4 residuals (the comprehensive specification)
+and pairs one extreme case with one moderate case in each tail, so the
+analysis holds beyond just the most extreme outliers. The two
+as-expected counties sit at the median rank with residuals near zero —
+clean baselines where the model predicts almost exactly right.</p>
 <div class="county-grid">
 <div class="county-card over">
 <div class="card-label">
-Over-Performer
+Over-Performer · Extreme
 </div>
 <div class="card-name">
-Montmorency County
+Jasper County
 </div>
 <div class="card-state">
-Michigan
+Illinois
 </div>
 <div class="card-stat">
-Turnout: 80.1%  |  Predicted: 63.8%
+Turnout: 77.7%  |  Predicted: 66.3%
 </div>
 <div class="card-residual">
-Residual: +16.2 pp
+Residual: +11.4 pp
 </div>
 </div>
 <div class="county-card over">
 <div class="card-label">
-Over-Performer
+Over-Performer · Moderate
 </div>
 <div class="card-name">
-Trempealeau County
-</div>
-<div class="card-state">
-Wisconsin
-</div>
-<div class="card-stat">
-Turnout: 75.3%  |  Predicted: 60.9%
-</div>
-<div class="card-residual">
-Residual: +14.5 pp
-</div>
-</div>
-<div class="county-card middle">
-<div class="card-label">
-As-Expected
-</div>
-<div class="card-name">
-Clinton County
-</div>
-<div class="card-state">
-Ohio
-</div>
-<div class="card-stat">
-Turnout: 65.7%  |  Predicted: 65.7%
-</div>
-<div class="card-residual">
-Residual: ≈0.0 pp
-</div>
-</div>
-<div class="county-card middle">
-<div class="card-label">
-As-Expected
-</div>
-<div class="card-name">
-DeKalb County
-</div>
-<div class="card-state">
-Illinois
-</div>
-<div class="card-stat">
-Turnout: 63.2%  |  Predicted: 63.2%
-</div>
-<div class="card-residual">
-Residual: ≈0.0 pp
-</div>
-</div>
-<div class="county-card under">
-<div class="card-label">
-Under-Performer
-</div>
-<div class="card-name">
-Brown County
-</div>
-<div class="card-state">
-Illinois
-</div>
-<div class="card-stat">
-Turnout: 47.8%  |  Predicted: 64.2%
-</div>
-<div class="card-residual">
-Residual: −16.4 pp
-</div>
-</div>
-<div class="county-card under">
-<div class="card-label">
-Under-Performer
-</div>
-<div class="card-name">
-Vanderburgh County
+Martin County
 </div>
 <div class="card-state">
 Indiana
 </div>
 <div class="card-stat">
-Turnout: 54.3%  |  Predicted: 68.7%
+Turnout: 66.1%  |  Predicted: 57.4%
 </div>
 <div class="card-residual">
-Residual: −14.5 pp
+Residual: +8.7 pp
+</div>
+</div>
+<div class="county-card middle">
+<div class="card-label">
+As-Expected
+</div>
+<div class="card-name">
+Rock Island County
+</div>
+<div class="card-state">
+Illinois
+</div>
+<div class="card-stat">
+Turnout: 61.1%  |  Predicted: 61.0%
+</div>
+<div class="card-residual">
+Residual: ≈0.0 pp
+</div>
+</div>
+<div class="county-card middle">
+<div class="card-label">
+As-Expected
+</div>
+<div class="card-name">
+Rusk County
+</div>
+<div class="card-state">
+Wisconsin
+</div>
+<div class="card-stat">
+Turnout: 73.6%  |  Predicted: 73.6%
+</div>
+<div class="card-residual">
+Residual: ≈+0.1 pp
+</div>
+</div>
+<div class="county-card under">
+<div class="card-label">
+Under-Performer · Moderate
+</div>
+<div class="card-name">
+Lawrence County
+</div>
+<div class="card-state">
+Illinois
+</div>
+<div class="card-stat">
+Turnout: 50.9%  |  Predicted: 57.5%
+</div>
+<div class="card-residual">
+Residual: −6.6 pp
+</div>
+</div>
+<div class="county-card under">
+<div class="card-label">
+Under-Performer · Extreme
+</div>
+<div class="card-name">
+Gogebic County
+</div>
+<div class="card-state">
+Michigan
+</div>
+<div class="card-stat">
+Turnout: 70.3%  |  Predicted: 79.7%
+</div>
+<div class="card-residual">
+Residual: −9.4 pp
 </div>
 </div>
 </div>
@@ -514,12 +523,35 @@ estimates</strong>:</p>
 <tr class="odd">
 <td>% Black or African American</td>
 <td>B02001</td>
-<td>Racial composition, suppression exposure</td>
+<td>Racial composition</td>
+</tr>
+<tr class="even">
+<td>% Hispanic or Latino</td>
+<td>B03003</td>
+<td>Ethnic composition, language and access barriers</td>
+</tr>
+<tr class="odd">
+<td>% American Indian / Alaska Native</td>
+<td>B02001</td>
+<td>Tribal community context, jurisdictional differences</td>
+</tr>
+<tr class="even">
+<td>% Age 18–24</td>
+<td>B01001</td>
+<td>Young adult / college-age share, lower turnout propensity</td>
+</tr>
+<tr class="odd">
+<td>% Age 65+</td>
+<td>B01001</td>
+<td>Older population, higher turnout propensity</td>
 </tr>
 </tbody>
 </table>
-<p>All data were retrieved using the <code>tidycensus</code> R package.
-County GEOID codes are used as the merge key across all datasets.</p>
+<p>The full Model 4 specification additionally includes state fixed
+effects to adjust for state-level institutional context (registration
+rules, ballot access, election administration). All ACS data were
+retrieved using the <code>tidycensus</code> R package. County GEOID
+codes are used as the merge key across all datasets.</p>
 <hr />
 <p><span class="section-label">Navigation</span></p>
 </div>

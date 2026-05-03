@@ -20,7 +20,7 @@ The interactive application below lets you explore the full dataset of counties 
 
 <div class="callout">
 <strong>How to Use</strong>
-Select a state and predictor variable from the dropdowns on the left. Each point represents one county. Counties selected as case studies are highlighted. The regression line reflects the simple bivariate relationship — the full model uses all five predictors simultaneously.
+Select a state and predictor variable from the dropdowns on the left. Each point represents one county. Counties selected as case studies are highlighted. The regression line reflects the simple bivariate relationship — the full Model 4 specification uses twelve predictors plus state fixed effects simultaneously.
 </div>
 
 ---
@@ -118,9 +118,9 @@ ui <- page_sidebar(
 )
 
 server <- function(input, output) {
-  case_counties <- c("Montmorency", "Trempealeau",
-                     "Brown", "Vanderburgh",
-                     "Clinton", "DeKalb")
+  case_counties <- c("Jasper", "Martin",
+                     "Rock Island", "Rusk",
+                     "Lawrence", "Gogebic")
 
   filtered <- reactive({
     d <- df_pct

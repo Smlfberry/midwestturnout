@@ -14,10 +14,10 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 
-# Canonical data from /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd
+# Canonical data from /Users/samberry/Desktop/Capstone/update_data_new.R
 canonical_path <- "data/df_pct_with_predictions.rds"
 if (!file.exists(canonical_path)) {
-  stop("Canonical predictions not found. Run /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd first to generate data/df_pct_with_predictions.rds")
+  stop("Canonical predictions not found. Run /Users/samberry/Desktop/Capstone/update_data_new.R first to generate data/df_pct_with_predictions.rds")
 }
 df_pct <- readRDS(canonical_path)
 ```

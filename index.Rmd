@@ -9,21 +9,29 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+options(tigris_use_cache = TRUE)
+try(library(sf), silent = TRUE)
+library(tigris)
+library(tidycensus)
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(ggrepel)
+library(showtext)
+library(sysfonts)
+font_add_google("IBM Plex Serif", "plex_serif")
+font_add_google("IBM Plex Sans", "plex_sans")
+showtext_auto()
 
-# Canonical predictions from /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd
-# Re-run that .Rmd whenever the model spec or input data changes.
 canonical_path <- "data/df_pct_with_predictions.rds"
 if (!file.exists(canonical_path)) {
-  stop("Canonical predictions not found. Run /Users/samberry/Desktop/Capstone/capstoneanalysis.Rmd first to generate data/df_pct_with_predictions.rds")
+  stop("Canonical predictions not found. Run capstoneanalysis.Rmd first.")
 }
 df_pct <- readRDS(canonical_path)
 ```
 
 <div class="site-hero">
-<div class="hero-grid">
+<div class="hero-grid hero-grid-text-only">
 <div class="hero-text">
 
 <span class="kicker">Quantitative Analysis · Midwest · 2024 General Election</span>
@@ -38,68 +46,160 @@ Practicum research in partnership with the Chicago Lawyers' Committee for Civil 
 </p>
 
 </div>
+</div>
+</div>
 
-<div class="hero-viz">
+<div class="viz-section">
 
-```{r hero-scatter, fig.width=7.5, fig.height=6.5, fig.cap="Each point is a county. The dashed line marks perfect prediction. Six case-study counties highlighted."}
-library(ggrepel)
+```{r hero-map, fig.width=11, fig.height=7.5}
+suppressPackageStartupMessages({
+})
+options(tigris_use_cache = TRUE)
 
-# Predictions come from the canonical Capstone analysis (Model 4 — comprehensive spec).
-# Loaded via setup chunk as df_pct.
-df_hero <- df_pct %>%
-  mutate(tier = case_when(
-    (county == "Jasper"      & state_name == "Illinois")  ~ "Over-Performer",
-    (county == "Martin"      & state_name == "Indiana")   ~ "Over-Performer",
-    (county == "Rock Island" & state_name == "Illinois")  ~ "As-Expected",
-    (county == "Rusk"        & state_name == "Wisconsin") ~ "As-Expected",
-    (county == "Lawrence"    & state_name == "Illinois")  ~ "Under-Performer",
-    (county == "Gogebic"     & state_name == "Michigan")  ~ "Under-Performer",
-    TRUE ~ "Other"
-  ))
+# County shapefiles for the 5 Midwest states (cb = simplified boundaries)
+midwest_counties <- tigris::counties(
+  state = c("IL", "IN", "OH", "WI", "MI"),
+  cb = TRUE,
+  year = 2023,
+  progress_bar = FALSE
+) |> sf::st_transform(crs = 4326)
 
-ggplot(df_hero, aes(x = predicted4, y = turnout_rate)) +
-  geom_abline(slope = 1, intercept = 0, linetype = "dashed",
-              color = "#888580", linewidth = 0.6) +
-  geom_point(data = filter(df_hero, tier == "Other"),
-             color = "#d8d4ce", size = 2, alpha = 0.65) +
-  geom_point(data = filter(df_hero, tier != "Other"),
-             aes(color = tier), size = 4, alpha = 0.95) +
-  ggrepel::geom_text_repel(
-    data = filter(df_hero, tier != "Other"),
-    aes(label = county, color = tier),
-    size = 4, family = "sans", fontface = "bold",
-    show.legend = FALSE,
-    box.padding = 0.6, point.padding = 0.4, max.overlaps = 20,
+# State outlines (dissolve counties to states)
+midwest_states <- midwest_counties |>
+  dplyr::group_by(STATEFP) |>
+  dplyr::summarise(geometry = sf::st_union(geometry), .groups = "drop")
+
+# Join shapefiles with model4 residuals
+map_data <- midwest_counties |>
+  dplyr::mutate(geoid = GEOID) |>
+  dplyr::left_join(df_pct, by = "geoid") |>
+  dplyr::mutate(
+    residual_pp = residual4 * 100,
+    residual_bin = cut(
+      residual_pp,
+      breaks = c(-Inf, -10, -5, -2, 2, 5, 10, Inf),
+      labels = c("≤ −10 pp", "−10 to −5", "−5 to −2",
+                 "−2 to +2", "+2 to +5", "+5 to +10", "≥ +10 pp"),
+      include.lowest = TRUE,
+      ordered_result = TRUE
+    )
+  )
+
+# Case-study county polygons + label centroids
+case_studies <- map_data |>
+  dplyr::filter(
+    (county == "Jasper"      & state_name == "Illinois")  |
+    (county == "Martin"      & state_name == "Indiana")   |
+    (county == "Rock Island" & state_name == "Illinois")  |
+    (county == "Rusk"        & state_name == "Wisconsin") |
+    (county == "Lawrence"    & state_name == "Illinois")  |
+    (county == "Gogebic"     & state_name == "Michigan")
+  )
+
+case_centroids <- sf::st_drop_geometry(case_studies) |>
+  dplyr::mutate(
+    centroid_lng = sf::st_coordinates(sf::st_centroid(case_studies$geometry))[, 1],
+    centroid_lat = sf::st_coordinates(sf::st_centroid(case_studies$geometry))[, 2]
+  )
+
+ggplot() +
+  # Counties — colored by Model 4 residual binned into 7 categories
+  geom_sf(
+    data = map_data,
+    aes(fill = residual_bin),
+    color = "white",
+    linewidth = 0.12
+  ) +
+  # State outlines — thin, soft warm gray
+  geom_sf(
+    data = midwest_states,
+    fill = NA,
+    color = "#A8A095",
+    linewidth = 0.3
+  ) +
+  # Case studies — outlined in warm dark charcoal (neutral, doesn't compete with palette)
+  geom_sf(
+    data = case_studies,
+    fill = NA,
+    color = "#2A2724",
+    linewidth = 0.55
+  ) +
+  # County labels via ggrepel
+  ggrepel::geom_label_repel(
+    data = case_centroids,
+    aes(x = centroid_lng, y = centroid_lat, label = county),
+    family = "plex_serif",
+    fontface = "bold",
+    size = 3.7,
+    color = "#1F1F1F",
+    fill = scales::alpha("white", 0.92),
+    label.size = 0,
+    box.padding = 0.7,
+    point.padding = 0.3,
+    min.segment.length = 0,
+    segment.color = "#5A544C",
+    segment.linewidth = 0.3,
+    max.overlaps = Inf,
     seed = 42
   ) +
-  scale_color_manual(
-    values = c("Over-Performer"  = "#3a7d72",
-               "As-Expected"     = "#888580",
-               "Under-Performer" = "#6e5d83"),
-    breaks = c("Over-Performer", "As-Expected", "Under-Performer")
+  # Discrete diverging palette: deep plum → cream → deep amber (7 bins)
+  scale_fill_manual(
+    values = c(
+      "≤ −10 pp"   = "#5D2A7C",   # deep plum
+      "−10 to −5"  = "#7E4FA0",   # medium plum
+      "−5 to −2"   = "#B89DCD",   # light plum
+      "−2 to +2"   = "#EDE8DA",   # warm cream-gray (near zero)
+      "+2 to +5"   = "#E5B07A",   # light amber
+      "+5 to +10"  = "#C77E2C",   # medium amber
+      "≥ +10 pp"   = "#A8651B"    # deep amber (deeper than before)
+    ),
+    name = NULL,
+    drop = FALSE,
+    na.value = "#EDE8DA",
+    guide = guide_legend(
+      nrow = 1,
+      keywidth  = unit(1.6, "cm"),
+      keyheight = unit(0.45, "cm"),
+      label.position = "bottom",
+      label.theme = element_text(
+        family = "plex_sans", size = 9, color = "#5A544C"
+      )
+    )
   ) +
+  coord_sf(crs = 4326) +
   labs(
-    x = "Predicted turnout rate (%)",
-    y = "Actual turnout rate (%)",
-    color = NULL,
-    caption = paste0("N = ", nrow(df_hero),
-                     " counties across IL, IN, OH, WI, MI.")
+    title    = "How Each County Compared to Its Prediction",
+    subtitle = "All 437 counties across five Midwestern states. Case studies outlined in teal.",
+    caption  = paste0(
+      "Residuals from Model 4 (full specification with state fixed effects). ",
+      "Negative values = turnout below prediction; positive = above prediction."
+    )
   ) +
-  theme_minimal(base_family = "sans", base_size = 12) +
+  theme_void(base_family = "plex_sans") +
   theme(
-    legend.position   = "top",
-    legend.text       = element_text(size = 11),
-    panel.grid.minor  = element_blank(),
-    axis.title        = element_text(size = 12),
-    axis.text         = element_text(size = 10),
-    plot.caption      = element_text(size = 9, color = "#888580",
-                                     margin = margin(t = 8)),
-    plot.background   = element_rect(fill = "white", color = NA)
+    plot.title = element_text(
+      family = "plex_serif", face = "bold",
+      size = 22, color = "#1F1F1F",
+      margin = margin(b = 6), hjust = 0.5
+    ),
+    plot.subtitle = element_text(
+      family = "plex_serif", face = "italic",
+      size = 14, color = "#7A746C",
+      margin = margin(b = 14), hjust = 0.5
+    ),
+    plot.caption = element_text(
+      family = "plex_sans",
+      size = 10, color = "#8C867E",
+      hjust = 0.5, margin = margin(t = 14)
+    ),
+    legend.position = "bottom",
+    legend.text  = element_text(family = "plex_sans", size = 10, color = "#5A544C"),
+    legend.title = element_text(family = "plex_sans", size = 10, color = "#5A544C"),
+    plot.background  = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(15, 15, 15, 15)
   )
 ```
-
-</div>
-</div>
 </div>
 
 ---
@@ -120,6 +220,167 @@ Those residuals are the core analytic object. Counties with the largest positive
 <strong>Why Residuals?</strong>
 Turnout rates alone can be misleading. A county with 65% turnout might be underperforming if its demographics predict 72%, while a county with 58% might be over-performing given its structural constraints. Residual analysis shifts the question from <em>how much</em> to <em>relative to what</em>.
 </div>
+
+---
+
+<span class="section-label">The Pattern</span>
+
+## Above and Below the Line
+
+The scatter below pairs the same Model 4 predictions against actual turnout. Counties on the dashed line voted exactly as their structural conditions predicted; those above voted more, those below voted less. The same six case studies highlighted on the map appear here in teal — over-performers in the upper left, under-performers in the lower right.
+
+
+
+```{r residual-scatter, fig.width=11, fig.height=7}
+df_hero <- df_pct %>%
+  mutate(
+    highlight = case_when(
+      (county == "Jasper"      & state_name == "Illinois")  ~ TRUE,
+      (county == "Martin"      & state_name == "Indiana")   ~ TRUE,
+      (county == "Rock Island" & state_name == "Illinois")  ~ TRUE,
+      (county == "Rusk"        & state_name == "Wisconsin") ~ TRUE,
+      (county == "Lawrence"    & state_name == "Illinois")  ~ TRUE,
+      (county == "Gogebic"     & state_name == "Michigan")  ~ TRUE,
+      TRUE ~ FALSE
+    )
+  )
+
+# Pre-compute axis limits for annotation positioning
+x_range <- range(df_hero$predicted4, na.rm = TRUE)
+y_range <- range(df_hero$turnout_rate, na.rm = TRUE)
+
+ggplot(df_hero, aes(x = predicted4, y = turnout_rate)) +
+
+  # Subtle shaded regions to anchor over/under areas (cool slate-blue above line, warm coral below)
+  geom_polygon(
+    data = data.frame(
+      x = c(0.30, 0.30, 1.00),
+      y = c(0.30, 1.00, 1.00)
+    ),
+    aes(x = x, y = y),
+    fill = "#2C4A6E", alpha = 0.04, inherit.aes = FALSE
+  ) +
+  geom_polygon(
+    data = data.frame(
+      x = c(0.30, 1.00, 1.00),
+      y = c(0.30, 0.30, 1.00)
+    ),
+    aes(x = x, y = y),
+    fill = "#C45F4A", alpha = 0.04, inherit.aes = FALSE
+  ) +
+
+  # Reference line (perfect prediction)
+  geom_abline(
+    slope = 1, intercept = 0,
+    linetype = "dashed",
+    color = "#8E877D",
+    linewidth = 0.7
+  ) +
+
+  # Background counties
+  geom_point(
+    data = filter(df_hero, !highlight),
+    color = "#D8D1C7",
+    size = 1.55,
+    alpha = 0.42
+  ) +
+
+  # Case-study counties (teal — consistent with site brand)
+  geom_point(
+    data = filter(df_hero, highlight),
+    color = "#2D7F73",
+    size = 4.5
+  ) +
+
+  ggrepel::geom_text_repel(
+    data = filter(df_hero, highlight),
+    aes(label = county),
+    family = "plex_serif",
+    fontface = "bold",
+    size = 3.9,
+    color = "#2F6F68",
+    show.legend = FALSE,
+    box.padding = 0.5,
+    point.padding = 0.35,
+    min.segment.length = 0,
+    segment.color = "#AAA297",
+    segment.linewidth = 0.28,
+    max.overlaps = 20,
+    seed = 42
+  ) +
+
+  # Annotation: over-performer region (upper left)
+  annotate(
+    "text",
+    x = 0.40, y = 0.93,
+    label = "Over-performers",
+    family = "plex_serif", fontface = "italic",
+    size = 5, color = "#2C4A6E",
+    hjust = 0
+  ) +
+  annotate(
+    "text",
+    x = 0.40, y = 0.905,
+    label = "Vote more than expected",
+    family = "plex_sans",
+    size = 3.4, color = "#5A544C",
+    hjust = 0
+  ) +
+
+  # Annotation: under-performer region (bottom right)
+  annotate(
+    "text",
+    x = 0.78, y = 0.42,
+    label = "Under-performers",
+    family = "plex_serif", fontface = "italic",
+    size = 5, color = "#C45F4A",
+    hjust = 0
+  ) +
+  annotate(
+    "text",
+    x = 0.78, y = 0.395,
+    label = "Vote less than expected",
+    family = "plex_sans",
+    size = 3.4, color = "#5A544C",
+    hjust = 0
+  ) +
+
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1)) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+
+  labs(
+    title    = "Actual vs. Predicted County Turnout",
+    subtitle = "Counties above the dashed line vote more than expected; below the line, less than expected",
+    x        = "Predicted turnout rate",
+    y        = "Actual turnout rate",
+    caption  = paste0("N = ", nrow(df_hero), " counties across five Midwestern states. Predictions from Model 4.")
+  ) +
+
+  theme_minimal(base_family = "plex_sans", base_size = 13) +
+
+  theme(
+    plot.title = element_text(
+      family = "plex_serif", face = "bold",
+      size = 26, color = "#1F1F1F",
+      margin = margin(b = 6)
+    ),
+    plot.subtitle = element_text(
+      family = "plex_serif", face = "italic",
+      size = 15, color = "#7A746C",
+      margin = margin(b = 18)
+    ),
+    axis.title = element_text(size = 12, color = "#4F4A44"),
+    axis.text  = element_text(size = 11, color = "#6B655D"),
+    panel.grid.major = element_line(color = "#F0ECE4", linewidth = 0.5),
+    panel.grid.minor = element_blank(),
+    plot.background  = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.caption = element_text(
+      size = 10, color = "#8C867E",
+      hjust = 1, margin = margin(t = 12)
+    )
+  )
+```
 
 ---
 

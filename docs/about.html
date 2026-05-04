@@ -293,17 +293,27 @@ Age Population (CVAP) denominators from ACS Special Tabulation
 estimates. CVAP is the appropriate denominator for voting rights
 research because it accounts for the legally eligible electorate rather
 than all residents or all adults.</p>
-<p><strong>Structural predictors</strong> are drawn from the 2020 ACS
+<p><strong>Structural predictors</strong> are drawn from the 2024 ACS
 5-Year Estimates and retrieved via the <code>tidycensus</code> R
-package. The five predictors — educational attainment, internet access,
-limited English proficiency, disability status, and poverty — represent
-well-documented correlates of voter participation in the political
-science and public administration literature.</p>
+package. The analysis builds up four nested OLS models. Model 1 uses
+five structural predictors derived from prior CLC research — educational
+attainment (bachelor’s), internet access, limited English proficiency,
+disability status, and poverty. Model 2 adds racial composition and
+lower-tail educational attainment. Model 3 introduces state fixed
+effects to adjust for state-level institutional context. Model 4 — the
+comprehensive specification — adds Hispanic, American Indian / Alaska
+Native, and age-structure variables. Model 4 drives case selection;
+Models 1–3 are presented as a methodological progression.</p>
 <p><strong>Case selection</strong> follows a purposive residual-based
-logic: two counties from the top of the residual distribution
-(over-performers), two near zero (near-expected), and two from the
-bottom (under-performers). Selection was also guided by geographic
-diversity across states.</p>
+logic drawing on Model 4: two counties from the top of the residual
+distribution (over-performers, one extreme and one moderate), two near
+zero (as-expected baselines), and two from the bottom (under-performers,
+one extreme and one moderate). The extreme + moderate pairing in each
+tail lets the analysis show that patterns hold beyond just the very
+furthest tails. Two counties with substantial incarcerated populations
+(Noble OH, Gratiot MI) were excluded from selection because their
+CVAP-counted prison populations distort the turnout-rate
+denominator.</p>
 <p><strong>Qualitative analysis</strong> draws on [list sources — local
 news archives, election commission reports, organizational documents,
 etc.].</p>
@@ -325,33 +335,33 @@ etc.].</p>
 </thead>
 <tbody>
 <tr class="odd">
-<td>U.S. Census Bureau, ACS 2020 5-Year</td>
-<td>Educational attainment, internet access, LEP, disability,
-poverty</td>
+<td>U.S. Census Bureau, ACS 2024 5-Year</td>
+<td>Educational attainment, internet access, LEP, disability, poverty,
+racial/ethnic composition, age structure</td>
 </tr>
 <tr class="even">
-<td>ACS CVAP Special Tabulation, 2020</td>
+<td>ACS CVAP Special Tabulation</td>
 <td>Eligible electorate denominators</td>
 </tr>
 <tr class="odd">
 <td>IL State Board of Elections</td>
-<td>2020 general election vote totals</td>
+<td>2024 general election vote totals</td>
 </tr>
 <tr class="even">
 <td>IN Secretary of State</td>
-<td>2020 general election vote totals</td>
+<td>2024 general election vote totals</td>
 </tr>
 <tr class="odd">
 <td>OH Secretary of State</td>
-<td>2020 general election vote totals</td>
+<td>2024 general election vote totals</td>
 </tr>
 <tr class="even">
 <td>WI Elections Commission</td>
-<td>2020 general election vote totals</td>
+<td>2024 general election vote totals</td>
 </tr>
 <tr class="odd">
 <td>MI Department of State</td>
-<td>2020 general election vote totals</td>
+<td>2024 general election vote totals</td>
 </tr>
 </tbody>
 </table>

@@ -10,30 +10,28 @@
    brand, midnight navy for links, mustard ochre accent. Diverging
    residual scale uses plum-to-amber (colorblind-safe; avoids red/blue
    partisan reading and red/green deficiency issues). */
+
 :root {
-  --ink:         #1a1a1a;      /* warm black */
-  --page:        #f7f4ed;      /* bone */
-  --page-alt:    #ede6d4;      /* deeper linen */
-  --rule:        #d8d0c0;      /* warm tan divider */
+  --ink:         #1f2326;
+  --page:        #ffffff;
+  --page-alt:    #f7f8f8;
+  --rule:        #e2e5e5;
 
-  --brand:       #6e1f2e;      /* oxblood — primary site identity */
-  --accent:      #1d2d4d;      /* midnight navy — links, methodology */
-  --accent-warm: #c89b3b;      /* mustard ochre — emphasis, trend lines */
+  --brand:       #2d7f73;      /* teal */
+  --accent:      #2f4f4f;      /* deep slate */
+  --accent-warm: #8a8f86;      /* muted olive-gray */
 
-  /* Residual diverging scale (colorblind-safe plum ↔ amber) */
-  --under:       #5e2e6e;      /* deep plum */
-  --mid:         #a09387;      /* warm gray */
-  --over:        #b8772e;      /* burnt amber */
+  --under:       #6f7f7b;      /* slate-green gray */
+  --mid:         #a8aaa6;
+  --over:        #2d7f73;
 
-  /* Legacy aliases — keep so existing class refs still resolve.
-     Most components have been re-mapped to new tokens above. */
   --accent2:     var(--under);
   --accent3:     var(--over);
   --neutral:     var(--mid);
 
-  --text-body:   #2a2625;
-  --text-mid:    #5a544a;
-  --text-light:  #8c857a;
+  --text-body:   #2d3030;
+  --text-mid:    #5f6664;
+  --text-light:  #8a908d;
 
   --mono:        'IBM Plex Mono', monospace;
   --sans:        'IBM Plex Sans', system-ui, sans-serif;
@@ -51,18 +49,18 @@ body {
   font-size: 1.35rem;
   line-height: 1.75;
   color: var(--text-body);
-  background: var(--page);
+  background: #ffffff;
   -webkit-font-smoothing: antialiased;
 }
 
 /* === NAVBAR — flatly override === */
 .navbar-default {
-  background-color: var(--ink) !important;
-  border-bottom: 3px solid var(--brand) !important;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e5e7e7 !important;
 }
 
 .navbar-default .navbar-brand {
-  color: var(--page) !important;
+  color: #1f2326 !important;
   font-family: var(--sans);
   font-weight: 600;
   font-size: 1.1rem;
@@ -84,15 +82,20 @@ body {
 }
 
 .navbar-default .navbar-nav > li > a {
-  color: rgba(247,244,237,0.75) !important;   /* bone, 75% opacity */
+  color: #6a6f6d !important;
   font-family: var(--sans);
   font-size: 1.05rem;
 }
 
-.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:hover {
+  color: #2d7f73 !important;
+  background-color: transparent !important;
+}
+
 .navbar-default .navbar-nav > li.active > a {
-  color: var(--page) !important;
-  background-color: var(--brand) !important;
+  color: #2d7f73 !important;
+  background-color: transparent !important;
+  border-bottom: 2px solid #2d7f73;
 }
 
 /* === PAGE WRAPPER === */
@@ -109,7 +112,7 @@ body {
 
 /* === HERO / LANDING === */
 .site-hero {
-  background: linear-gradient(180deg, var(--page-alt) 0%, var(--page) 100%);
+  background: #ffffff;
   padding: 3rem 2.5rem 2.75rem;
   border-radius: 3px;
   border-top: 4px solid var(--brand);
@@ -281,25 +284,18 @@ a:hover { border-bottom-color: var(--accent); }
 
 /* === CALLOUT BOXES === */
 .callout {
-  border-left: 4px solid var(--accent);
-  background: #eaeef5;     /* pale navy tint */
-  padding: 1.4rem 1.65rem;
-  margin: 1.75rem 0;
-  font-family: var(--sans);
-  font-size: 1.18rem;
-  line-height: 1.65;
-  color: var(--text-body);
-  border-radius: 0 2px 2px 0;
+  border-left: 4px solid var(--brand);
+  background: #f5f8f7;
 }
 
 .callout.finding {
-  border-left-color: var(--over);
-  background: #f5ecdc;     /* pale amber */
+  border-left-color: var(--brand);
+  background: #f3f8f7;
 }
 
 .callout.warning {
   border-left-color: var(--under);
-  background: #ede5f0;     /* pale plum */
+  background: #f6f7f7;
 }
 
 .callout strong {
@@ -438,7 +434,7 @@ code {
 }
 
 pre {
-  background: #f0ede8;
+  background: #f7f8f8;
   border: 1px solid var(--rule);
   border-radius: 3px;
   padding: 1.25rem;
@@ -555,4 +551,36 @@ img {
   .stat-item { border-right: none; border-bottom: 1px solid var(--rule); }
   .county-grid { grid-template-columns: 1fr; }
   h1 { font-size: 1.6rem; }
+}
+
+
+.viz-section {
+  max-width: 950px;
+  margin: 2.5rem auto 3rem auto;
+  padding: 1.75rem 2rem 1.5rem;
+  background: #ffffff;
+  border: 1px solid var(--rule);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.05);
+}
+
+.hero-grid-text-only {
+  display: block;
+}
+
+.hero-text {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.site-hero .kicker,
+.site-hero .dek,
+.site-hero .byline {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.site-hero h1 {
+  margin-left: auto;
+  margin-right: auto;
 }

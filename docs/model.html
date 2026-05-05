@@ -11,7 +11,7 @@
 
 
 
-<title>Model</title>
+<title>model.knit</title>
 
 <script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -266,14 +266,13 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Model</h1>
 
 </div>
 
 
 <p><span class="section-label">Methodology</span></p>
-<div id="model-specification" class="section level2">
-<h2>Model Specification</h2>
+<div id="how-the-model-is-built" class="section level2">
+<h2>How the Model Is Built</h2>
 <p>This analysis uses <strong>Ordinary Least Squares (OLS)
 regression</strong> to model county-level voter turnout rates as a
 function of structural predictors from the American Community Survey.
@@ -283,6 +282,14 @@ county-level turnout rate calculated using CVAP denominators.</p>
 four nested models. Each adds variables to its predecessor, and
 comparing across them shows which findings are robust and which are
 artifacts of model specification.</p>
+<div class="figure">
+<img src="model_files/figure-html/fit-progression-1.png" alt="Adjusted R-squared and RMSE across the four nested specifications. Model 3 adds state fixed effects; Model 4 is the preferred specification used for case selection." width="1650" />
+<p class="caption">
+Adjusted R-squared and RMSE across the four nested specifications. Model
+3 adds state fixed effects; Model 4 is the preferred specification used
+for case selection.
+</p>
+</div>
 <p><strong>Model 1 — original CLC-derived structural predictors (5
 variables):</strong></p>
 <p><span class="math display">\[\text{Turnout}_i = \beta_0 +
@@ -315,8 +322,18 @@ candidates for qualitative investigation.</p>
 <hr />
 <p><span class="section-label">Model Results</span></p>
 </div>
-<div id="model-fit-across-specifications" class="section level2">
-<h2>Model Fit Across Specifications</h2>
+<div id="fit-statistics" class="section level2">
+<h2>Fit Statistics</h2>
+<p>The largest fit gain comes from adding <strong>state fixed
+effects</strong> (Model 2 → Model 3): adjusted R² rises from roughly
+0.54 to 0.81, indicating that state-level institutional context absorbs
+much of the unexplained variance. Adding <strong>age structure and
+corrected race variables</strong> (Model 3 → Model 4) yields a further
+gain to roughly 0.86 — meaningful but smaller, suggesting that state
+context is the single most important addition. The progression also
+confirms why Model 4 is the preferred specification for case selection:
+outliers identified under Model 4 have already been adjusted for both
+state context and demographic detail.</p>
 <table class="table table-striped table-hover" style="font-size: 13px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
 Model fit statistics across the four nested specifications. RMSE
@@ -457,17 +474,38 @@ Model 4: full (age + Hispanic + AI/AN)
 </tr>
 </tbody>
 </table>
-<p>The largest fit gain comes from adding <strong>state fixed
-effects</strong> (Model 2 → Model 3): adjusted R² rises from roughly
-0.54 to 0.81, indicating that state-level institutional context absorbs
-much of the unexplained variance. Adding <strong>age structure and
-corrected race variables</strong> (Model 3 → Model 4) yields a further
-gain to roughly 0.86 — meaningful but smaller, suggesting that state
-context is the single most important addition. The progression also
-confirms why Model 4 is the preferred specification for case selection:
-outliers identified under Model 4 have already been adjusted for both
-state context and demographic detail.</p>
 <hr />
+</div>
+<div id="visual-summary-model-4" class="section level2">
+<h2>Visual Summary — Model 4</h2>
+<p><strong>Model 4 fit:</strong> R² = 0.86, Adjusted R² = 0.855, RMSE =
+3.13 percentage points. The model explains approximately 86% of variance
+in county-level turnout rates.</p>
+<div class="figure">
+<img src="model_files/figure-html/coef-plot-1.png" alt="Model 4 coefficient estimates and 95% confidence intervals. Effects are rescaled to percentage-point turnout change for a 10-point increase in each predictor; state fixed effects are estimated but not displayed." width="1650" />
+<p class="caption">
+Model 4 coefficient estimates and 95% confidence intervals. Effects are
+rescaled to percentage-point turnout change for a 10-point increase in
+each predictor; state fixed effects are estimated but not displayed.
+</p>
+</div>
+<hr />
+</div>
+<div id="residual-distribution-model-4" class="section level2">
+<h2>Residual Distribution — Model 4</h2>
+<p>The distribution of Model 4 residuals reveals whether the
+comprehensive specification systematically over- or under-predicts for
+any subset of counties. A well-behaved residual distribution should be
+approximately normal with mean zero.</p>
+<div class="figure">
+<img src="model_files/figure-html/residual-hist-1.png" alt="Distribution of Model 4 residuals (actual - predicted turnout rate, in percentage points)." width="1650" />
+<p class="caption">
+Distribution of Model 4 residuals (actual - predicted turnout rate, in
+percentage points).
+</p>
+</div>
+<hr />
+<p><span class="section-label">Technical Estimates</span></p>
 </div>
 <div id="coefficient-estimates-model-4" class="section level2">
 <h2>Coefficient Estimates — Model 4</h2>
@@ -481,6 +519,12 @@ counties across IL, IN, OH, WI, MI.
 <tr>
 <th style="text-align:left;">
 Predictor
+</th>
+<th style="text-align:left;">
+Category
+</th>
+<th style="text-align:right;">
+10-pt Effect (pp)
 </th>
 <th style="text-align:right;">
 Estimate
@@ -506,6 +550,12 @@ p-value
 <td style="text-align:left;">
 % Bachelor’s Degree or Higher
 </td>
+<td style="text-align:left;">
+Education &amp; Access
+</td>
+<td style="text-align:right;">
+5.26
+</td>
 <td style="text-align:right;">
 0.0053
 </td>
@@ -528,6 +578,12 @@ p-value
 <tr>
 <td style="text-align:left;">
 % No High School Diploma
+</td>
+<td style="text-align:left;">
+Education &amp; Access
+</td>
+<td style="text-align:right;">
+-6.64
 </td>
 <td style="text-align:right;">
 -0.0066
@@ -552,6 +608,12 @@ p-value
 <td style="text-align:left;">
 % Black or African American
 </td>
+<td style="text-align:left;">
+Race, Ethnicity &amp; Language
+</td>
+<td style="text-align:right;">
+-2.12
+</td>
 <td style="text-align:right;">
 -0.0021
 </td>
@@ -575,6 +637,12 @@ p-value
 <td style="text-align:left;">
 % Hispanic or Latino
 </td>
+<td style="text-align:left;">
+Race, Ethnicity &amp; Language
+</td>
+<td style="text-align:right;">
+-0.15
+</td>
 <td style="text-align:right;">
 -0.0002
 </td>
@@ -597,6 +665,12 @@ p-value
 <td style="text-align:left;">
 % American Indian / Alaska Native
 </td>
+<td style="text-align:left;">
+Race, Ethnicity &amp; Language
+</td>
+<td style="text-align:right;">
+-2.05
+</td>
 <td style="text-align:right;">
 -0.0021
 </td>
@@ -618,7 +692,13 @@ p-value
 </tr>
 <tr>
 <td style="text-align:left;">
-% Age 18–24
+% Age 18-24
+</td>
+<td style="text-align:left;">
+Age Structure
+</td>
+<td style="text-align:right;">
+-6.46
 </td>
 <td style="text-align:right;">
 -0.0065
@@ -643,6 +723,12 @@ p-value
 <td style="text-align:left;">
 % Age 65+
 </td>
+<td style="text-align:left;">
+Age Structure
+</td>
+<td style="text-align:right;">
+1.41
+</td>
 <td style="text-align:right;">
 0.0014
 </td>
@@ -665,6 +751,12 @@ p-value
 <tr>
 <td style="text-align:left;">
 % Households with Internet
+</td>
+<td style="text-align:left;">
+Education &amp; Access
+</td>
+<td style="text-align:right;">
+-1.08
 </td>
 <td style="text-align:right;">
 -0.0011
@@ -689,6 +781,12 @@ p-value
 <td style="text-align:left;">
 % Limited English Proficiency
 </td>
+<td style="text-align:left;">
+Race, Ethnicity &amp; Language
+</td>
+<td style="text-align:right;">
+-0.38
+</td>
 <td style="text-align:right;">
 -0.0004
 </td>
@@ -711,6 +809,12 @@ p-value
 <td style="text-align:left;">
 % Population with a Disability
 </td>
+<td style="text-align:left;">
+Economic &amp; Health Context
+</td>
+<td style="text-align:right;">
+0.52
+</td>
 <td style="text-align:right;">
 0.0005
 </td>
@@ -732,6 +836,12 @@ p-value
 <tr>
 <td style="text-align:left;">
 % Below Poverty Line
+</td>
+<td style="text-align:left;">
+Economic &amp; Health Context
+</td>
+<td style="text-align:right;">
+-3.41
 </td>
 <td style="text-align:right;">
 -0.0034
@@ -756,60 +866,19 @@ p-value
 <tfoot>
 <tr>
 <td style="padding: 0; " colspan="100%">
-<span style="font-style: italic;">Significance: </span>
+<span style="font-style: italic;">Note: </span>
 </td>
 </tr>
 <tr>
 <td style="padding: 0; " colspan="100%">
-<sup></sup> † p &lt; .10 * p &lt; .05 ** p &lt; .01 *** p &lt; .001
+<sup></sup> The 10-point effect column rescales each coefficient to the
+expected percentage-point change in turnout for a 10-point increase in
+the predictor. † p &lt; .10 * p &lt; .05 ** p &lt; .01 *** p &lt; .001
 </td>
 </tr>
 </tfoot>
 </table></li>
 </ul>
-<p><strong>Model 4 fit:</strong> R² = 0.86, Adjusted R² = 0.855, RMSE =
-3.13 percentage points. The model explains approximately 86% of variance
-in county-level turnout rates.</p>
-<hr />
-</div>
-<div id="coefficient-plot-model-4" class="section level2">
-<h2>Coefficient Plot — Model 4</h2>
-<div class="figure">
-<img src="model_files/figure-html/coef-plot-1.png" alt="Model 4 point estimates and 95% confidence intervals (state fixed effects suppressed). Estimates represent change in turnout rate per one-percentage-point change in predictor." width="1200" />
-<p class="caption">
-Model 4 point estimates and 95% confidence intervals (state fixed
-effects suppressed). Estimates represent change in turnout rate per
-one-percentage-point change in predictor.
-</p>
-</div>
-<hr />
-<p><span class="section-label">Residuals</span></p>
-</div>
-<div id="residual-distribution-model-4" class="section level2">
-<h2>Residual Distribution — Model 4</h2>
-<p>The distribution of Model 4 residuals reveals whether the
-comprehensive specification systematically over- or under-predicts for
-any subset of counties. A well-behaved residual distribution should be
-approximately normal with mean zero.</p>
-<div class="figure">
-<img src="model_files/figure-html/residual-hist-1.png" alt="Distribution of Model 4 residuals (actual − predicted turnout rate, in percentage points). Counties selected as case studies are marked." width="1200" />
-<p class="caption">
-Distribution of Model 4 residuals (actual − predicted turnout rate, in
-percentage points). Counties selected as case studies are marked.
-</p>
-</div>
-<hr />
-</div>
-<div id="predicted-vs.-actual-turnout-model-4" class="section level2">
-<h2>Predicted vs. Actual Turnout — Model 4</h2>
-<div class="figure">
-<img src="model_files/figure-html/pred-actual-1.png" alt="Each point is a county. The dashed line represents perfect prediction (residual = 0). Points above the line over-performed; points below under-performed. Predictions from Model 4." width="1200" />
-<p class="caption">
-Each point is a county. The dashed line represents perfect prediction
-(residual = 0). Points above the line over-performed; points below
-under-performed. Predictions from Model 4.
-</p>
-</div>
 <hr />
 <p><span class="section-label">Case Selection</span></p>
 </div>

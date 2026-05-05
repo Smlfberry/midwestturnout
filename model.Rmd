@@ -1,5 +1,5 @@
 ---
-title: "Model"
+title: ""
 output:
   html_document:
     theme: flatly
@@ -55,16 +55,203 @@ selected <- df_pct %>%
   )
 
 # Palette
-pal <- c(over = "#3a7d72", middle = "#888580", under = "#6e5d83")
+pal <- c(
+  teal       = "#2D7F73",
+  teal_light = "#5C9A91",
+  slate      = "#6F7F7B",
+  cream      = "#F7F8F8",
+  rule       = "#E7E1D8",
+  text       = "#2D3030",
+  text_mid   = "#6F746F",
+  text_light = "#9A948C",
+  amber      = "#B8772E",
+  plum       = "#6E4A8A"
+)
+
+source("plot-fonts.R")
+
+# Tidy coefficient table for Model 4, dropping state fixed effects for readability.
+# State FE coefficients appear in the model object but aren't substantively interpretable here.
+coef_df <- broom::tidy(model4, conf.int = TRUE) %>%
+  filter(term != "(Intercept)",
+         !str_detect(term, "factor\\(state_name\\)")) %>%
+  mutate(
+    term = case_when(
+      term == "pct_bachelors"           ~ "% Bachelor's Degree or Higher",
+      term == "pct_no_hs"               ~ "% No High School Diploma",
+      term == "pct_black"               ~ "% Black or African American",
+      term == "pct_hispanic"            ~ "% Hispanic or Latino",
+      term == "pct_ai_an"               ~ "% American Indian / Alaska Native",
+      term == "pct_age_18_24"           ~ "% Age 18-24",
+      term == "pct_age_65_plus"         ~ "% Age 65+",
+      term == "pct_households_internet" ~ "% Households with Internet",
+      term == "pct_limited_english"     ~ "% Limited English Proficiency",
+      term == "pct_disability_total"    ~ "% Population with a Disability",
+      term == "pct_poverty"             ~ "% Below Poverty Line",
+      TRUE ~ term
+    ),
+    category = case_when(
+      term %in% c("% Bachelor's Degree or Higher",
+                  "% No High School Diploma",
+                  "% Households with Internet") ~ "Education & Access",
+      term %in% c("% Black or African American",
+                  "% Hispanic or Latino",
+                  "% American Indian / Alaska Native",
+                  "% Limited English Proficiency") ~ "Race, Ethnicity & Language",
+      term %in% c("% Age 18-24", "% Age 65+") ~ "Age Structure",
+      TRUE ~ "Economic & Health Context"
+    ),
+    category = factor(
+      category,
+      levels = c("Education & Access", "Race, Ethnicity & Language",
+                 "Age Structure", "Economic & Health Context")
+    ),
+    sig = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01  ~ "**",
+      p.value < 0.05  ~ "*",
+      p.value < 0.1   ~ "†",
+      TRUE            ~ ""
+    ),
+    sig_level = case_when(
+      p.value < 0.01 ~ "p < .01",
+      p.value < 0.05 ~ "p < .05",
+      p.value < 0.10 ~ "p < .10",
+      TRUE           ~ "Not significant"
+    ),
+    sig_level = factor(sig_level,
+                       levels = c("p < .01", "p < .05",
+                                  "p < .10", "Not significant")),
+    evidence = if_else(p.value < 0.05, "Clear association", "Unclear / overlaps zero"),
+    evidence = factor(evidence,
+                      levels = c("Clear association", "Unclear / overlaps zero")),
+    estimate_10pp = estimate * 10 * 100,
+    conf.low_10pp = conf.low * 10 * 100,
+    conf.high_10pp = conf.high * 10 * 100,
+    effect_size = abs(estimate_10pp)
+  )
+
+s4 <- summary(model4)
+
+fit_table <- bind_rows(
+  glance(model1) %>% mutate(Model = "Model 1: CLC framework (5 vars)"),
+  glance(model2) %>% mutate(Model = "Model 2: + no HS + Black"),
+  glance(model3) %>% mutate(Model = "Model 3: + state fixed effects"),
+  glance(model4) %>% mutate(Model = "Model 4: full (age + Hispanic + AI/AN)")
+) %>%
+  mutate(
+    RMSE = sigma * 100  # report RMSE in percentage points
+  ) %>%
+  select(Model,
+         `R²`             = r.squared,
+         `Adj. R²`        = adj.r.squared,
+         `RMSE (pp)`      = RMSE,
+         AIC, BIC,
+         `df (residual)`  = df.residual,
+         `N`              = nobs)
 ```
 
 <span class="section-label">Methodology</span>
 
-## Model Specification
+## How the Model Is Built
 
 This analysis uses **Ordinary Least Squares (OLS) regression** to model county-level voter turnout rates as a function of structural predictors from the American Community Survey. The unit of analysis is the county; the outcome variable is the county-level turnout rate calculated using CVAP denominators.
 
 Rather than relying on a single specification, the analysis builds up four nested models. Each adds variables to its predecessor, and comparing across them shows which findings are robust and which are artifacts of model specification.
+
+```{r fit-progression, fig.width=11, fig.height=4.8, fig.cap="Adjusted R-squared and RMSE across the four nested specifications. Model 3 adds state fixed effects; Model 4 is the preferred specification used for case selection."}
+fit_plot_df <- fit_table %>%
+  mutate(
+    Model_short = factor(
+      c("Model 1", "Model 2", "Model 3", "Model 4"),
+      levels = c("Model 1", "Model 2", "Model 3", "Model 4")
+    ),
+    Model_detail = c("CLC framework", "+ no HS + Black",
+                     "+ state fixed effects", "+ age + race detail"),
+    highlight = Model_short %in% c("Model 3", "Model 4")
+  )
+
+ggplot(fit_plot_df, aes(x = Model_short, y = `Adj. R²`)) +
+  geom_col(
+    aes(fill = highlight),
+    width = 0.62, alpha = 0.78,
+    color = "white", linewidth = 0.5
+  ) +
+  geom_text(
+    aes(label = scales::number(`Adj. R²`, accuracy = 0.01)),
+    family = plot_sans, fontface = "bold",
+    size = 3.8, color = "#4F4A44",
+    vjust = -0.55
+  ) +
+  geom_text(
+    aes(y = pmax(`Adj. R²` - 0.08, 0.08),
+        label = paste0("RMSE: ", scales::number(`RMSE (pp)`, accuracy = 0.1), " pp")),
+    family = plot_sans, size = 3.1, color = "white",
+    fontface = "bold"
+  ) +
+  geom_text(
+    aes(y = -0.075, label = Model_detail),
+    family = plot_sans, size = 3.0, color = "#6F746F",
+    lineheight = 0.95
+  ) +
+  scale_y_continuous(
+    limits = c(-0.1, 0.92),
+    labels = scales::number_format(accuracy = 0.1),
+    expand = expansion(mult = c(0, 0.06))
+  ) +
+  coord_cartesian(clip = "off") +
+  scale_fill_manual(
+    values = c(`TRUE` = "#2D7F73", `FALSE` = "#C9C5BE"),
+    guide = "none"
+  ) +
+  labs(
+    title = "How Much Each Specification Explains",
+    subtitle = "Adjusted R-squared rises sharply once state fixed effects enter the model.",
+    x = NULL,
+    y = "Adjusted R-squared",
+    caption = "Bars show adjusted R-squared. In-bar labels report RMSE in turnout percentage points."
+  ) +
+  theme_minimal(base_family = plot_sans, base_size = 13) +
+  theme(
+    plot.title = element_text(
+      family = plot_serif, face = "bold",
+      size = 22, color = "#1F1F1F",
+      margin = margin(b = 6)
+    ),
+    plot.subtitle = element_text(
+      family = plot_serif, face = "italic",
+      size = 13, color = "#7A746C",
+      margin = margin(b = 14)
+    ),
+    panel.grid.major.y = element_line(color = "#F1EDE6", linewidth = 0.35),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.text.x = element_text(
+      family = plot_sans, face = "plain",
+      size = 11.2, color = "#4F4A44",
+      margin = margin(t = 5)
+    ),
+    axis.text.y = element_text(
+      family = plot_sans, face = "plain",
+      size = 10, color = "#8A837A"
+    ),
+    axis.title.y = element_text(
+      family = plot_sans, face = "plain",
+      size = 10.5, color = "#5A544C",
+      margin = margin(r = 14)
+    ),
+    axis.ticks = element_blank(),
+    axis.line.x = element_blank(),
+    plot.caption = element_text(
+      family = plot_sans, size = 10,
+      color = "#8C867E", hjust = 1,
+      margin = margin(t = 12)
+    ),
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(12, 18, 28, 15)
+  )
+```
 
 **Model 1 — original CLC-derived structural predictors (5 variables):**
 
@@ -90,25 +277,11 @@ The goal is not prediction accuracy per se, but residual interpretation. OLS pro
 
 <span class="section-label">Model Results</span>
 
-## Model Fit Across Specifications
+## Fit Statistics
 
-```{r fit-comparison}
-fit_table <- bind_rows(
-  glance(model1) %>% mutate(Model = "Model 1: CLC framework (5 vars)"),
-  glance(model2) %>% mutate(Model = "Model 2: + no HS + Black"),
-  glance(model3) %>% mutate(Model = "Model 3: + state fixed effects"),
-  glance(model4) %>% mutate(Model = "Model 4: full (age + Hispanic + AI/AN)")
-) %>%
-  mutate(
-    RMSE = sigma * 100  # report RMSE in percentage points
-  ) %>%
-  select(Model,
-         `R²`             = r.squared,
-         `Adj. R²`        = adj.r.squared,
-         `RMSE (pp)`      = RMSE,
-         AIC, BIC,
-         `df (residual)`  = df.residual,
-         `N`              = nobs)
+The largest fit gain comes from adding **state fixed effects** (Model 2 → Model 3): adjusted R² rises from roughly 0.54 to 0.81, indicating that state-level institutional context absorbs much of the unexplained variance. Adding **age structure and corrected race variables** (Model 3 → Model 4) yields a further gain to roughly 0.86 — meaningful but smaller, suggesting that state context is the single most important addition. The progression also confirms why Model 4 is the preferred specification for case selection: outliers identified under Model 4 have already been adjusted for both state context and demographic detail.
+
+```{r fit-table}
 
 fit_table %>%
   kable(digits = c(0, 3, 3, 2, 1, 1, 0, 0),
@@ -118,97 +291,125 @@ fit_table %>%
                 full_width = TRUE, font_size = 13)
 ```
 
-The largest fit gain comes from adding **state fixed effects** (Model 2 → Model 3): adjusted R² rises from roughly 0.54 to 0.81, indicating that state-level institutional context absorbs much of the unexplained variance. Adding **age structure and corrected race variables** (Model 3 → Model 4) yields a further gain to roughly 0.86 — meaningful but smaller, suggesting that state context is the single most important addition. The progression also confirms why Model 4 is the preferred specification for case selection: outliers identified under Model 4 have already been adjusted for both state context and demographic detail.
-
 ---
 
-## Coefficient Estimates — Model 4
-
-```{r coef-table}
-# Tidy coefficient table for Model 4, dropping state fixed effects for readability.
-# State FE coefficients appear in the model object but aren't substantively interpretable here.
-coef_df <- broom::tidy(model4, conf.int = TRUE) %>%
-  filter(term != "(Intercept)",
-         !str_detect(term, "factor\\(state_name\\)")) %>%
-  mutate(
-    term = case_when(
-      term == "pct_bachelors"           ~ "% Bachelor's Degree or Higher",
-      term == "pct_no_hs"               ~ "% No High School Diploma",
-      term == "pct_black"               ~ "% Black or African American",
-      term == "pct_hispanic"            ~ "% Hispanic or Latino",
-      term == "pct_ai_an"               ~ "% American Indian / Alaska Native",
-      term == "pct_age_18_24"           ~ "% Age 18–24",
-      term == "pct_age_65_plus"         ~ "% Age 65+",
-      term == "pct_households_internet" ~ "% Households with Internet",
-      term == "pct_limited_english"     ~ "% Limited English Proficiency",
-      term == "pct_disability_total"    ~ "% Population with a Disability",
-      term == "pct_poverty"             ~ "% Below Poverty Line",
-      TRUE ~ term
-    ),
-    sig = case_when(
-      p.value < 0.001 ~ "***",
-      p.value < 0.01  ~ "**",
-      p.value < 0.05  ~ "*",
-      p.value < 0.1   ~ "†",
-      TRUE            ~ ""
-    )
-  )
-
-coef_df %>%
-  select(Predictor = term, Estimate = estimate,
-         `Std. Error` = std.error, `95% CI Low` = conf.low,
-         `95% CI High` = conf.high, `p-value` = p.value, ` ` = sig) %>%
-  kable(digits = 4, align = c("l","r","r","r","r","r","l"),
-        caption = "Model 4 OLS coefficients (state fixed effects suppressed for readability). Outcome: county-level turnout rate (CVAP denominator). N = counties across IL, IN, OH, WI, MI.") %>%
-  kable_styling(bootstrap_options = c("striped","hover"),
-                full_width = TRUE, font_size = 13) %>%
-  column_spec(1, bold = FALSE) %>%
-  footnote(general = "† p < .10  * p < .05  ** p < .01  *** p < .001",
-           general_title = "Significance: ")
-```
-
-```{r model4-fit}
-s4 <- summary(model4)
-```
+## Visual Summary — Model 4
 
 **Model 4 fit:** R² = `r round(s4$r.squared, 3)`, Adjusted R² = `r round(s4$adj.r.squared, 3)`, RMSE = `r round(sqrt(mean(residuals(model4)^2)) * 100, 2)` percentage points. The model explains approximately `r round(s4$r.squared * 100, 1)`% of variance in county-level turnout rates.
 
----
+```{r coef-plot, fig.width=11, fig.height=6.8, fig.cap="Model 4 coefficient estimates and 95% confidence intervals. Effects are rescaled to percentage-point turnout change for a 10-point increase in each predictor; state fixed effects are estimated but not displayed."}
+coef_plot_df <- coef_df %>%
+  mutate(
+    term_plot = fct_reorder(term, estimate_10pp),
+    label_key = if_else(
+      term %in% c("% Bachelor's Degree or Higher",
+                  "% No High School Diploma",
+                  "% Age 18-24",
+                  "% Below Poverty Line"),
+      scales::number(estimate_10pp, accuracy = 0.1, suffix = " pp"),
+      NA_character_
+    )
+  )
 
-## Coefficient Plot — Model 4
-
-```{r coef-plot, fig.cap="Model 4 point estimates and 95% confidence intervals (state fixed effects suppressed). Estimates represent change in turnout rate per one-percentage-point change in predictor."}
-coef_df %>%
-  mutate(term = fct_reorder(term, estimate)) %>%
-  ggplot(aes(x = estimate, y = term)) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "#888580", linewidth = 0.5) +
-  geom_segment(aes(x = conf.low, xend = conf.high,
-                   y = term, yend = term),
-               color = "#1a4a8a", linewidth = 0.8, alpha = 0.5) +
-  geom_point(aes(color = estimate > 0), size = 3.5) +
-  scale_color_manual(values = c(`TRUE` = "#3a7d72", `FALSE` = "#6e5d83"),
-                     guide = "none") +
-  labs(x = "Coefficient estimate", y = NULL,
-       caption = "95% confidence intervals shown. State fixed effects estimated but not displayed. N = counties across 5 Midwest states.") +
-  theme_minimal(base_family = "sans", base_size = 12) +
+ggplot(coef_plot_df, aes(x = estimate_10pp, y = term_plot)) +
+  annotate("rect",
+           xmin = -1, xmax = 1,
+           ymin = -Inf, ymax = Inf,
+           fill = "#F7F8F8", alpha = 0.95) +
+  geom_vline(xintercept = 0, color = "#9A948C",
+             linewidth = 0.55, linetype = "dashed") +
+  geom_segment(
+    aes(x = conf.low_10pp, xend = conf.high_10pp,
+        y = term_plot, yend = term_plot),
+    color = "#C5BFB6", linewidth = 1.5,
+    lineend = "round", alpha = 0.9
+  ) +
+  geom_point(
+    aes(color = evidence),
+    size = 4.4, alpha = 0.96
+  ) +
+  geom_text(
+    aes(label = label_key),
+    family = plot_sans, size = 3.2, color = "#5A544C",
+    hjust = if_else(coef_plot_df$estimate_10pp >= 0, -0.25, 1.25),
+    na.rm = TRUE
+  ) +
+  facet_grid(category ~ ., scales = "free_y",
+             space = "free_y", switch = "y") +
+  scale_x_continuous(
+    labels = scales::label_number(accuracy = 1, suffix = " pp"),
+    breaks = scales::pretty_breaks(n = 7)
+  ) +
+  scale_color_manual(
+    values = c(
+      "Clear association" = "#2D7F73",
+      "Unclear / overlaps zero" = "#C9C5BE"
+    ),
+    drop = FALSE
+  ) +
+  labs(
+    title = "Which County Traits Move Turnout Predictions?",
+    subtitle = "Clearer associations are shown in teal; pale points have confidence intervals that overlap zero.",
+    x = "Estimated change in turnout rate",
+    y = NULL,
+    color = NULL,
+    caption = "Horizontal bars show 95% confidence intervals. The shaded band marks effects within +/- 1 percentage point of zero."
+  ) +
+  theme_minimal(base_family = plot_sans, base_size = 13) +
   theme(
+    plot.title = element_text(
+      family = plot_serif, face = "bold",
+      size = 21, color = "#1F1F1F",
+      margin = margin(b = 6)
+    ),
+    plot.subtitle = element_text(
+      family = plot_serif, face = "italic",
+      size = 12.5, color = "#7A746C",
+      margin = margin(b = 18)
+    ),
+    plot.caption = element_text(
+      family = plot_sans, size = 10,
+      color = "#8C867E", hjust = 1,
+      margin = margin(t = 12)
+    ),
+    panel.grid.major.x = element_line(color = "#EDE8DA", linewidth = 0.55),
     panel.grid.major.y = element_blank(),
-    panel.grid.minor   = element_blank(),
-    axis.text.y        = element_text(size = 11),
-    plot.caption       = element_text(size = 9, color = "#888580", margin = margin(t = 8)),
-    plot.background    = element_rect(fill = "white", color = NA)
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(
+      family = plot_sans, size = 11,
+      color = "#4F4A44", margin = margin(t = 8)
+    ),
+    axis.text.x = element_text(family = plot_sans, size = 10.5, color = "#7A746C"),
+    axis.text.y = element_text(family = plot_sans, size = 10.5, color = "#4F4A44"),
+    legend.position = "top",
+    legend.justification = "left",
+    legend.key.size = unit(0.45, "cm"),
+    legend.spacing.x = unit(0.4, "cm"),
+    legend.text = element_text(family = plot_sans, size = 9.5, color = "#5A544C"),
+    plot.title.position = "plot",
+    plot.caption.position = "plot",
+    strip.placement = "outside",
+    strip.background = element_blank(),
+    strip.text.y.left = element_text(
+      family = plot_sans, face = "bold",
+      size = 9.5, color = "#2D7F73",
+      angle = 0, hjust = 1,
+      margin = margin(r = 10)
+    ),
+    panel.spacing.y = unit(0.85, "lines"),
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(15, 18, 15, 15)
   )
 ```
 
 ---
-
-<span class="section-label">Residuals</span>
 
 ## Residual Distribution — Model 4
 
 The distribution of Model 4 residuals reveals whether the comprehensive specification systematically over- or under-predicts for any subset of counties. A well-behaved residual distribution should be approximately normal with mean zero.
 
-```{r residual-hist, fig.cap="Distribution of Model 4 residuals (actual − predicted turnout rate, in percentage points). Counties selected as case studies are marked."}
+```{r residual-hist, fig.width=11, fig.height=5, fig.cap="Distribution of Model 4 residuals (actual - predicted turnout rate, in percentage points)."}
 # Assign tier labels for the six case-study counties
 df_pct <- df_pct %>%
   mutate(tier = case_when(
@@ -222,71 +423,77 @@ df_pct <- df_pct %>%
   ))
 
 ggplot(df_pct, aes(x = residual4 * 100)) +
-  geom_histogram(binwidth = 1, fill = "#d8d4ce", color = "white", linewidth = 0.3) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "#1a4a8a", linewidth = 0.7) +
-  geom_point(
-    data = filter(df_pct, tier != "Other"),
-    aes(x = residual4 * 100, y = 1, color = tier),
-    size = 3, shape = 17, alpha = 0.9
-  ) +
-  scale_color_manual(
-    values = c("Over-Performer"  = "#3a7d72",
-               "As-Expected"     = "#888580",
-               "Under-Performer" = "#6e5d83"),
-    breaks = c("Over-Performer", "As-Expected", "Under-Performer")
+  annotate("rect",
+           xmin = -1, xmax = 1,
+           ymin = -Inf, ymax = Inf,
+           fill = "#F7F8F8", alpha = 0.95) +
+  geom_histogram(binwidth = 1, fill = "#ECE9F0",
+                 color = "white", linewidth = 0.35, alpha = 0.82) +
+  geom_vline(xintercept = 0, linetype = "dashed",
+             color = "#8E877D", linewidth = 0.7) +
+  scale_y_continuous(
+    breaks = c(0, 20, 40, 60),
+    limits = c(0, 75),
+    expand = expansion(mult = c(0, 0.03))
   ) +
   labs(
+    title = "Most Counties Cluster Near Their Prediction",
+    subtitle = "Model 4 residuals are centered near zero, with a small number of counties in each tail.",
     x = "Residual (percentage points)",
     y = "Number of counties",
-    color = NULL,
-    caption = "Triangle markers indicate the six case-study counties (selected from Model 4)."
+    caption = "Residuals are actual minus predicted turnout. Negative values indicate turnout below the model prediction."
   ) +
-  theme_minimal(base_family = "sans", base_size = 12) +
+  theme_minimal(base_family = plot_sans, base_size = 13) +
   theme(
-    legend.position   = "top",
-    panel.grid.minor  = element_blank(),
-    plot.caption      = element_text(size = 9, color = "#888580", margin = margin(t = 8)),
-    plot.background   = element_rect(fill = "white", color = NA)
+    plot.title = element_text(
+      family = plot_serif, face = "bold",
+      size = 23, color = "#1F1F1F",
+      margin = margin(b = 6)
+    ),
+    plot.subtitle = element_text(
+      family = plot_serif, face = "italic",
+      size = 14, color = "#7A746C",
+      margin = margin(b = 16)
+    ),
+    legend.position = "none",
+    panel.grid.major.x = element_line(color = "#F1EDE6", linewidth = 0.35),
+    panel.grid.major.y = element_line(color = "#F1EDE6", linewidth = 0.35),
+    panel.grid.minor = element_blank(),
+    axis.title = element_text(family = plot_sans, size = 11, color = "#4F4A44"),
+    axis.text = element_text(family = plot_sans, size = 10.5, color = "#7A746C"),
+    axis.ticks = element_blank(),
+    plot.caption = element_text(
+      family = plot_sans, size = 10,
+      color = "#8C867E", hjust = 1,
+      margin = margin(t = 12)
+    ),
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(15, 18, 18, 15)
   )
 ```
 
 ---
 
-## Predicted vs. Actual Turnout — Model 4
+<span class="section-label">Technical Estimates</span>
 
-```{r pred-actual, fig.cap="Each point is a county. The dashed line represents perfect prediction (residual = 0). Points above the line over-performed; points below under-performed. Predictions from Model 4."}
-ggplot(df_pct, aes(x = predicted4, y = turnout_rate)) +
-  geom_abline(slope = 1, intercept = 0, linetype = "dashed",
-              color = "#888580", linewidth = 0.6) +
-  geom_point(data = filter(df_pct, tier == "Other"),
-             color = "#d8d4ce", size = 2, alpha = 0.6) +
-  geom_point(data = filter(df_pct, tier != "Other"),
-             aes(color = tier), size = 3.5, alpha = 0.95) +
-  ggrepel::geom_text_repel(
-    data = filter(df_pct, tier != "Other"),
-    aes(label = county, color = tier),
-    size = 3, family = "sans", show.legend = FALSE,
-    box.padding = 0.4, max.overlaps = 20
-  ) +
-  scale_color_manual(
-    values = c("Over-Performer"  = "#3a7d72",
-               "As-Expected"     = "#888580",
-               "Under-Performer" = "#6e5d83"),
-    breaks = c("Over-Performer", "As-Expected", "Under-Performer")
-  ) +
-  labs(
-    x = "Predicted turnout rate (Model 4)",
-    y = "Actual turnout rate",
-    color = NULL,
-    caption = "Gray points: all other counties. Colored points: case-study counties. Labels added via ggrepel."
-  ) +
-  theme_minimal(base_family = "sans", base_size = 12) +
-  theme(
-    legend.position  = "top",
-    panel.grid.minor = element_blank(),
-    plot.caption     = element_text(size = 9, color = "#888580", margin = margin(t = 8)),
-    plot.background  = element_rect(fill = "white", color = NA)
-  )
+## Coefficient Estimates — Model 4
+
+```{r coef-table}
+coef_df %>%
+  mutate(`10-pt Effect (pp)` = estimate_10pp) %>%
+  select(Predictor = term, Category = category,
+         `10-pt Effect (pp)`, Estimate = estimate,
+         `Std. Error` = std.error, `95% CI Low` = conf.low,
+         `95% CI High` = conf.high, `p-value` = p.value, ` ` = sig) %>%
+  kable(digits = c(0, 0, 2, 4, 4, 4, 4, 4, 0),
+        align = c("l","l","r","r","r","r","r","r","l"),
+        caption = "Model 4 OLS coefficients (state fixed effects suppressed for readability). Outcome: county-level turnout rate (CVAP denominator). N = counties across IL, IN, OH, WI, MI.") %>%
+  kable_styling(bootstrap_options = c("striped","hover"),
+                full_width = TRUE, font_size = 13) %>%
+  column_spec(1, bold = FALSE) %>%
+  footnote(general = "The 10-point effect column rescales each coefficient to the expected percentage-point change in turnout for a 10-point increase in the predictor. † p < .10  * p < .05  ** p < .01  *** p < .001",
+           general_title = "Note: ")
 ```
 
 ---

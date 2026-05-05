@@ -27,6 +27,19 @@ if (!file.exists(canonical_df)) {
 }
 df_pct <- readRDS(canonical_df)
 
+source("plot-fonts.R")
+
+case_palette <- c(
+  over = "#2D7F73",
+  middle = "#747D74",
+  under = "#6E4A8A",
+  state = "#B9B9B4",
+  grid = "#F1EDE6",
+  text = "#4F4A44",
+  text_mid = "#7A746C",
+  text_light = "#8C867E"
+)
+
 # Helpers ────────────────────────────────────────────────────────────────────
 county_row <- function(cname, sname) {
   df_pct %>% filter(county == cname, state_name == sname) %>% slice(1)
@@ -56,6 +69,96 @@ predictor_bar <- function(cname, sname) {
   ) %>%
     pivot_longer(all_of(vars), names_to = "variable", values_to = "value") %>%
     mutate(variable = factor(variable, levels = vars, labels = labels))
+}
+
+profile_plot <- function(cname, sname, tier,
+                         title = "County Profile vs. State Average") {
+  tier_colors <- c(
+    "Over-Performer" = case_palette[["over"]],
+    "As-Expected" = case_palette[["middle"]],
+    "Under-Performer" = case_palette[["under"]]
+  )
+
+  plot_data <- predictor_bar(cname, sname) %>%
+    mutate(
+      type = factor(type, levels = c("County", "State Avg")),
+      fill_group = if_else(type == "County", tier, "State Avg")
+    )
+
+  ggplot(plot_data, aes(x = value, y = variable, fill = fill_group, group = type)) +
+    geom_col(
+      aes(alpha = type),
+      position = position_dodge(width = 0.72),
+      width = 0.58
+    ) +
+    geom_text(
+      aes(
+        label = scales::number(value, accuracy = 0.1, suffix = "%")
+      ),
+      position = position_dodge(width = 0.72),
+      family = plot_sans, size = 3.1, color = case_palette[["text"]],
+      hjust = -0.18
+    ) +
+    scale_fill_manual(
+      values = c(tier_colors, "State Avg" = case_palette[["state"]]),
+      breaks = c(tier, "State Avg"),
+      labels = c(cname, paste(sname, "avg"))
+    ) +
+    scale_alpha_manual(
+      values = c("County" = 0.82, "State Avg" = 0.72),
+      guide = "none"
+    ) +
+    scale_x_continuous(
+      labels = scales::label_number(suffix = "%"),
+      limits = c(0, NA),
+      expand = expansion(mult = c(0, 0.12))
+    ) +
+    labs(
+      title = title,
+      subtitle = "Five framework predictors compared with the state average",
+      x = "Share of population or households",
+      y = NULL,
+      fill = NULL
+    ) +
+    theme_minimal(base_family = plot_sans, base_size = 13) +
+    theme(
+      plot.title = element_text(
+        family = plot_serif, face = "bold",
+        size = 22, color = "#1F1F1F",
+        margin = margin(b = 6)
+      ),
+      plot.subtitle = element_text(
+        family = plot_serif, face = "italic",
+        size = 13, color = "#7A746C",
+        margin = margin(b = 14)
+      ),
+      legend.position = "top",
+      legend.justification = "left",
+      legend.text = element_text(family = plot_sans, size = 10,
+                                 color = "#5A544C"),
+      panel.grid.major.x = element_line(color = case_palette[["grid"]],
+                                        linewidth = 0.35),
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor = element_blank(),
+      axis.title.x = element_text(
+        family = plot_sans, face = "plain",
+        size = 10.5, color = "#5A544C",
+        margin = margin(t = 8)
+      ),
+      axis.text.x = element_text(
+        family = plot_sans, face = "plain",
+        size = 10, color = "#8A837A"
+      ),
+      axis.text.y = element_text(
+        family = plot_sans, face = "plain",
+        size = 11.2, color = "#4F4A44"
+      ),
+      axis.ticks = element_blank(),
+      axis.line.x = element_blank(),
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.background = element_rect(fill = "white", color = NA),
+      plot.margin = margin(12, 18, 18, 15)
+    )
 }
 ```
 
@@ -88,16 +191,9 @@ r <- county_row("Jasper", "Illinois")
 
 ### Predictor Profile
 
-```{r jasper-bar, fig.cap="County values vs. Illinois state average for the five framework predictors.", fig.height=3.5}
-predictor_bar("Jasper", "Illinois") %>%
-  ggplot(aes(x = value, y = variable, fill = type)) +
-  geom_col(position = "dodge", width = 0.65) +
-  scale_fill_manual(values = c("County" = "#2e7d52", "State Avg" = "#d8d4ce")) +
-  labs(x = "Percent (%)", y = NULL, fill = NULL) +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.major.y = element_blank(),
-        panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
+```{r jasper-profile, fig.cap="County values vs. Illinois state average for the five framework predictors.", fig.width=8, fig.height=4.2}
+profile_plot("Jasper", "Illinois", "Over-Performer",
+             "Jasper vs. Illinois Average")
 ```
 
 ### Qualitative Analysis
@@ -132,16 +228,9 @@ r <- county_row("Martin", "Indiana")
 
 ### Predictor Profile
 
-```{r martin-bar, fig.cap="County values vs. Indiana state average for the five framework predictors.", fig.height=3.5}
-predictor_bar("Martin", "Indiana") %>%
-  ggplot(aes(x = value, y = variable, fill = type)) +
-  geom_col(position = "dodge", width = 0.65) +
-  scale_fill_manual(values = c("County" = "#2e7d52", "State Avg" = "#d8d4ce")) +
-  labs(x = "Percent (%)", y = NULL, fill = NULL) +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.major.y = element_blank(),
-        panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
+```{r martin-profile, fig.cap="County values vs. Indiana state average for the five framework predictors.", fig.width=8, fig.height=4.2}
+profile_plot("Martin", "Indiana", "Over-Performer",
+             "Martin vs. Indiana Average")
 ```
 
 ### Qualitative Analysis
@@ -178,16 +267,9 @@ r <- county_row("Rock Island", "Illinois")
 
 ### Predictor Profile
 
-```{r rockisland-bar, fig.cap="County values vs. Illinois state average for the five framework predictors.", fig.height=3.5}
-predictor_bar("Rock Island", "Illinois") %>%
-  ggplot(aes(x = value, y = variable, fill = type)) +
-  geom_col(position = "dodge", width = 0.65) +
-  scale_fill_manual(values = c("County" = "#888580", "State Avg" = "#d8d4ce")) +
-  labs(x = "Percent (%)", y = NULL, fill = NULL) +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.major.y = element_blank(),
-        panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
+```{r rockisland-profile, fig.cap="County values vs. Illinois state average for the five framework predictors.", fig.width=8, fig.height=4.2}
+profile_plot("Rock Island", "Illinois", "As-Expected",
+             "Rock Island vs. Illinois Average")
 ```
 
 ### Qualitative Analysis
@@ -220,16 +302,9 @@ r <- county_row("Rusk", "Wisconsin")
 
 ### Predictor Profile
 
-```{r rusk-bar, fig.cap="County values vs. Wisconsin state average for the five framework predictors.", fig.height=3.5}
-predictor_bar("Rusk", "Wisconsin") %>%
-  ggplot(aes(x = value, y = variable, fill = type)) +
-  geom_col(position = "dodge", width = 0.65) +
-  scale_fill_manual(values = c("County" = "#888580", "State Avg" = "#d8d4ce")) +
-  labs(x = "Percent (%)", y = NULL, fill = NULL) +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.major.y = element_blank(),
-        panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
+```{r rusk-profile, fig.cap="County values vs. Wisconsin state average for the five framework predictors.", fig.width=8, fig.height=4.2}
+profile_plot("Rusk", "Wisconsin", "As-Expected",
+             "Rusk vs. Wisconsin Average")
 ```
 
 ### Qualitative Analysis
@@ -264,16 +339,9 @@ r <- county_row("Lawrence", "Illinois")
 
 ### Predictor Profile
 
-```{r lawrence-bar, fig.cap="County values vs. Illinois state average for the five framework predictors.", fig.height=3.5}
-predictor_bar("Lawrence", "Illinois") %>%
-  ggplot(aes(x = value, y = variable, fill = type)) +
-  geom_col(position = "dodge", width = 0.65) +
-  scale_fill_manual(values = c("County" = "#c0392b", "State Avg" = "#d8d4ce")) +
-  labs(x = "Percent (%)", y = NULL, fill = NULL) +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.major.y = element_blank(),
-        panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
+```{r lawrence-profile, fig.cap="County values vs. Illinois state average for the five framework predictors.", fig.width=8, fig.height=4.2}
+profile_plot("Lawrence", "Illinois", "Under-Performer",
+             "Lawrence vs. Illinois Average")
 ```
 
 ### Qualitative Analysis
@@ -306,16 +374,9 @@ r <- county_row("Gogebic", "Michigan")
 
 ### Predictor Profile
 
-```{r gogebic-bar, fig.cap="County values vs. Michigan state average for the five framework predictors.", fig.height=3.5}
-predictor_bar("Gogebic", "Michigan") %>%
-  ggplot(aes(x = value, y = variable, fill = type)) +
-  geom_col(position = "dodge", width = 0.65) +
-  scale_fill_manual(values = c("County" = "#c0392b", "State Avg" = "#d8d4ce")) +
-  labs(x = "Percent (%)", y = NULL, fill = NULL) +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.major.y = element_blank(),
-        panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
+```{r gogebic-profile, fig.cap="County values vs. Michigan state average for the five framework predictors.", fig.width=8, fig.height=4.2}
+profile_plot("Gogebic", "Michigan", "Under-Performer",
+             "Gogebic vs. Michigan Average")
 ```
 
 ### Qualitative Analysis
@@ -332,58 +393,6 @@ Gogebic's case suggests that political realignment may disrupt established patte
 <strong>Key Finding</strong>
 Gogebic's underperformance illustrates how political realignment can outpace the rebuilding of mobilizing infrastructure. The unions and party organizations that historically delivered voters in this Upper Peninsula county have weakened, but new institutional channels have not emerged to replace them — a pattern with broad implications for declining-Democratic, realigning rural counties across the Midwest.
 </div>
-
----
-
-<span class="section-label">Cross-County Patterns</span>
-
-# Comparing Across Cases
-
-```{r cross-county, fig.cap="All six case-study counties plotted across the five framework predictors, with state-tier benchmarks.", fig.height=5}
-case_counties <- df_pct %>%
-  filter(
-    (county == "Jasper"      & state_name == "Illinois")  |
-    (county == "Martin"      & state_name == "Indiana")   |
-    (county == "Rock Island" & state_name == "Illinois")  |
-    (county == "Rusk"        & state_name == "Wisconsin") |
-    (county == "Lawrence"    & state_name == "Illinois")  |
-    (county == "Gogebic"     & state_name == "Michigan")
-  ) %>%
-  mutate(tier = case_when(
-    county %in% c("Jasper", "Martin")          ~ "Over-Performer",
-    county %in% c("Rock Island", "Rusk")       ~ "As-Expected",
-    county %in% c("Lawrence", "Gogebic")       ~ "Under-Performer"
-  ))
-
-vars <- c("pct_bachelors", "pct_households_internet",
-          "pct_limited_english", "pct_disability_total", "pct_poverty")
-labels <- c("Bachelor's+", "Internet\nAccess", "Limited\nEnglish",
-            "Disability", "Poverty")
-
-case_long <- case_counties %>%
-  select(county, tier, all_of(vars)) %>%
-  pivot_longer(all_of(vars), names_to = "variable", values_to = "value") %>%
-  mutate(variable = factor(variable, levels = vars, labels = labels))
-
-ggplot(case_long, aes(x = variable, y = value, color = tier, group = county)) +
-  geom_line(alpha = 0.4, linewidth = 0.7) +
-  geom_point(size = 3, alpha = 0.9) +
-  ggrepel::geom_text_repel(
-    data = case_long %>% filter(variable == "Poverty"),
-    aes(label = county), size = 3, family = "sans",
-    nudge_x = 0.3, show.legend = FALSE
-  ) +
-  scale_color_manual(
-    values = c("Over-Performer"  = "#2e7d52",
-               "As-Expected"     = "#888580",
-               "Under-Performer" = "#c0392b"),
-    name = "Performance Tier"
-  ) +
-  labs(x = NULL, y = "Percent (%)") +
-  theme_minimal(base_family = "sans", base_size = 11) +
-  theme(legend.position = "top", panel.grid.minor = element_blank(),
-        plot.background = element_rect(fill = "white", color = NA))
-```
 
 ---
 

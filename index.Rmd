@@ -17,11 +17,7 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 library(ggrepel)
-library(showtext)
-library(sysfonts)
-font_add_google("IBM Plex Serif", "plex_serif")
-font_add_google("IBM Plex Sans", "plex_sans")
-showtext_auto()
+source("plot-fonts.R")
 
 canonical_path <- "data/df_pct_with_predictions.rds"
 if (!file.exists(canonical_path)) {
@@ -52,8 +48,6 @@ Practicum research in partnership with the Chicago Lawyers' Committee for Civil 
 <div class="viz-section">
 
 ```{r hero-map, fig.width=11, fig.height=7.5}
-suppressPackageStartupMessages({
-})
 options(tigris_use_cache = TRUE)
 
 # County shapefiles for the 5 Midwest states (cb = simplified boundaries)

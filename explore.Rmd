@@ -1,5 +1,5 @@
 ---
-title: "Explore the Data"
+title: ""
 output:
   html_document:
     theme: flatly
@@ -7,188 +7,400 @@ output:
     highlight: null
 ---
 
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+options(tigris_use_cache = TRUE)
+
+library(tidyverse)
+library(leaflet)
+library(htmlwidgets)
+library(htmltools)
+library(sf)
+library(tigris)
+
+# ── Canonical dataset ───────────────────────────────────────────────────────
+canonical_path <- "data/df_pct_with_predictions.rds"
+if (!file.exists(canonical_path)) {
+  stop("Canonical predictions not found. Run update_data_new.R first.")
+}
+df_pct <- readRDS(canonical_path)
+
+# Mark case study counties and their performance tier
+df_pct <- df_pct %>%
+  mutate(
+    case_tier = case_when(
+      county == "Jasper"      & state_name == "Illinois"   ~ "over",
+      county == "Martin"      & state_name == "Indiana"    ~ "over",
+      county == "Rock Island" & state_name == "Illinois"   ~ "middle",
+      county == "Rusk"        & state_name == "Wisconsin"  ~ "middle",
+      county == "Lawrence"    & state_name == "Illinois"   ~ "under",
+      county == "Gogebic"     & state_name == "Michigan"   ~ "under",
+      TRUE ~ NA_character_
+    ),
+    is_case        = !is.na(case_tier),
+    turnout_pct    = turnout_rate * 100,
+    predicted4_pct = predicted4  * 100,
+    residual4_pp   = residual4   * 100
+  )
+
+# ── County shapefiles ───────────────────────────────────────────────────────
+midwest_sf <- counties(
+  state        = c("IL", "IN", "OH", "WI", "MI"),
+  cb           = TRUE,
+  resolution   = "20m",
+  year         = 2023,
+  progress_bar = FALSE
+) %>% st_transform(crs = 4326)
+
+# Join shapefiles with model data
+map_sf <- midwest_sf %>%
+  mutate(geoid = GEOID) %>%
+  left_join(df_pct, by = "geoid")
+
+# Subset case study counties for border highlight layer
+case_sf <- map_sf %>% filter(!is.na(case_tier))
+
+# ── Color palettes ──────────────────────────────────────────────────────────
+pal_turnout <- colorNumeric(
+  palette  = c("#e8f5f2", "#bde5dc", "#7dc8b8", "#3da898", "#2d7f73"),
+  domain   = map_sf$turnout_pct,
+  na.color = "#dde1e0"
+)
+pal_predicted <- colorNumeric(
+  palette  = c("#e8f5f2", "#bde5dc", "#7dc8b8", "#3da898", "#2d7f73"),
+  domain   = map_sf$predicted4_pct,
+  na.color = "#dde1e0"
+)
+# Diverging palette centered near zero: slate (under) → neutral → teal (over)
+pal_residual <- colorBin(
+  palette  = c("#5a6b67", "#8fa39f", "#c0cfcc", "#f0f2f1",
+                "#c5e1db", "#7dc8b8", "#2d7f73"),
+  bins     = c(-12, -8, -5, -2, 2, 5, 8, 12),
+  na.color = "#dde1e0"
+)
+
+# ── Popup HTML builder ──────────────────────────────────────────────────────
+build_popup <- function(county, state_name, case_tier,
+                        turnout_pct, predicted4_pct, residual4_pp,
+                        pct_bachelors, pct_poverty,
+                        pct_households_internet, pct_limited_english) {
+
+  badge <- if (!is.na(case_tier)) {
+    col <- switch(case_tier,
+      "over"   = "#2d7f73",
+      "under"  = "#6f7f7b",
+      "middle" = "#a8aaa6"
+    )
+    txt <- switch(case_tier,
+      "over"   = "Case Study · Over-performer",
+      "under"  = "Case Study · Under-performer",
+      "middle" = "Case Study · Near-expected"
+    )
+    paste0(
+      '<div style="font:600 0.68rem/1 \'IBM Plex Sans\',sans-serif;',
+      'letter-spacing:.1em;text-transform:uppercase;color:', col,
+      ';margin-bottom:.55rem;">', txt, '</div>'
+    )
+  } else ""
+
+  res_col  <- if (!is.na(residual4_pp) && residual4_pp >= 0) "#2d7f73" else "#6f7f7b"
+  res_sign <- if (!is.na(residual4_pp) && residual4_pp >= 0) "+" else ""
+  res_str  <- if (!is.na(residual4_pp)) paste0(res_sign, sprintf("%.1f", residual4_pp), " pp") else "—"
+  t_str    <- if (!is.na(turnout_pct))    paste0(sprintf("%.1f", turnout_pct), "%")    else "—"
+  p_str    <- if (!is.na(predicted4_pct)) paste0(sprintf("%.1f", predicted4_pct), "%") else "—"
+
+  fmt <- function(x, suffix = "%") if (!is.na(x)) paste0(sprintf("%.1f", x), suffix) else "—"
+
+  paste0(
+    '<div style="font-family:\'IBM Plex Sans\',sans-serif;',
+    'min-width:215px;max-width:260px;line-height:1.45;padding:2px 1px;">',
+    badge,
+    '<div style="font-family:\'IBM Plex Serif\',Georgia,serif;',
+    'font-size:1.05rem;font-weight:600;color:#1f2326;margin-bottom:.12rem;">',
+    county, ' County</div>',
+    '<div style="font-size:.82rem;color:#8a908d;margin-bottom:.8rem;">', state_name, '</div>',
+    # Turnout boxes
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.55rem;">',
+      '<div style="background:#f7f8f8;padding:.45rem .5rem;border-radius:2px;text-align:center;">',
+        '<div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;',
+        'color:#8a908d;margin-bottom:.15rem;">Actual</div>',
+        '<div style="font-family:\'IBM Plex Serif\',serif;font-size:1.1rem;',
+        'font-weight:600;color:#1f2326;">', t_str, '</div>',
+      '</div>',
+      '<div style="background:#f7f8f8;padding:.45rem .5rem;border-radius:2px;text-align:center;">',
+        '<div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;',
+        'color:#8a908d;margin-bottom:.15rem;">Model Pred.</div>',
+        '<div style="font-family:\'IBM Plex Serif\',serif;font-size:1.1rem;',
+        'font-weight:600;color:#1f2326;">', p_str, '</div>',
+      '</div>',
+    '</div>',
+    # Residual
+    '<div style="font-size:.88rem;color:#5f6664;margin-bottom:.75rem;">',
+    'vs model: <span style="font-weight:600;color:', res_col, ';">', res_str, '</span></div>',
+    # Demographics
+    '<div style="border-top:1px solid #e2e5e5;padding-top:.6rem;">',
+      '<div style="font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;',
+      'color:#8a908d;margin-bottom:.35rem;">Key Characteristics</div>',
+      '<div style="font-size:.8rem;color:#5f6664;line-height:1.75;">',
+        fmt(pct_bachelors), ' Bachelor\'s+ &nbsp;·&nbsp; ', fmt(pct_poverty), ' Poverty<br>',
+        fmt(pct_households_internet), ' Internet &nbsp;·&nbsp; ', fmt(pct_limited_english), ' Ltd. English',
+      '</div>',
+    '</div>',
+    '</div>'
+  )
+}
+
+# Build popup strings for all counties
+popup_data <- map_sf %>%
+  st_drop_geometry() %>%
+  transmute(county, state_name, case_tier, turnout_pct, predicted4_pct, residual4_pp,
+            pct_bachelors, pct_poverty, pct_households_internet, pct_limited_english)
+
+map_sf$popup_html <- purrr::pmap_chr(popup_data, build_popup)
+
+# Hover labels
+map_sf <- map_sf %>%
+  mutate(
+    label_base  = paste0(county, " County, ", state_name),
+    label_resid = paste0(
+      county, " County, ", state_name,
+      ifelse(!is.na(residual4_pp),
+             paste0("  (", ifelse(residual4_pp > 0, "+", ""), round(residual4_pp, 1), " pp)"),
+             "")
+    )
+  )
+
+# State label anchor points (lower peninsula only for MI)
+state_labs <- data.frame(
+  name = c("ILLINOIS", "INDIANA", "OHIO", "WISCONSIN", "MICHIGAN"),
+  lng  = c(-89.20,    -86.35,   -82.80,  -89.70,     -84.55),
+  lat  = c( 40.00,     40.30,    40.50,   44.40,      43.80)
+)
 ```
 
 <span class="section-label">Interactive Explorer</span>
 
 # Explore County-Level Turnout
 
-The interactive application below lets you explore the full dataset of counties across all five states. Filter by state, adjust which predictor to plot against turnout, and hover over individual counties to see their model statistics.
+All 437 counties across Illinois, Indiana, Ohio, Wisconsin, and Michigan — plotted three ways. Toggle between actual turnout, what the model predicts given each county's demographics, and the gap between them.
 
 <div class="callout">
 <strong>How to Use</strong>
-Select a state and predictor variable from the dropdowns on the left. Each point represents one county. Counties selected as case studies are highlighted. The regression line reflects the simple bivariate relationship — the full Model 4 specification uses twelve predictors plus state fixed effects simultaneously.
+Use the layer selector (top right of the map) to switch views. Click any county to see a profile card with its actual and predicted turnout, model residual, and key demographic characteristics. Counties selected as case studies are outlined in black — hover to identify them.
 </div>
 
 ---
 
-## Interactive County Explorer
-
-<!-- 
-  SHINYLIVE EMBED
-  ─────────────────────────────────────────────────────────────────────────
-  Option A: Shinylive via <iframe> (recommended for GitHub Pages)
-  
-  After building your Shiny app separately and deploying it with shinylive,
-  replace the src below with your deployed URL.
-  
-  shinylive::export() will generate a self-contained app folder.
-  Push that folder to GitHub Pages (e.g., /docs/app/) and use:
-  src="app/index.html"
-  ─────────────────────────────────────────────────────────────────────────
--->
-
-<div class="shiny-frame-wrapper">
-  <iframe 
-    src="app/index.html" 
-    height="620" 
-    title="County Voter Turnout Explorer"
-    loading="lazy"
-    allowfullscreen>
-  </iframe>
-  <div class="shiny-caption">
-    Interactive Shiny application. Data: ACS 2020 5-Year Estimates; State Election Commissions (IL, IN, OH, WI, MI). 
-    Built with R Shiny + shinylive.
-  </div>
-</div>
-
----
-
-## Building the Shinylive App
-
-The Shiny app source is in `shiny-app/app.R`. To compile and export it for GitHub Pages:
-
-```r
-# Install shinylive if needed
-install.packages("shinylive")
-
-# Export the app to the docs/app/ folder
-shinylive::export("shiny-app", "docs/app")
-```
-
-Then push `docs/` to GitHub — the iframe above will load it automatically.
-
-The app source below serves as a starting-point template:
-
-```r
-# shiny-app/app.R
-library(shiny)
-library(tidyverse)
-library(bslib)
-library(plotly)
-
-df_pct <- readRDS("../data/df_pct.rds")
-# Add predicted/residual columns (rerun model or load pre-saved output)
-
-ui <- page_sidebar(
-  title = "Midwest Voter Turnout Explorer",
-  theme = bs_theme(
-    base_font  = font_google("IBM Plex Sans"),
-    bg         = "#ffffff",
-    fg         = "#1c1c1e",
-    primary    = "#1a4a8a"
-  ),
-  sidebar = sidebar(
-    selectInput("state", "State",
-      choices  = c("All", sort(unique(df_pct$state_name))),
-      selected = "All"
-    ),
-    selectInput("xvar", "X-Axis Predictor",
-      choices = c(
-        "% Bachelor's+"           = "pct_bachelors",
-        "% Internet Access"       = "pct_households_internet",
-        "% Limited English"       = "pct_limited_english",
-        "% Disability"            = "pct_disability_total",
-        "% Poverty"               = "pct_poverty"
-      )
-    ),
-    checkboxInput("highlight", "Highlight case-study counties", TRUE),
-    hr(),
-    p("Each point = one county. Hover for details.", 
-      style = "font-size:0.82rem;color:#888580;")
-  ),
-  card(plotlyOutput("scatter", height = "480px")),
-  card(
-    card_header("Top 10 Residuals"),
-    tableOutput("top_table")
-  )
+```{r county-map, out.width="100%"}
+label_opts <- labelOptions(
+  style    = list("font-family" = "'IBM Plex Sans', sans-serif",
+                  "font-size"   = "12px",
+                  "color"       = "#1f2326"),
+  textsize = "12px"
 )
 
-server <- function(input, output) {
-  case_counties <- c("Jasper", "Martin",
-                     "Rock Island", "Rusk",
-                     "Lawrence", "Gogebic")
-
-  filtered <- reactive({
-    d <- df_pct
-    if (input$state != "All") d <- filter(d, state_name == input$state)
-    d
-  })
-
-  output$scatter <- renderPlotly({
-    d <- filtered() %>%
-      mutate(
-        is_case = county %in% case_counties,
-        label   = paste0(county, ", ", state_name,
-                         "<br>Actual: ", round(turnout_rate, 1), "%",
-                         "<br>Predicted: ", round(predicted, 1), "%",
-                         "<br>Residual: ", round(residual, 2), " pp")
-      )
-
-    p <- ggplot(d, aes_string(x = input$xvar, y = "turnout_rate",
-                               text = "label")) +
-      geom_smooth(method = "lm", se = TRUE, color = "#1a4a8a", fill = "#d0ddef",
-                  linewidth = 0.7, alpha = 0.3) +
-      geom_point(data = filter(d, !is_case),
-                 color = "#d8d4ce", size = 2.5, alpha = 0.7) +
-      labs(x = input$xvar, y = "Turnout Rate (%)") +
-      theme_minimal(base_family = "sans")
-
-    if (input$highlight) {
-      p <- p +
-        geom_point(data = filter(d, is_case),
-                   aes(color = case_when(
-                     residual > 1  ~ "Over-Performer",
-                     residual < -1 ~ "Under-Performer",
-                     TRUE          ~ "Near-Expected"
-                   )), size = 4, alpha = 0.95) +
-        scale_color_manual(values = c("Over-Performer"  = "#2e7d52",
-                                      "Near-Expected"   = "#888580",
-                                      "Under-Performer" = "#c0392b"),
-                           name = NULL)
-    }
-
-    ggplotly(p, tooltip = "text") %>%
-      layout(legend = list(orientation = "h", x = 0, y = 1.05))
-  })
-
-  output$top_table <- renderTable({
-    filtered() %>%
-      arrange(desc(abs(residual))) %>%
-      slice_head(n = 10) %>%
-      select(County = county, State = state_name,
-             `Actual (%)` = turnout_rate,
-             `Predicted (%)` = predicted,
-             `Residual (pp)` = residual) %>%
-      mutate(across(where(is.numeric), ~ round(.x, 2)))
-  }, striped = TRUE, hover = TRUE, bordered = FALSE)
+poly_opts <- function(group, fill_col, label_col) {
+  list(
+    group       = group,
+    fillColor   = fill_col,
+    fillOpacity = 0.82,
+    color       = "#ffffff",
+    weight      = 0.5,
+    opacity     = 0.8,
+    popup       = htmltools::HTML(map_sf$popup_html),
+    label       = label_col,
+    labelOptions = label_opts,
+    highlightOptions = highlightOptions(
+      weight      = 2,
+      color       = "#1f2326",
+      fillOpacity = 0.92,
+      bringToFront = FALSE
+    )
+  )
 }
 
-shinyApp(ui, server)
+leaflet(map_sf, height = 580,
+        options = leafletOptions(zoomControl = TRUE, scrollWheelZoom = "center")) %>%
+  setView(lng = -87.2, lat = 43.1, zoom = 6) %>%
+
+  # Custom pane so state labels + case borders sit above choropleth fill
+  addMapPane("top_pane", zIndex = 450) %>%
+
+  # Base tiles — no labels (state names are added manually above polygons)
+  addProviderTiles(providers$CartoDB.PositronNoLabels,
+                   options = tileOptions(opacity = 0.80)) %>%
+
+  # ── Layer 1: Actual Turnout ──────────────────────────────────────────────
+  addPolygons(
+    group        = "Actual Turnout",
+    fillColor    = ~pal_turnout(turnout_pct),
+    fillOpacity  = 0.82,
+    color        = "#ffffff",
+    weight       = 0.5,
+    opacity      = 0.8,
+    popup        = ~popup_html,
+    label        = ~label_base,
+    labelOptions = label_opts,
+    highlightOptions = highlightOptions(
+      weight = 2, color = "#1f2326", fillOpacity = 0.93, bringToFront = FALSE)
+  ) %>%
+
+  # ── Layer 2: Predicted Turnout ───────────────────────────────────────────
+  addPolygons(
+    group        = "Predicted Turnout",
+    fillColor    = ~pal_predicted(predicted4_pct),
+    fillOpacity  = 0.82,
+    color        = "#ffffff",
+    weight       = 0.5,
+    opacity      = 0.8,
+    popup        = ~popup_html,
+    label        = ~label_base,
+    labelOptions = label_opts,
+    highlightOptions = highlightOptions(
+      weight = 2, color = "#1f2326", fillOpacity = 0.93, bringToFront = FALSE)
+  ) %>%
+
+  # ── Layer 3: Model Residual ──────────────────────────────────────────────
+  addPolygons(
+    group        = "Model Residual",
+    fillColor    = ~pal_residual(residual4_pp),
+    fillOpacity  = 0.82,
+    color        = "#ffffff",
+    weight       = 0.5,
+    opacity      = 0.8,
+    popup        = ~popup_html,
+    label        = ~label_resid,
+    labelOptions = label_opts,
+    highlightOptions = highlightOptions(
+      weight = 2, color = "#1f2326", fillOpacity = 0.93, bringToFront = FALSE)
+  ) %>%
+
+  # ── Case study county borders — amber, above fill ────────────────────────
+  addPolygons(
+    data        = case_sf,
+    fillColor   = "transparent",
+    fillOpacity = 0,
+    color       = "#d4861e",
+    weight      = 3,
+    opacity     = 1,
+    options     = pathOptions(pane = "top_pane", interactive = FALSE)
+  ) %>%
+
+  # ── State name labels — permanent markers in elevated pane ────────────────
+  addCircleMarkers(
+    data        = state_labs,
+    lng         = ~lng,
+    lat         = ~lat,
+    radius      = 0,
+    stroke      = FALSE,
+    fillOpacity = 0,
+    label       = ~name,
+    labelOptions = labelOptions(
+      noHide    = TRUE,
+      direction = "center",
+      textOnly  = TRUE,
+      style     = list(
+        "font-family"    = "'IBM Plex Sans', sans-serif",
+        "font-size"      = "13px",
+        "font-weight"    = "700",
+        "letter-spacing" = "0.12em",
+        "color"          = "#1f2326",
+        "text-transform" = "uppercase",
+        "text-shadow"    = paste(
+          "0 0 4px #fff,", "0 0 4px #fff,",
+          "1px 1px 0 #fff,", "-1px -1px 0 #fff,",
+          "1px -1px 0 #fff,", "-1px 1px 0 #fff"
+        ),
+        "pointer-events" = "none"
+      )
+    ),
+    options = markerOptions(pane = "top_pane", interactive = FALSE)
+  ) %>%
+
+  # ── Layer control ────────────────────────────────────────────────────────
+  addLayersControl(
+    baseGroups = c("Actual Turnout", "Predicted Turnout", "Model Residual"),
+    options    = layersControlOptions(collapsed = FALSE)
+  ) %>%
+
+  # ── Legends (one per layer; JS toggles visibility) ───────────────────────
+  addLegend(
+    position  = "bottomright",
+    pal       = pal_turnout,
+    values    = map_sf$turnout_pct,
+    title     = "Turnout Rate (%)",
+    opacity   = 0.85,
+    labFormat = labelFormat(suffix = "%")
+  ) %>%
+  addLegend(
+    position  = "bottomright",
+    pal       = pal_predicted,
+    values    = map_sf$predicted4_pct,
+    title     = "Predicted Turnout (%)",
+    opacity   = 0.85,
+    labFormat = labelFormat(suffix = "%")
+  ) %>%
+  addLegend(
+    position  = "bottomright",
+    pal       = pal_residual,
+    values    = map_sf$residual4_pp,
+    title     = "Residual (pp)",
+    opacity   = 0.85,
+    labFormat = labelFormat(suffix = " pp")
+  ) %>%
+
+  hideGroup("Predicted Turnout") %>%
+  hideGroup("Model Residual") %>%
+
+  # ── JS: show/hide legend matching the active layer ───────────────────────
+  onRender("
+    function(el, x) {
+      var map = this;
+      var legends = el.querySelectorAll('.info.legend');
+      if (legends.length > 1) legends[1].style.display = 'none';
+      if (legends.length > 2) legends[2].style.display = 'none';
+      var nameToIdx = {
+        'Actual Turnout':    0,
+        'Predicted Turnout': 1,
+        'Model Residual':    2
+      };
+      map.on('baselayerchange', function(e) {
+        for (var i = 0; i < legends.length; i++) {
+          legends[i].style.display = 'none';
+        }
+        var idx = nameToIdx[e.name];
+        if (idx !== undefined && legends[idx]) {
+          legends[idx].style.display = 'block';
+        }
+      });
+    }
+  ")
 ```
+
+<p style="font-family:'IBM Plex Sans',sans-serif;font-size:0.82rem;color:#8a908d;margin-top:0.5rem;">
+Counties outlined in black are the six case studies. Data: ACS 2020 5-Year Estimates; State Election Commissions (IL, IN, OH, WI, MI); CVAP Special Tabulation. Predictions from Model 4 (12 predictors + state fixed effects).
+</p>
 
 ---
 
-<div class="callout">
-<strong>Note on Shinylive</strong>
-Shinylive compiles R code to WebAssembly and runs entirely in the browser — no server required. This makes it compatible with GitHub Pages. The first load may take 10–15 seconds while the R environment initializes. Package size is a constraint: keep dependencies minimal (tidyverse, plotly, bslib are manageable). If the app grows complex, consider deploying to shinyapps.io and embedding via iframe instead.
+## Reading the Residual Map
+
+<div class="callout finding">
+<strong>Why Residuals?</strong>
+The residual map is the core analytical contribution. After accounting for education, internet access, poverty, disability, limited English proficiency, racial composition, age structure, and state-level institutional context, some counties still turn out voters at rates far above or below what demographics predict. Those gaps are what this project investigates.
+</div>
+
+The residual for each county is the difference between its actual 2024 general election turnout rate (CVAP-based) and what Model 4 predicts given its demographic profile. A county 8 percentage points above the regression line has mobilization capacity that demographics alone do not explain — an election office, a civic organization, a culture of participation, or some other structural advantage.
+
+The two **over-performing case studies** (Jasper, IL; Martin, IN) sit at the extreme upper tail — they vote at rates 9–12 points higher than comparable counties. The two **under-performing case studies** (Lawrence, IL; Gogebic, MI) sit near the bottom, with turnout 7–9 points lower than their demographic peers. Rock Island, IL and Rusk, WI serve as near-expected anchors, falling within one point of the model's prediction.
+
+<div class="callout warning">
+<strong>Measurement Note</strong>
+Two counties with more extreme negative residuals — Noble County, OH and Gratiot County, MI — were excluded from case selection because both host large state correctional facilities. Incarcerated residents are counted in CVAP but cannot vote under state law, mechanically deflating measured turnout. Their apparent under-performance is a denominator artifact, not a behavioral finding.
 </div>
 
 ---
 
 <div class="site-footer">
-Interactive visualization built with R Shiny and shinylive. Full source on <a href="https://github.com/[your-repo]">GitHub</a>.
+Interactive map built with R and <a href="https://rstudio.github.io/leaflet/">Leaflet for R</a>. Choropleth boundaries from the U.S. Census Bureau (TIGER/Line, 2023). Full analysis source on <a href="https://github.com/Smlfberry/midwestturnout">GitHub</a>.
 </div>

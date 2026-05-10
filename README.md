@@ -43,8 +43,8 @@ The work builds on practicum research conducted with the Chicago Lawyers' Commit
 
 Qualitative case study research draws on secondary sources including DataUSA county profiles, local government economic development websites, the Naval Surface Warfare Center Crane Division official site, U.S. Bureau of Labor Statistics data, state nonprofit directories, and regional news archives.
 
-
 ## Repository Structure
+```
 midwestturnout/
 ├── data/                            # model outputs and predictions
 │   ├── df_pct_with_predictions.rds  # primary dataset used across all pages
@@ -60,7 +60,7 @@ midwestturnout/
 ├── about.Rmd                        # about the project
 ├── custom.css                       # site-wide styles
 └── _site.yml                        # site configuration and nav
-
+```
 ## Analysis
 
 All data processing, modeling, and visualization conducted in R. The predictive model uses OLS regression with state fixed effects. Full model specification and coefficient estimates are available on the Methodology page.

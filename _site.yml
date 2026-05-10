@@ -26,4 +26,4 @@ output:
     css: custom.css
     highlight: pygments
     toc: false
-    self_contained: false
+    self_contained: true

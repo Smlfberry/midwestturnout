@@ -17,9 +17,6 @@ The work builds on practicum research conducted with the Chicago Lawyers' Commit
 - RStudio
 - Key packages: `tidyverse`, `tidycensus`, `sf`, `tigris`, `broom`, `kableExtra`, `ggrepel`, `showtext`
 
-
-```
-
 ### Steps to reproduce
 
 1. Clone the repository
@@ -46,7 +43,6 @@ The work builds on practicum research conducted with the Chicago Lawyers' Commit
 
 Qualitative case study research draws on secondary sources including DataUSA county profiles, local government economic development websites, the Naval Surface Warfare Center Crane Division official site, U.S. Bureau of Labor Statistics data, state nonprofit directories, and regional news archives.
 
----
 
 ## Repository Structure
 midwestturnout/
@@ -64,8 +60,6 @@ midwestturnout/
 ├── about.Rmd                        # about the project
 ├── custom.css                       # site-wide styles
 └── _site.yml                        # site configuration and nav
-
----
 
 ## Analysis
 

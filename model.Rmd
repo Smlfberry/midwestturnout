@@ -19,8 +19,7 @@ library(broom)
 library(ggrepel)
 library(plotly)
 
-# ── Canonical artifacts ────────────────────────────────────────────────────
-# All predictions and model objects come from the canonical Capstone pipeline:
+# All objects come from the Capstone pipeline:
 #   /Users/samberry/Desktop/Capstone/update_data_new.R
 # Re-run that script whenever the model spec or input data changes.
 canonical_df    <- "data/df_pct_with_predictions.rds"

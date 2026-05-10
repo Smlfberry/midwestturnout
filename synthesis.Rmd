@@ -292,5 +292,5 @@ Several directions would strengthen and extend this analysis:
 ---
 
 <div class="site-footer">
-Analysis conducted in R. Data: ACS 2024 5-Year Estimates; CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). Prepared in partial fulfillment of capstone requirements, University of Chicago Crown Family School of Social Work, Policy, and Practice.
+Analysis conducted in R. Data: ACS 2024 5-Year Estimates; CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). 
 </div>

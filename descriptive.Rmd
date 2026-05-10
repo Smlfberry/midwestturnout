@@ -21,18 +21,11 @@ if (!file.exists(canonical_path)) {
 df_pct <- readRDS(canonical_path)
 ```
 
-<span class="section-label">Project Background</span>
-
 ## The Descriptive Groundwork
 
 The descriptive analysis that grounds the project comes from the quantitative component of a regional needs assessment conducted for the **Chicago Lawyers' Committee for Civil Rights (CLC)** — a legal nonprofit focused on voting rights — supporting their Midwest expansion across Illinois, Indiana, Ohio, Wisconsin, and Michigan. The analysis covered all 437 counties in the five states, pairing turnout data from the 2024 Presidential General Election with demographic estimates from the American Community Survey.
 
 The findings here establish *where* turnout disparities are concentrated and *what* demographic patterns track with them. They directly informed the predictor selection for the predictive model that anchors this capstone — but description alone cannot explain *why* some counties perform above or below what their structural conditions predict. That gap is what the model and case studies take up.
-
-<div class="callout">
-<strong>Descriptive Research Questions</strong>
-(1) Where are disparities in voter turnout most concentrated across the five Midwest states? (2) How do observed patterns align with demographic disparities and voting barriers?
-</div>
 
 ---
 
@@ -332,37 +325,29 @@ function showState(state, btn) {
 
 ## What the Descriptive Analysis Found
 
-Across all five states, four demographic factors consistently differentiated low from high-turnout counties:
+Across all five states, educational attainment was the most consistently large demographic difference between low and high-turnout counties. For every state, low-turnout counties had a much higher proportion of residents with just a high school degree or no high school degree at all. Conversely, high-turnout counties in all states had much higher levels of residents with either a bachelor's or a graduate degree.
 
-**Educational attainment** was the most consistently large demographic difference in every state. For every state, low-turnout counties had a much higher proportion of residents with just a high school degree or no high school degree at all. Conversely, high-turnout counties in all states had much higher levels of residents with either a bachelor's or a graduate degree. These findings are in line with current theories of political participation that find educational attainment is a strong predictor of political participation (Kim, 2023; Leighley & Nagler, 2013).
+While not as uniformly pronounced as education, racial composition was also a large differentiating factor between low and high-turnout counties — though patterns did vary. Generally, low-turnout counties had higher shares of Black residents, while high-turnout counties had more white residents. Additionally, some states, such as Wisconsin, had low-turnout counties that had a much higher proportion of Alaska Native/American Indian residents. Another outlier was Ohio, which had much less pronounced racial differences — where low-turnout counties had higher shares of white and Black residents and high-turnout counties averaged more Asian American residents.
 
-**Racial composition** was also a large differentiating factor between low and high-turnout counties, though patterns varied by state. Generally, low-turnout counties had higher shares of Black residents while high-turnout counties had more white residents. Wisconsin showed a distinct pattern, with low-turnout counties having a much higher proportion of American Indian/Alaska Native residents. Ohio was a notable exception with less pronounced racial differences overall. These patterns are consistent with documented racial turnout disparities (Morris & Grange, 2024; Barber & Holbein, 2022), and suggest that areas with higher rates of marginalized racial groups may be affected by broader structural conditions that limit turnout — such as polling place closures and stricter voter identification laws that have a disproportionate impact on racially marginalized voters (Hajnal et al., 2017).
+Access to technology also appeared as a key differentiator across most states. Looking at Ohio in particular, high-turnout counties had much higher averages of households with internet and computers, even more of a pronounced difference than race/ethnicity.
 
-**Technology access** — specifically household internet and computer access — appeared as a key differentiator across most states. Looking at Ohio in particular, high-turnout counties had much higher averages of households with internet and computers, even more of a pronounced difference than race/ethnicity. This is consistent with resource-based theories of political participation and likely reflects both financial barriers and the increasing role of online voter registration and information access.
-
-**Disability status** was a smaller but consistent differentiator, with low-turnout counties averaging higher rates of residents with disabilities across all five states. This may reflect barriers related to accessibility, such as transportation to polling sites or disability-inclusive access to polling locations (Schur et al., 2015; U.S. Vote Foundation, 2024).
-
-Additionally, in Wisconsin and Illinois in particular — and to a lesser extent Indiana and Michigan — **place of origin** differed, with low-turnout counties having higher rates of residents born in-state while high-turnout counties had higher rates of residents born out of state. This likely reflects patterns of migration and the clustering of out-of-state residents in more urban, higher-education areas.
-
-<div class="callout finding">
-<strong>The Gap This Analysis Cannot Fill</strong>
-Descriptive analysis identifies <em>what</em> demographic patterns are associated with low turnout — but it cannot explain why some counties perform better or worse than their demographics predict. Two counties with identical demographic profiles can have very different turnout rates. Understanding that variation requires moving beyond description to prediction — which is the purpose of the modeling phase.
-</div>
+The final consistent demographic differences were in disability status. While less pronounced than most of the previous trends, low-turnout counties had consistently higher rates of residents with disabilities. Additionally, in Wisconsin and Illinois in particular, and to a lesser extent Indiana and Michigan, low-turnout counties had much higher rates of residents born in-state, while high-turnout counties had higher rates of residents born out-of-state.
 
 ---
 
 ## From Description to Prediction
 
-The descriptive findings establish that education, race, internet access, and disability status are the strongest demographic correlates of county-level turnout variation across the Midwest. These findings directly informed the predictor selection for the predictive model. The expanded model also accounts for state-level institutional context — registration rules, ballot access, and party competition — through state fixed effects, which adjust for the kind of cross-state differences visible in the choropleths above.
+The descriptive findings establish that education, race, internet access, and disability status are the strongest demographic correlates of county-level turnout variation across the Midwest. These findings directly informed the predictor selection for the model. The expanded model also accounts for state-level institutional context via state fixed effects, which adjust for the cross-state turnout differences seen in the choropleths above.
 
-The predictive model takes the next step: rather than asking which demographics are associated with low turnout, it asks which counties perform *above or below what their demographics predict* — and uses those residuals to identify cases for qualitative investigation.
+The predictive model takes the next step. After asking which demographics are associated with low turnout, the next question is which counties perform above or below what their demographics predict. From there, how counties' actual turnout compared to their predicted turnout will be used to identify cases for qualitative investigation.
 
-- **[The Model →](model.html)** Full model specification, results, and residual distribution
+- **[Methodology →](model.html)** Full model specification, results, and residual distribution
 - **[Case Studies →](case-studies.html)** Qualitative analysis of six selected counties
 - **[Synthesis →](synthesis.html)** Cross-case patterns and implications
+- **[Explore →](explore.html)** Interactive county-level data explorer
 
 ---
 
 <div class="site-footer">
-Data: U.S. Census Bureau American Community Survey (2024 5-Year Estimates); CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). Visualizations produced in R with ggplot2 and tigris. Analysis conducted as part of a quantitative needs assessment for the Chicago Lawyers' Committee for Civil Rights.
+Data: U.S. Census Bureau American Community Survey (2024 5-Year Estimates); CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). Visualizations produced in R with ggplot2 and tigris.
 </div>

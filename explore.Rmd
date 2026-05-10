@@ -380,6 +380,13 @@ Counties outlined in gray are the six case studies. Data: ACS 2020 5-Year Estima
 
 ---
 
+- **[Background →](descriptive.html)** Descriptive findings: state choropleths and demographic gap analysis
+- **[Methodology →](model.html)** Full model specification, results, and residual distribution
+- **[Case Studies →](case-studies.html)** Qualitative analysis of six selected counties
+- **[Synthesis →](synthesis.html)** Cross-case patterns and implications
+
+---
+
 <div class="site-footer">
 Interactive map built with R and <a href="https://rstudio.github.io/leaflet/">Leaflet for R</a>. Choropleth boundaries from the U.S. Census Bureau (TIGER/Line, 2023). Full analysis source on <a href="https://github.com/Smlfberry/midwestturnout">GitHub</a>.
 </div>

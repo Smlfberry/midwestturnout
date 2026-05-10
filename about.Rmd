@@ -46,7 +46,7 @@ The work builds on practicum research conducted with the **Chicago Lawyers' Comm
 | WI Elections Commission | 2024 general election vote totals |
 | MI Department of State | 2024 general election vote totals |
 
-All data processing and analysis were conducted in **R** using the `tidyverse`, `tidycensus`, `broom`, and `kableExtra` packages. Interactive visualizations use `shiny`, `plotly`, and `shinylive`.
+All data processing, analysis, and visualization were conducted in **R**.
 
 Full replication code is available on [GitHub →](https://github.com/Smlfberry/midwestturnout).
 
@@ -64,12 +64,11 @@ A full README with reproduction instructions, file structure, and package requir
 
 ---
 
-
-<span class="section-label">Acknowledgments</span>
-
-## Acknowledgments
-
-This project was developed in partial fulfillment of practicum requirements at the University of Chicago Crown Family School of Social Work, Policy, and Practice. The author thanks [advisor name] for guidance on research design, and the Chicago Lawyers' Committee for Civil Rights for the opportunity to conduct applied voting rights research.
+- **[Background →](descriptive.html)** Descriptive findings: state choropleths and demographic gap analysis
+- **[Methodology →](model.html)** Full model specification, results, and residual distribution
+- **[Case Studies →](case-studies.html)** Qualitative analysis of six selected counties
+- **[Synthesis →](synthesis.html)** Cross-case patterns and implications
+- **[Explore →](explore.html)** Interactive county-level data explorer
 
 ---
 

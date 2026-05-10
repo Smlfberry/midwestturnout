@@ -161,7 +161,7 @@ fit_table <- bind_rows(
 
 This analysis uses **Ordinary Least Squares (OLS) regression** to model county-level voter turnout rates as a function of structural predictors from the American Community Survey. The unit of analysis is the county; the outcome variable is the county-level turnout rate calculated using CVAP denominators.
 
-Rather than relying on a single specification, the analysis builds up four nested models. Each adds variables to its predecessor, and comparing across them shows which findings are robust and which are artifacts of model specification.
+Instead of a single specification, the analysis builds up four nested models, each adding variables to the one prior. This progression shows how fit improves with each addition and confirms that Model 4 — which is most comprehensive — is the appropriate basis for case selection.
 
 ```{r fit-progression, fig.width=11, fig.height=4.8, fig.cap="Adjusted R-squared and RMSE across the four nested specifications. Model 3 adds state fixed effects; Model 4 is the preferred specification used for case selection."}
 fit_plot_df <- fit_table %>%
@@ -274,16 +274,14 @@ In each model, $i$ indexes counties and $\varepsilon_i$ is the performance gap �
 
 <div class="callout">
 <strong>Why OLS?</strong>
-The goal is not prediction accuracy per se, but residual interpretation. OLS produces easily interpretable residuals in the original units (percentage points of turnout) and makes assumptions transparent. Comparing residuals across nested specifications surfaces which county-level outliers persist as the model becomes more comprehensive — those persistent outliers are the strongest candidates for qualitative investigation.
+Here, the goal is not prediction accuracy but using residuals to inform case selection. OLS produces easily interpretable residuals — stark outliers are the strongest candidates for qualitative investigation.
 </div>
 
 ---
 
-<span class="section-label">Model Results</span>
-
 ## Fit Statistics
 
-The largest fit gain comes from adding **state fixed effects** (Model 2 → Model 3): adjusted R² rises from roughly 0.54 to 0.81, indicating that state-level institutional context absorbs much of the unexplained variance. Adding **age structure and corrected race variables** (Model 3 → Model 4) yields a further gain to roughly 0.86 — meaningful but smaller, suggesting that state context is the single most important addition. The progression also confirms why Model 4 is the preferred specification for case selection: outliers identified under Model 4 have already been adjusted for both state context and demographic detail.
+The largest fit gain comes from adding state fixed effects (Model 2 → Model 3): adjusted R² rises from roughly 0.54 to 0.81, indicating that state-level context absorbs much of the unexplained variance. Adding age structure and additional race variables (Model 3 → Model 4) yields a further gain to roughly 0.86, certainly smaller but still meaningful. Together, this model progression shows why Model 4 is the preferred specification.
 
 ```{r fit-table}
 
@@ -503,30 +501,27 @@ plot_ly(height = 440) %>%
 
 ---
 
-<span class="section-label">Technical Estimates</span>
-
 ## Coefficient Estimates — Model 4
 
 ```{r coef-table}
 coef_df %>%
-  mutate(`10-pt Effect (pp)` = estimate_10pp) %>%
+  mutate(
+    `10-pt Effect (pp)` = estimate_10pp,
+    `p-value` = ifelse(p.value < 0.001, "<0.001", formatC(round(p.value, 3), format = "f", digits = 3))
+  ) %>%
   select(Predictor = term, Category = category,
-         `10-pt Effect (pp)`, Estimate = estimate,
-         `Std. Error` = std.error, `95% CI Low` = conf.low,
-         `95% CI High` = conf.high, `p-value` = p.value, ` ` = sig) %>%
-  kable(digits = c(0, 0, 2, 4, 4, 4, 4, 4, 0),
-        align = c("l","l","r","r","r","r","r","r","l"),
+         `10-pt Effect (pp)`, `p-value`) %>%
+  kable(digits = c(0, 0, 2, 0),
+        align = c("l","l","r","r"),
         caption = "Model 4 OLS coefficients (state fixed effects suppressed for readability). Outcome: county-level turnout rate (CVAP denominator). N = counties across IL, IN, OH, WI, MI.") %>%
   kable_styling(bootstrap_options = c("striped","hover"),
                 full_width = TRUE, font_size = 13) %>%
   column_spec(1, bold = FALSE) %>%
-  footnote(general = "The 10-point effect column rescales each coefficient to the expected percentage-point change in turnout for a 10-point increase in the predictor. † p < .10  * p < .05  ** p < .01  *** p < .001",
+  footnote(general = "The 10-point effect column shows the expected change in county turnout rate for a 10-point increase in each predictor. For example, a −6.6 pp effect for % No High School Diploma means that counties with 10 percentage points more residents without a high school diploma tend to have turnout 6.6 points lower, holding all other predictors constant.",
            general_title = "Note: ")
 ```
 
 ---
-
-<span class="section-label">Case Selection</span>
 
 ## Selected Counties: Full Statistics — Model 4
 
@@ -563,17 +558,20 @@ selected_sorted %>%
   row_spec(which(selected_sorted$residual4 < -0.01), background = "#EEEDFE")
 ```
 
-The selection pairs **one extreme + one moderate** county in each tail (over- and under-performers) so the qualitative analysis can show the pattern holds beyond just the most extreme outliers. The two as-expected counties — Rock Island (IL) and Clark (IN) — sit adjacent to the median rank with residuals near zero, providing clean baselines where Model 4 predicts almost exactly right.
+The selection pairs **one extreme + one moderate** county in each tail (over- and under-performers) so the qualitative analysis can analyze beyond simply the most extreme outliers. The two as-expected counties, Rock Island (IL) and Clark (IN), have residuals near zero. This provides a clean baseline where Model 4 predicts the turnout almost exactly.
 
 ---
 
 <div class="callout">
 <strong>Limitations</strong>
-This model is cross-sectional and observational. Coefficients should not be interpreted as causal effects. OLS assumes linearity, homoscedasticity, and no perfect multicollinearity; these assumptions are assessed but not guaranteed to hold across all counties. Model 4 includes state fixed effects but not interactions between state and substantive predictors — the marginal effect of each predictor is constrained to be the same in every state. Some predictors (e.g., percent Hispanic, percent limited English) attenuate to non-significance in the full model, likely because related variables (state context, age structure) absorb shared variance; this is expected in nested-spec progressions.
+This model is cross-sectional and observational. As such, it is important to note that the coefficients should not be interpreted as causal effects.
 </div>
 
 ---
 
-<div class="site-footer">
-Model estimated in R using base `lm()`. Confidence intervals via `broom::tidy()`. Visualizations with `ggplot2`. Full replication code on <a href="https://github.com/[your-repo]">GitHub</a>.
-</div>
+- **[Background →](descriptive.html)** Descriptive findings: state choropleths and demographic gap analysis
+- **[Case Studies →](case-studies.html)** Qualitative analysis of six selected counties
+- **[Synthesis →](synthesis.html)** Cross-case patterns and implications
+- **[Explore →](explore.html)** Interactive county-level data explorer
+
+---

@@ -1,6 +1,10 @@
 .Rproj.user
 .Rhistory
 .RData
+.RDataTmp
 .Ruserdata
-data/
-data/
+.DS_Store
+.claude/
+index_cache/
+index_files/
+PROJECT_NOTES.md

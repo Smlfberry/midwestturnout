@@ -30,16 +30,9 @@ df_pct <- readRDS(canonical_path)
 <div class="hero-grid hero-grid-text-only">
 <div class="hero-text">
 
-<span class="kicker">Quantitative Analysis · Midwest · 2024 General Election</span>
-
 # What Demographics Can — and Can't — Explain
 
-<p class="dek">A predictive model of county-level turnout across five Midwest states identifies counties that vote significantly above or below their demographic expectations. Six cases anchor a mixed-methods investigation into what the data alone cannot capture.</p>
-
-<p class="byline">
-Sam Berry &nbsp;·&nbsp; University of Chicago &nbsp;·&nbsp; 2026<br>
-Practicum research in partnership with the Chicago Lawyers' Committee for Civil Rights
-</p>
+<p class="dek">A predictive model of county-level turnout across five Midwestern states in the 2024 presidential election identifies counties that vote significantly above or below their demographic expectations. Six cases anchor a mixed-methods investigation into what the data alone cannot capture.</p>
 
 </div>
 </div>
@@ -190,26 +183,15 @@ ggplot() +
 
 ---
 
-<span class="section-label">Research Design</span>
-
 ## What This Project Does
 
-This project extends a descriptive needs assessment conducted for the Chicago Lawyers' Committee for Civil Rights (CLC) as part of their Midwest regional expansion. The prior analysis documented demographic patterns associated with low voter turnout across five Midwestern states — finding consistent gaps by education, race, internet access, and disability status. This capstone takes the next step: moving from descriptive patterns to a predictive model that identifies counties performing above or below their structural expectations, then investigating why through qualitative case analysis.
+This project builds on a descriptive needs assessment conducted for the Chicago Lawyers' Committee for Civil Rights (CLC) Midwest Voting Rights Program as part of their Midwest regional expansion. This analysis included identifying demographic patterns associated with low voter turnout across five Midwestern states, finding consistent gaps by education, race, internet access, and disability status. This project moves from identifying descriptive patterns to building a predictive model that identifies counties performing above or below what their demographic data would suggest, then investigating why through qualitative case analysis.
 
-County-level analysis offers a complementary lens to individual survey data — it captures the aggregate civic environment in which participation decisions are made, and surfaces variation that individual-level models can obscure.
+To do so, this project builds four nested OLS regression models predicting county-level turnout rates in the 2024 general election across Illinois, Indiana, Ohio, Wisconsin, and Michigan. Model 1 uses five structural predictors drawn from the American Community Survey. Model 2 adds racial composition and lower-tail educational attainment, informed by the prior CLC descriptive findings. Model 3 introduces state fixed effects, absorbing state-level institutional context like registration rules, ballot access, and voter ID requirements. Model 4 — the most comprehensive and the one used to identify case studies — adds Hispanic, American Indian / Alaska Native, and age-structure variables. The gap between what Model 4 predicts for a county and its actual turnout — called the residual — identifies counties that perform better or worse than their demographic conditions would suggest.
 
-This project builds four nested OLS regression models predicting county-level turnout rates in the 2024 general election across Illinois, Indiana, Ohio, Wisconsin, and Michigan. Model 1 uses five structural predictors drawn from the American Community Survey. Model 2 adds racial composition and lower-tail educational attainment as a theoretically motivated robustness check informed by the prior CLC descriptive findings. Model 3 introduces state fixed effects, adjusting case identification for state-level institutional context. Model 4 — the comprehensive specification — adds Hispanic, American Indian / Alaska Native, and age-structure variables. Residuals from Model 4 identify counties that perform *better or worse than their structural conditions predict*; comparing across all four models distinguishes robust outliers from those whose extremity reflects model misspecification.
-
-Those residuals are the core analytic object. Counties with the largest positive residuals are "over-performers": something beyond their demographics is driving participation. Counties with the largest negative residuals are "under-performers": something is suppressing turnout that the model cannot explain. Counties closest to zero are the "as-expected" cases.
-
-<div class="callout">
-<strong>Why Residuals?</strong>
-Turnout rates alone can be misleading. A county with 65% turnout might be underperforming if its demographics predict 72%, while a county with 58% might be over-performing given its structural constraints. Residual analysis shifts the question from <em>how much</em> to <em>relative to what</em>.
-</div>
+Counties with the largest positive residuals are 'over-performers': something beyond the demographic data captured in the model is driving participation. Counties with the largest negative residuals are 'under-performers': something is suppressing turnout that the model cannot explain. Counties closest to zero are the 'as-expected' cases.
 
 ---
-
-<span class="section-label">The Pattern</span>
 
 ## Above and Below the Line
 
@@ -370,9 +352,7 @@ ggplot(df_hero, aes(x = predicted4, y = turnout_rate)) +
 
 ---
 
-<span class="section-label">Case Selection</span>
-
-## The Six Counties
+## Case Selection
 
 Two counties from each tier — over-performers, as-expected, and under-performers — were selected for in-depth qualitative analysis. Selection draws from Model 4 residuals (the comprehensive specification) and pairs one extreme case with one moderate case in each tail, so the analysis holds beyond just the most extreme outliers. The two as-expected counties sit at the median rank with residuals near zero — clean baselines where the model predicts almost exactly right.
 
@@ -430,17 +410,13 @@ Two counties from each tier — over-performers, as-expected, and under-performe
 
 ---
 
-<span class="section-label">Data & Methods</span>
-
 ## Data Sources
 
 <span class="method-tag">ACS 5-Year</span>
 <span class="method-tag">CVAP Denominators</span>
 <span class="method-tag">State Election Commissions</span>
 
-Turnout rates are calculated using **Citizen Voting Age Population (CVAP)** denominators from ACS estimates, consistent with best practices in voting rights research. Using CVAP rather than total population or VAP ensures the denominator reflects the legally eligible electorate.
-
-Structural predictors are drawn from the **2024 ACS 5-Year estimates**:
+Turnout rates are calculated using **Citizen Voting Age Population (CVAP)** denominators from ACS estimates. Demographic predictors are drawn from the **2024 ACS 5-Year estimates**:
 
 | Predictor | ACS Table | Rationale |
 |-----------|-----------|-----------|
@@ -456,23 +432,20 @@ Structural predictors are drawn from the **2024 ACS 5-Year estimates**:
 | % Age 18–24 | B01001 | Young adult / college-age share, lower turnout propensity |
 | % Age 65+ | B01001 | Older population, higher turnout propensity |
 
-The full Model 4 specification additionally includes state fixed effects to adjust for state-level institutional context (registration rules, ballot access, election administration). All ACS data were retrieved using the `tidycensus` R package. County GEOID codes are used as the merge key across all datasets.
+The full Model 4 specification additionally includes state fixed effects to adjust for state-level institutional context (registration rules, ballot access, election administration). All ACS data were retrieved using the `tidycensus` R package.
 
 ---
 
-<span class="section-label">Navigation</span>
-
 ## Explore This Project
 
-- **[Background →](descriptive.html)** Prior CLC descriptive findings: state choropleths and demographic gap analysis across all five states.
-- **[The Model →](model.html)** Model specification, coefficient tables, model fit, and residual distribution for both models.
-- **[Case Studies →](case-studies.html)** Qualitative deep-dive on each of the six selected counties.
-- **[Synthesis →](synthesis.html)** Cross-case patterns, institutional access argument, and implications for CLC expansion.
-- **[Explore the Data →](explore.html)** Interactive tools for exploring the full county-level dataset.
+- **[Background →](descriptive.html)** Descriptive findings: state choropleths and demographic gap analysis
+- **[Methodology →](model.html)** Full model specification, results, and residual distribution
+- **[Case Studies →](case-studies.html)** Qualitative analysis of six selected counties
+- **[Synthesis →](synthesis.html)** Cross-case patterns and implications
+- **[Explore →](explore.html)** Interactive county-level data explorer
 
 ---
 
 <div class="site-footer">
-Data: U.S. Census Bureau American Community Survey (2024 5-Year Estimates); CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). Analysis conducted in R. Code available on <a href="https://github.com/Smlfberry/midwestturnout">GitHub</a>.<br>
-Prepared in partial fulfillment of capstone requirements, University of Chicago Crown Family School of Social Work, Policy, and Practice. Developed in partnership with the Chicago Lawyers' Committee for Civil Rights.
+Data: U.S. Census Bureau American Community Survey (2024 5-Year Estimates); CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). Analysis conducted in R. Code available on <a href="https://github.com/Smlfberry/midwestturnout">GitHub</a>.
 </div>

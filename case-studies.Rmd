@@ -36,9 +36,9 @@ r_gogebic    <- county_row("Gogebic",     "Michigan")
 
 # Six Counties, Three Stories
 
-The six case-study counties were drawn from Model 4 residuals — the comprehensive specification — and represent three distinct patterns relative to model predictions. **Over-performers** suggest something beyond demographics is mobilizing voters: institutional access, civic infrastructure, or political context. **As-expected** counties serve as baselines where structural conditions straightforwardly predict participation. **Under-performers** raise questions about suppression, disengagement, or barriers not captured by the model.
+The six case-study counties were drawn from Model 4 residuals and represent three distinct patterns relative to model predictions. Over-performers suggest something beyond demographics is mobilizing voters, such as civic infrastructure or political context. As-expected counties serve as baselines where structural conditions accurately predict turnout. Under-performers raise questions about possible voter suppression, disengagement, or other barriers not captured by the model.
 
-In each tail, one county represents the most extreme case and a second the more moderate outlier — letting the analysis show the pattern holds beyond the furthest tails. The two as-expected counties sit adjacent to the median rank with residuals near zero.
+In each tail, one county represents an extreme case and the second a more moderate outlier — ensuring the analysis is not limited to only the most extreme cases.
 
 ---
 
@@ -147,6 +147,8 @@ ggplot(case_data, aes(y = county_label)) +
 ---
 
 ## County Profiles
+
+Click on each county profile to read the full analysis.
 
 <style>
 .county-expand-table {
@@ -271,7 +273,7 @@ ggplot(case_data, aes(y = county_label)) +
 <td colspan="7">
 <div class="expand-body">
 <p>Jasper County, Illinois, has a turnout rate of 77.7% compared to a predicted rate of 66.3%, a +11.4 percentage point gap — making it the single most overperforming county in the dataset. Despite its overperformance in turnout, no formal mobilizing institution stands out. A Republican-dominated county, there were no identifiable GOTV organizations and no documented voter-mobilization initiatives leading up to the 2024 presidential election.</p>
-<p>With a population of approximately 9,300, Jasper County may reflect a small, socially embedded community that the literature often links to elevated turnout norms and social pressure. In small communities, voting is socially visible: neighbors know whether their neighbors voted, religious institutions disseminate election information and apply normative pressure, and the perceived consequence of any individual vote is amplified by smaller electorates (Putnam, 2008;<sup>1</sup> Gerber, Green &amp; Larimer, 2008<sup>2</sup>).</p>
+<p>With a population of approximately 9,300, Jasper County may reflect a small, socially embedded community that the literature often links to elevated turnout norms and social pressure. In small communities, voting is socially visible: neighbors know whether their neighbors voted and the perceived consequence of any individual vote is amplified by smaller electorates (Putnam, 2008;<sup>1</sup> Gerber, Green &amp; Larimer, 2008<sup>2</sup>).</p>
 <p>Jasper also has an interesting profile economically, being in a state of relative economic momentum. While it had modest economic growth during 2024 and an increased poverty rate, inflation-adjusted GDP grew approximately 29% between 2018 and 2022, dramatically outpacing Illinois's 1% statewide growth rate over the same period. Local development organizations such as Jasper County Economic Development Inc. (JEDI), established in 2012, indicate a level of community coordination and planning in economic growth and local development. The strong Republican identification of Jasper may also contribute to higher participation in a county with a relatively cohesive local political environment.</p>
 </div>
 </td>
@@ -292,8 +294,8 @@ ggplot(case_data, aes(y = county_label)) +
 <p>Martin County, Indiana has a turnout rate of 66.1% compared to a predicted rate of 57.4%, a +8.7 percentage point gap.</p>
 <p>Similar to Jasper, Martin County did not have any obvious voter mobilization organizations or efforts leading up to the 2024 presidential election. While the county's overperformance does not appear to stem from formal voter outreach efforts, it may instead reflect a compositional effect tied to the local economy and workforce structure.</p>
 <p>Here, the economic activity is much more pronounced than in Jasper. Martin County is home to The Naval Surface Warfare Center Crane Division (NSWC Crane), which employs roughly 6,500 federal employees and contractors, including over 3,000 STEM workers and approximately 1,000 engineers. This base has hired more than 1,300 personnel in the last three years alone. Additionally, the average wages in Martin County are approximately 6% above the national average — atypical for a rural county and reflective of Crane's concentration of high-skill federal employment. Since 2024, Martin has seen noticeable increases in both median household income and median property value — despite a stable employment rate from 2023 to 2024.</p>
-<p>In a county of fewer than 10,000 residents, this large federal workforce can drastically reshape who actually lives there. The model sees Martin as a rural Indiana county, despite the fact that the workforce composition resembles a federal research community situated in a rural setting. Research on public-sector employment suggests that government employees are generally more politically active and civically engaged than the broader population — especially in professional or technical occupations like the NSWC Crane (Cooper &amp; Reggie, 2025).<sup>3</sup> The model's standard demographic predictors — education, internet access, poverty, age — do not capture the occupational civic culture that federal professional employment appears to generate independently of those characteristics</p>
-<p>Local development organizations such as the Martin County Alliance reinforce this picture of community stability and coordination, and rising property values (approximately 6% in 2023–2024) signal continued economic confidence. Taken together, Crane's workforce concentration and the surrounding civic-economic infrastructure produce turnout levels that exceed what the county's rural geography and standard demographic measures would otherwise predict.</p>
+<p>In a county of fewer than 10,000 residents, this large federal workforce can drastically reshape who actually lives there. The model sees Martin as a rural Indiana county, despite the fact that the workforce composition resembles a federal research community situated in a rural setting. Research on public-sector employment suggests that government employees are generally more politically active and civically engaged than the broader population — especially in professional or technical occupations like the NSWC Crane (Cooper &amp; Reggie, 2025).<sup>3</sup> The model's standard demographic predictors — education, internet access, poverty, age — do not capture the civic culture that federal professional employment may generate independently of those characteristics</p>
+<p>Local development organizations such as the Martin County Alliance reinforce this picture of community stability, and rising property values (approximately 6% in 2023–2024) signal continued economic growth. Taken together, Crane's workforce concentration and the surrounding civic infrastructure produce turnout levels that exceed what the county's rural, standard demographic measures would otherwise predict.</p>
 </div>
 </td>
 </tr>
@@ -315,10 +317,10 @@ ggplot(case_data, aes(y = county_label)) +
 <tr class="expand-row middle" id="expand-rockisland">
 <td colspan="7">
 <div class="expand-body">
-<p>Rock Island County, Illinois, has a turnout rate of 61.1% compared to a predicted rate of 61.0% — essentially a zero residual. Here, Rock Island serves primarily as a baseline comparison case, with the central analytic question being why the model predicts turnout so accurately.</p>
-<p>Part of the Quad Cities metropolitan area along the Mississippi River, Rock Island is an urban-industrial county with approximately 145,000 residents. The county is demographically diverse, with substantial Latino and Black populations, and maintains a mixed economy that includes manufacturing, logistics, healthcare, and the Rock Island Arsenal, a major federal Army installation. Unlike Martin County, however, the federal workforce does not dominate the county's economic composition, instead serving as one part of a broader economy. Historically, the county has leaned Democratic, but has remained competitive in recent cycles.</p>
-<p>Rock Island does not appear to contain unusual mobilizing or suppressive dynamics. Illinois maintains a moderately accessible voting environment, and there are no clearly identifiable civic or economic features that would be expected to elevate or depress turnout beyond what the model already captures. Instead, the county reflects a relatively balanced combination of industrial, urban, racial, and institutional characteristics that align with the model's underlying predictors.</p>
-<p>Overall, this makes Rock Island important precisely because it does not stand out. Despite its relatively diverse and complex demographic and economic composition, Rock Island performed almost exactly as the model predicted, suggesting the model performs well in capturing turnout dynamics in counties that are neither overwhelmingly rural nor heavily metropolitan.</p>
+<p>Rock Island County, Illinois, has a turnout rate of 61.1% compared to a predicted rate of 61.0% — essentially a zero residual. Here, Rock Island serves primarily as a baseline comparison case. So, why does the model predict turnout so accurately here?</p>
+<p>Part of the Quad Cities metropolitan area along the Mississippi River, Rock Island is an urban-industrial county with approximately 145,000 residents. The county is demographically diverse, with substantial Latino and Black populations. It has a balanced economy, including manufacturing, logistics, healthcare, and the Rock Island Arsenal, a major federal Army installation. Unlike Martin County, however, the federal workforce does not dominate the county's economic composition, instead serving as one part of a more balanced economy. Historically, the county has leaned Democratic, but has remained competitive in recent cycles.</p>
+<p>Rock Island does not appear to contain unusual mobilizing or suppressive dynamics. Illinois has a moderately accessible voting environment, and there are no clearly identifiable civic or economic factors that would be expected to alter turnout beyond what the model captures. Instead, the county reflects a relatively balanced combination of industrial, urban, racial, and institutional characteristics that align with the model's underlying predictors.</p>
+<p>Overall, this makes Rock Island important because it does not stand out. Despite its relatively diverse and complex demographic and economic composition, Rock Island performed almost exactly as the model predicted, suggesting the model performs well in capturing turnout dynamics in counties that are neither overwhelmingly rural nor heavily metropolitan.</p>
 </div>
 </td>
 </tr>
@@ -335,9 +337,9 @@ ggplot(case_data, aes(y = county_label)) +
 <tr class="expand-row middle" id="expand-rusk">
 <td colspan="7">
 <div class="expand-body">
-<p>Rusk County, Wisconsin, has a turnout rate of 73.6% compared to a predicted rate of 73.6% — a residual of essentially zero. Like Rock Island, the analytic question for Rusk is why the model predicts it so cleanly.</p>
-<p>Rusk is a small, predominantly rural county of approximately 14,000 residents in Wisconsin. It is overwhelmingly white, has lower median income levels than the state average, and is economically dependent on agriculture and light manufacturing. Wisconsin's accessible voting environment applies uniformly, and Rusk shows no unique local civic infrastructure or mobilization efforts.</p>
-<p>Rusk's near-zero residual indicates that the model captures rural counties cleanly when neither unusual civic capacity nor large-scale federal employers reshape the county's composition. It is a quiet baseline case — showing how the model's structural predictions translate directly into observed turnout when the surrounding conditions are typical for the region.</p>
+<p>Rusk County, Wisconsin, has a turnout rate of 73.6% compared to a predicted rate of 73.6% — a residual of essentially zero. Like Rock Island, the question for Rusk is why the model predicts it so well.</p>
+<p>Rusk is a small, mainly rural county of approximately 14,000 residents in Wisconsin. It is overwhelmingly white, has lower median income levels than the state average, and is quite economically dependent on agriculture and light manufacturing. Rusk shows no unique local civic infrastructure or mobilization efforts.</p>
+<p>Rusk's near-zero residual indicates that the model captures rural counties well when neither unusual civic capacity nor large-scale federal employers reshape the county's composition. It is a quiet baseline case — showing how the model's structural predictions translate well to observed turnout when the surrounding conditions are typical for the region.</p>
 </div>
 </td>
 </tr>
@@ -359,8 +361,8 @@ ggplot(case_data, aes(y = county_label)) +
 <tr class="expand-row under" id="expand-lawrence">
 <td colspan="7">
 <div class="expand-body">
-<p>Lawrence County, Illinois has a turnout rate of 50.9% compared to a predicted rate of 57.5%, a −6.6 percentage point underperformance. Despite low income and modest educational attainment, the county has a high homeownership rate and very low median property values — both of which are often associated with higher turnout. The county also operates one of only eight Foreign Trade Zones in Illinois, indicating some degree of institutional economic infrastructure.</p>
-<p>Still, there is little evidence of local civic or mobilizing infrastructure that might be powering the higher participation. There were no documented GOTV organizations during the 2024 election, no prominent civic associations, and little evidence of organized voter mobilization. While Lawrence's strongly Republican political environment could provide some partisan mobilization, there is no clear organizational or institutional channel connecting the county's relatively stable population structure to higher turnout.</p>
+<p>Lawrence County, Illinois has a turnout rate of 50.9% compared to a predicted rate of 57.5%, a −6.6 percentage point underperformance. Despite low income and modest educational attainment, the county has a high homeownership rate, which is often associated with higher turnout, while its very low median property values often suggest low turnout. The county also operates one of only eight Foreign Trade Zones in Illinois, indicating some degree of institutional economic infrastructure.</p>
+<p>Still, there is little evidence of local civic or mobilizing infrastructure that might be powering the higher participation. There were no documented GOTV organizations during the 2024 election, no prominent civic associations, and little evidence of organized voter mobilization. While Lawrence's strongly Republican political environment could provide some partisan mobilization, there are no clear organizational or institutional factors connecting the county to higher turnout.</p>
 <p>Although Lawrence shares some characteristics with counties like Jasper County — including a smaller population size, high homeownership, and a strongly Republican political environment — the county underperforms relative to expectations. The divergence between the two cases suggests that structural characteristics alone are insufficient to explain turnout variation and that unobserved local social or civic dynamics not reflected in available data or county websites may also shape voter participation in ways that are difficult to directly measure.</p>
 </div>
 </td>
@@ -406,6 +408,13 @@ function toggleRow(id) {
   }
 }
 </script>
+
+---
+
+- **[Background →](descriptive.html)** Descriptive findings: state choropleths and demographic gap analysis
+- **[Methodology →](model.html)** Full model specification, results, and residual distribution
+- **[Synthesis →](synthesis.html)** Cross-case patterns and implications
+- **[Explore →](explore.html)** Interactive county-level data explorer
 
 ---
 

@@ -165,7 +165,7 @@ This project moved through three phases: a descriptive analysis of county-level 
 <div class="phase-card">
 <div class="phase-kicker">Phase Three</div>
 <div class="phase-title">Case studies</div>
-<p>Why do six counties defy their demographic predictions — and what does that reveal about local civic life?</p>
+<p>Why do some counties defy their demographic predictions ?</p>
 </div>
 </div>
 
@@ -178,20 +178,20 @@ The CLC descriptive analysis established the basic landscape. Across all five st
 
 The demographic correlates of these gaps were consistent across states. Educational attainment was the strongest and most uniform differentiator: low-turnout counties had substantially higher shares of residents with no high school diploma and only a high school degree, while high-turnout counties had much higher shares of college and graduate degree holders. Racial composition was also a persistent gap — low-turnout counties consistently had higher shares of Black residents and, in Wisconsin, American Indian and Alaska Native residents. Internet and computer access, disability status, and place of origin rounded out a picture of overlapping structural disadvantage concentrated in low-turnout areas.
 
-These patterns are descriptive, not causal. But they establish where the participation gaps are and who bears them — and they motivated the predictors included in the modeling phase.
+These patterns are descriptive, not causal. But they establish where the participation gaps are — and they motivated the predictors included in the modeling phase.
 
 ---
 
 <p class="phase-header">Phase Two</p>
 <p class="phase-subtitle">The Model: Quantifying Structural Predictions</p>
 
-The predictive modeling phase asked a more precise question: given a county's demographic and structural profile, what turnout rate would we expect? Four nested OLS specifications were estimated, each adding predictors to the previous. The preferred specification — Model 4 — includes twelve predictors covering education, race and ethnicity, age structure, internet access, poverty, and disability, plus state fixed effects. It explains approximately 86% of the variation in county-level turnout (Adjusted R² = 0.855, RMSE = 3.19 pp).
+The predictive modeling phase asked a more precise question: given a county's demographic and structural profile, what turnout rate would we expect? Four nested OLS specifications were estimated, each adding predictors to the previous. Model 4, which was used to identify case studies, includes twelve predictors covering education, race and ethnicity, age structure, internet access, poverty, and disability, plus state fixed effects. It explains approximately 86% of the variation in county-level turnout (Adjusted R² = 0.855, RMSE = 3.19 pp).
 
 The single largest fit improvement came from adding state fixed effects (Model 2 → Model 3: adjusted R² rose from 0.54 to 0.81). This confirms that state-level institutional context — registration rules, ballot access, early voting availability, voter ID requirements — absorbs a substantial share of the variance that demographics alone cannot explain. Adding age structure and expanded race variables in Model 4 yielded a further gain to 0.86, meaningful but smaller.
 
 Among the individual predictors, the strongest effects in Model 4 were lower-tail education (a 10-point increase in % no high school diploma is associated with a −6.6 pp change in turnout), young adult population (% age 18–24: −6.5 pp per 10-point increase), and poverty (% below poverty line: −3.4 pp). Higher education was the strongest positive predictor (% bachelor's or higher: +5.3 pp). Racial composition showed significant independent effects for % Black (−2.1 pp) and % American Indian/Alaska Native (−2.1 pp), while % Hispanic and % Limited English Proficiency attenuated to non-significance in the full model, likely because state context absorbs shared variance.
 
-The model's residuals — the gap between each county's actual and predicted turnout — are the primary analytic output. A well-calibrated model produces residuals approximately normally distributed around zero, and Model 4's distribution is close to that. The counties at the tails — those that persistently over- or underperform their demographic predictions — are the most analytically interesting, and were the basis for case study selection.
+A well-balanced model produces residuals approximately normally distributed around zero, and Model 4's distribution is close to that. The counties at the tails — those that extremely over- or underperform their demographic predictions — served as the basis for case study selection.
 
 ---
 
@@ -254,9 +254,9 @@ The three phases point toward a consistent conclusion: demographic and structura
 <p>Structural conditions set the floor. Whether a county reaches its structural potential appears to depend heavily on local organizational and social factors the ACS cannot measure.</p>
 </div>
 
-This has broader implications for how turnout inequality should be understood. Education, poverty, age structure, and state institutional environment shape what is possible. But whether a county reaches that potential appears to depend on local organizational and social factors — informal community networks, major institutional anchors, the presence or absence of active mobilization infrastructure. Gogebic and Lawrence both had structural conditions that should have produced higher turnout. Neither did. The difference lies in something surveys cannot capture.
+This has broader implications for how turnout inequality should be understood. Education, poverty, age structure, and state institutional environment help shape what is possible. Still, whether a county reaches that potential appears to depend on local organizational and social factors, such as major institutional anchors or the presence or absence of mobilization infrastructure. Gogebic and Lawrence both had structural conditions that should have produced higher turnout. Neither did. The difference lies in something survey data cannot capture.
 
-For organizations working on voting rights and civic participation, this suggests that demographic targeting alone — focusing on counties with low structural capacity — may miss counties where structural potential exists but is chronically underactivated. Identifying those counties requires exactly the kind of mixed-methods approach this project employed: quantitative baselines to locate the anomalies, qualitative research to explain them.
+For organizations working on voting rights and civic participation, this suggests that demographic targeting alone — focusing on counties with low structural capacity — may miss counties where structural potential exists but is underactivated. Identifying those counties requires exactly the kind of mixed-methods approach this project employed: quantitative baselines to locate the anomalies, qualitative research to try and explain them.
 
 ---
 
@@ -281,6 +281,13 @@ Several directions would strengthen and extend this analysis:
 - **Primary source qualitative research** — interviews with local election officials, nonprofit staff, and community organizers in the six case counties would allow the hypotheses developed here to be tested more rigorously
 - **Panel analysis** across multiple election cycles to assess whether residual patterns are stable or election-specific
 - **Civic infrastructure measurement** — incorporating organizational density data (nonprofit registrations, union membership rates, religious organization counts) as predictors would allow the informal social capital hypothesis to be tested quantitatively
+
+---
+
+- **[Background →](descriptive.html)** Descriptive findings: state choropleths and demographic gap analysis
+- **[Methodology →](model.html)** Full model specification, results, and residual distribution
+- **[Case Studies →](case-studies.html)** Qualitative analysis of six selected counties
+- **[Explore →](explore.html)** Interactive county-level data explorer
 
 ---
 

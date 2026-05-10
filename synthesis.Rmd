@@ -279,8 +279,8 @@ This analysis is observational and cross-sectional. The relationships identified
 Several directions would strengthen and extend this analysis:
 
 - **Primary source qualitative research** — interviews with local election officials, nonprofit staff, and community organizers in the six case counties would allow the hypotheses developed here to be tested more rigorously
-- **Panel analysis** across multiple election cycles to assess whether residual patterns are stable or election-specific
-- **Civic infrastructure measurement** — incorporating organizational density data (nonprofit registrations, union membership rates, religious organization counts) as predictors would allow the informal social capital hypothesis to be tested quantitatively
+- **Analysis across multiple election cycles** to assess whether residual patterns are stable or election-specific
+- **Civic infrastructure measurement** — incorporating some form of organizational density data such as nonprofit registrations, union memberships or religious organization counts as predictors would allow the informal social capital hypothesis to be tested formally
 
 ---
 

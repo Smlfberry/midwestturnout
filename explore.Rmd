@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Explore County-Level Turnout"
 output:
   html_document:
     theme: flatly
@@ -178,9 +178,6 @@ state_labs <- data.frame(
 )
 ```
 
-<span class="section-label">Interactive Explorer</span>
-
-# Explore County-Level Turnout
 
 All 437 counties across Illinois, Indiana, Ohio, Wisconsin, and Michigan — plotted three ways. Toggle between actual turnout, what the model predicts given each county's demographics, and the gap between them.
 
@@ -275,12 +272,12 @@ leaflet(map_sf, height = 580,
       weight = 2, color = "#1f2326", fillOpacity = 0.93, bringToFront = FALSE)
   ) %>%
 
-  # ── Case study county borders — amber, above fill ────────────────────────
+  # ── Case study county borders — gray, above fill ─────────────────────────
   addPolygons(
     data        = case_sf,
     fillColor   = "transparent",
     fillOpacity = 0,
-    color       = "#d4861e",
+    color       = "#888780",
     weight      = 3,
     opacity     = 1,
     options     = pathOptions(pane = "top_pane", interactive = FALSE)
@@ -378,26 +375,8 @@ leaflet(map_sf, height = 580,
 ```
 
 <p style="font-family:'IBM Plex Sans',sans-serif;font-size:0.82rem;color:#8a908d;margin-top:0.5rem;">
-Counties outlined in black are the six case studies. Data: ACS 2020 5-Year Estimates; State Election Commissions (IL, IN, OH, WI, MI); CVAP Special Tabulation. Predictions from Model 4 (12 predictors + state fixed effects).
+Counties outlined in gray are the six case studies. Data: ACS 2020 5-Year Estimates; State Election Commissions (IL, IN, OH, WI, MI); CVAP Special Tabulation. Predictions from Model 4 (12 predictors + state fixed effects).
 </p>
-
----
-
-## Reading the Residual Map
-
-<div class="callout finding">
-<strong>Why Residuals?</strong>
-The residual map is the core analytical contribution. After accounting for education, internet access, poverty, disability, limited English proficiency, racial composition, age structure, and state-level institutional context, some counties still turn out voters at rates far above or below what demographics predict. Those gaps are what this project investigates.
-</div>
-
-The residual for each county is the difference between its actual 2024 general election turnout rate (CVAP-based) and what Model 4 predicts given its demographic profile. A county 8 percentage points above the regression line has mobilization capacity that demographics alone do not explain — an election office, a civic organization, a culture of participation, or some other structural advantage.
-
-The two **over-performing case studies** (Jasper, IL; Martin, IN) sit at the extreme upper tail — they vote at rates 9–12 points higher than comparable counties. The two **under-performing case studies** (Lawrence, IL; Gogebic, MI) sit near the bottom, with turnout 7–9 points lower than their demographic peers. Rock Island, IL and Rusk, WI serve as near-expected anchors, falling within one point of the model's prediction.
-
-<div class="callout warning">
-<strong>Measurement Note</strong>
-Two counties with more extreme negative residuals — Noble County, OH and Gratiot County, MI — were excluded from case selection because both host large state correctional facilities. Incarcerated residents are counted in CVAP but cannot vote under state law, mechanically deflating measured turnout. Their apparent under-performance is a denominator artifact, not a behavioral finding.
-</div>
 
 ---
 

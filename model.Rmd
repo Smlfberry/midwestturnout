@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "Methodology"
 output:
   html_document:
     theme: flatly
@@ -152,17 +152,12 @@ fit_table <- bind_rows(
     RMSE = sigma * 100  # report RMSE in percentage points
   ) %>%
   select(Model,
-         `R²`             = r.squared,
-         `Adj. R²`        = adj.r.squared,
-         `RMSE (pp)`      = RMSE,
-         AIC, BIC,
-         `df (residual)`  = df.residual,
-         `N`              = nobs)
+         `R²`        = r.squared,
+         `Adj. R²`   = adj.r.squared,
+         `RMSE (pp)` = RMSE,
+         `N`         = nobs)
 ```
 
-<span class="section-label">Methodology</span>
-
-## How the Model Is Built
 
 This analysis uses **Ordinary Least Squares (OLS) regression** to model county-level voter turnout rates as a function of structural predictors from the American Community Survey. The unit of analysis is the county; the outcome variable is the county-level turnout rate calculated using CVAP denominators.
 
@@ -293,8 +288,8 @@ The largest fit gain comes from adding **state fixed effects** (Model 2 → Mode
 ```{r fit-table}
 
 fit_table %>%
-  kable(digits = c(0, 3, 3, 2, 1, 1, 0, 0),
-        align = c("l","r","r","r","r","r","r","r"),
+  kable(digits = c(0, 3, 3, 2, 0),
+        align = c("l","r","r","r","r"),
         caption = "Model fit statistics across the four nested specifications. RMSE expressed in percentage points of turnout.") %>%
   kable_styling(bootstrap_options = c("striped","hover"),
                 full_width = TRUE, font_size = 13)
@@ -324,21 +319,9 @@ ggplot(coef_plot_df, aes(x = estimate_10pp, y = term_plot)) +
            fill = "#F7F8F8", alpha = 0.95) +
   geom_vline(xintercept = 0, color = "#9A948C",
              linewidth = 0.5, linetype = "dashed") +
-  geom_segment(
-    aes(x = conf.low_10pp, xend = conf.high_10pp,
-        y = term_plot, yend = term_plot,
-        color = evidence),
-    linewidth = 0.85, lineend = "round", alpha = 0.45
-  ) +
   geom_point(
     aes(color = evidence),
     size = 4.8, alpha = 0.95
-  ) +
-  geom_text(
-    aes(label = label_key),
-    family = plot_sans, size = 3.5, color = "#4A4440", fontface = "bold",
-    hjust = if_else(coef_plot_df$estimate_10pp >= 0, -0.28, 1.28),
-    na.rm = TRUE
   ) +
   facet_grid(category ~ ., scales = "free_y",
              space = "free_y", switch = "y") +
@@ -363,7 +346,7 @@ ggplot(coef_plot_df, aes(x = estimate_10pp, y = term_plot)) +
     x        = "Estimated change in turnout rate (per 10-pp increase in predictor)",
     y        = NULL,
     color    = NULL,
-    caption  = "95% confidence intervals shown. Shaded band marks effects within ±1 pp of zero. State fixed effects estimated but not shown."
+    caption  = "Shaded band marks effects within ±1 pp of zero. State fixed effects estimated but not shown."
   ) +
   theme_minimal(base_family = plot_sans, base_size = 14) +
   theme(
@@ -450,7 +433,7 @@ plot_ly(height = 440) %>%
     data      = df_pct %>% mutate(resid_pp = residual4 * 100),
     x         = ~resid_pp,
     xbins     = list(start = -12, end = 12, size = 1),
-    marker    = list(color = "#ECE9F0", line = list(color = "white", width = 0.5)),
+    marker    = list(color = "rgba(29,158,117,0.4)", line = list(color = "white", width = 0.5)),
     name      = "All counties",
     showlegend = FALSE,
     hovertemplate = "%{y} counties<extra></extra>"
@@ -550,16 +533,23 @@ coef_df %>%
 ```{r selected-table}
 selected_sorted <- selected %>% arrange(desc(residual4))
 
+resid_vals <- round(selected_sorted$residual4 * 100, 1)
+resid_colors <- case_when(
+  abs(resid_vals) <= 0.15 ~ "#888780",
+  resid_vals > 0          ~ "#D85A30",
+  TRUE                    ~ "#7F77DD"
+)
+
 selected_sorted %>%
   mutate(
-    Tier = case_when(
+    Tier           = case_when(
       residual4 >  0.01 ~ "Over-Performer",
       residual4 < -0.01 ~ "Under-Performer",
       TRUE              ~ "As-Expected"
     ),
     `Actual (%)`    = round(turnout_rate * 100, 1),
     `Predicted (%)` = round(predicted4   * 100, 1),
-    `Residual (pp)` = round(residual4    * 100, 1),
+    `Residual (pp)` = resid_vals,
     `Rank (m4)`     = as.integer(rank_m4)
   ) %>%
   select(County = county, State = state_name, Tier,
@@ -568,10 +558,9 @@ selected_sorted %>%
         caption = "The six case-study counties with Model 4 statistics. Residuals in percentage points. Rank out of 437 counties (1 = most underperforming, 437 = most overperforming).") %>%
   kable_styling(bootstrap_options = c("striped","hover"),
                 full_width = TRUE, font_size = 13) %>%
-  row_spec(which(selected_sorted %>% pull(residual4) >  0.01),
-           background = "#e8efed") %>%
-  row_spec(which(selected_sorted %>% pull(residual4) < -0.01),
-           background = "#ece9f0")
+  column_spec(6, color = resid_colors, bold = TRUE) %>%
+  row_spec(which(selected_sorted$residual4 >  0.01), background = "#FAECE7") %>%
+  row_spec(which(selected_sorted$residual4 < -0.01), background = "#EEEDFE")
 ```
 
 The selection pairs **one extreme + one moderate** county in each tail (over- and under-performers) so the qualitative analysis can show the pattern holds beyond just the most extreme outliers. The two as-expected counties — Rock Island (IL) and Clark (IN) — sit adjacent to the median rank with residuals near zero, providing clean baselines where Model 4 predicts almost exactly right.

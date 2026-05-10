@@ -1,6 +1,6 @@
 # PROJECT_NOTES.md — midwestturnout
 
-> Living notes file for Sam's UChicago capstone. Read this first at the start of every Claude session — it's the cheapest way to load context.
+> Living notes file for capstone. Read this first at the start of every Claude session — it's the cheapest way to load context.
 
 _Last updated: 2026-05-01_
 
@@ -9,7 +9,7 @@ _Last updated: 2026-05-01_
 ## What this project is
 
 **Title:** Midwest Voter Turnout Study — *Who Votes, and Why Some Counties Beat the Odds*
-**Author:** Sam Berry, University of Chicago, Crown Family School of Social Work, Policy, and Practice (2026 capstone)
+**Author:** Sam Berry, University of Chicago (2026 capstone)
 **Partner:** Chicago Lawyers' Committee for Civil Rights (CLC) — extends prior descriptive needs assessment Sam did for them
 **GitHub:** https://github.com/Smlfberry/midwestturnout
 

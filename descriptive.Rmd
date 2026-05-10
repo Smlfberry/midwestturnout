@@ -36,8 +36,6 @@ The findings here establish *where* turnout disparities are concentrated and *wh
 
 ---
 
-<span class="section-label">At a Glance</span>
-
 ## State-Level Overview
 
 Across all five states, the analysis found steady patterns of turnout disparities — specifically large differences between low- and high-turnout quintiles in education level, racial/ethnic composition, and internet access. The table below summarizes turnout ranges and within-state variation for each state.
@@ -94,103 +92,243 @@ state_overview %>%
 
 ---
 
-<span class="section-label">State-Level Turnout</span>
+## Turnout and Demographic Patterns by State
 
-## Voter Turnout by County
+For each state, the choropleth shows the county-level turnout distribution; the demographic gap chart below shows where low- and high-turnout counties differ most. Use the tabs to switch between states.
 
-County-level turnout rates were calculated using Citizen Voting Age Population (CVAP) denominators from ACS estimates — the appropriate denominator for voting rights research because it reflects the legally eligible electorate. The choropleths below show the distribution of turnout across all counties in each state, revealing wide variation both within and across state lines.
+<style>
+.state-tabs {
+  display: flex;
+  gap: 0;
+  margin: 1.4rem 0 0 0;
+  border-bottom: 2px solid #E2E5E5;
+}
+.state-tab {
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #7A746C;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.01em;
+}
+.state-tab:hover { color: #1D9E75; }
+.state-tab.active {
+  color: #1D9E75;
+  border-bottom-color: #1D9E75;
+}
+.state-panel { display: none; padding-top: 1.6rem; }
+.state-map-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.state-map-col {
+  flex: 0 0 50%;
+  min-width: 0;
+}
+.state-map-col p { margin: 0; }
+.state-map-col img { width: 100%; height: auto; display: block; }
+.state-text-col {
+  flex: 0 0 50%;
+  min-width: 0;
+  padding-left: 2rem;
+  font-size: 15px;
+}
+.state-caption {
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 0.85rem;
+  color: #8C867E;
+  text-align: center;
+  margin: 0.4rem 0 0 0;
+  line-height: 1.5;
+}
+.state-dumbbell { margin-top: 2rem; }
+</style>
 
-### Illinois
+<div class="state-tabs">
+<button class="state-tab active" onclick="showState('il', this)">Illinois</button>
+<button class="state-tab" onclick="showState('in', this)">Indiana</button>
+<button class="state-tab" onclick="showState('mi', this)">Michigan</button>
+<button class="state-tab" onclick="showState('oh', this)">Ohio</button>
+<button class="state-tab" onclick="showState('wi', this)">Wisconsin</button>
+</div>
 
-```{r il-map, out.width="65%", fig.align="center", fig.cap="Voter turnout rate by county in Illinois, 2024 General Election. Turnout ranged from 48% to 78%."}
+<!-- ── Illinois ──────────────────────────────────────────────────────── -->
+<div id="state-il" class="state-panel" style="display:block">
+
+<div class="state-map-row">
+<div class="state-map-col">
+
+```{r il-map, fig.width=7, fig.height=8, out.width="100%"}
 knitr::include_graphics("figures/turnout_maps/illinoisturnout.png")
 ```
 
+<p class="state-caption">Voter turnout rate by county in Illinois, 2024 General Election. Turnout ranged from 48% to 78%.</p>
+</div>
+<div class="state-text-col">
+
 Illinois has a fairly even distribution of turnout across the state. County-level turnout ranged from 48% to 78%, and counties in the highest quintile voted 15.5 percentage points more on average than those in the lowest — a substantial within-state gap. Still, the two lowest turnout counties, Lawrence (51%) and Brown (48%), sit 4% and 7% behind the next lowest county respectively, suggesting localized pockets of particularly low participation in the rural west-central and southern parts of the state.
 
-### Indiana
+</div>
+</div>
 
-```{r in-map, out.width="65%", fig.align="center", fig.cap="Voter turnout rate by county in Indiana, 2024 General Election. Turnout ranged from 38.5% to 77.9%."}
-knitr::include_graphics("figures/turnout_maps/indianaturnout.png")
-```
+<div class="state-dumbbell">
 
-Indiana features a longer tail at the low end of the turnout distribution compared to the high-turnout counties. LaGrange County (39%) is over 10% lower than the second-lowest turnout county, and the state as a whole features a cluster of counties between the 54–60% range. County-level turnout varied from 38.5% to 77.9%, with the highest quintile averaging 16.8 percentage points more than the lowest — the widest within-state gap of all five states.
-
-### Michigan
-
-```{r mi-map, out.width="65%", fig.align="center", fig.cap="Voter turnout rate by county in Michigan, 2024 General Election. Turnout ranged from 57.7% to 93.2%."}
-knitr::include_graphics("figures/turnout_maps/michiganturnout.png")
-```
-
-Michigan has a high floor for low turnout, with only six counties below 65%. Two counties — Leelanau (93%) and Keweenaw (90%) — exceeded 90% turnout, and the distribution features a cluster of counties between 80–86%. Overall, turnout ranged from 57.7% to 93.2%, with the highest quintile averaging 18.7 percentage points above the lowest. Michigan ranked third nationally in eligible voter turnout in 2024, a result the Michigan Department of State attributed directly to expanded access policies passed under Proposal 2022-2.
-
-### Ohio
-
-```{r oh-map, out.width="65%", fig.align="center", fig.cap="Voter turnout rate by county in Ohio, 2024 General Election. Turnout ranged from 40.8% to 84.3%."}
-knitr::include_graphics("figures/turnout_maps/ohioturnout.png")
-```
-
-While most of Ohio sits in a mid-turnout range compared to national averages, it features extremes in variation — with Holmes County recording by far the lowest turnout, over 10 percentage points below the second lowest. Overall, turnout ranged from 40.8% to 84.3%, with the highest quintile averaging 17.6 percentage points above the lowest.
-
-### Wisconsin
-
-```{r wi-map, out.width="65%", fig.align="center", fig.cap="Voter turnout rate by county in Wisconsin, 2024 General Election. Turnout ranged from 53.6% to 87.5%."}
-knitr::include_graphics("figures/turnout_maps/wisconsinturnout.png")
-```
-
-Wisconsin features many counties clustered between 70–76%. There is only one county below 64% — Menominee County (54%) — and Waukesha County stands as something of an outlier at the top with 88%. County-level turnout ranged from 53.6% to 87.5%, with a difference of just 13.5 percentage points between the average of the lowest and highest quintile counties — suggesting a more compressed distribution and more modest differences among counties on average.
-
----
-
-<span class="section-label">Demographic Patterns</span>
-
-## Who Lives in Low vs. High Turnout Counties?
-
-For each state, counties were divided into turnout quintiles and demographic characteristics were compared between the lowest and highest quintile groups. The charts below show the largest demographic gaps — variables where low and high turnout counties differ most substantially. Values to the right of center are higher in high-turnout counties; values to the left are higher in low-turnout counties.
-
-### Illinois
-
-```{r il-gap, out.width="70%", fig.align="center", fig.cap="Largest demographic gaps between high- and low-turnout counties in Illinois."}
+```{r il-gap, fig.width=6, fig.height=4, out.width="55%", fig.align="center"}
 knitr::include_graphics("figures/state_gap_plots/top_gaps_illinois.jpg")
 ```
 
+<p class="state-caption">Largest demographic gaps between high- and low-turnout counties in Illinois.</p>
+
 The largest demographic differences between low and high-turnout counties were racial disparities. High-turnout counties had an average of 9.5 percentage points more white residents, while low-turnout counties averaged 7 percentage points more Black residents. Educational attainment also varied: low-turnout counties had an average of 4.3 percentage points more residents with no high school diploma, and 2.5 percentage points more with just a high school degree. High-turnout counties had 3.7 percentage points more residents with a bachelor's degree and 2.2 percentage points more with some college. Place of origin was also a notable gap — high-turnout counties had an average of 5 percentage points more residents born out of state, while low-turnout counties averaged 4.7 percentage points more residents born in state. Other noticeable differences include high-turnout counties having an average of 3.1 percentage points more households with internet, and low-turnout counties averaging 2.1 percentage points more residents with a disability.
 
-### Indiana
+</div>
+</div>
 
-```{r in-gap, out.width="70%", fig.align="center", fig.cap="Largest demographic gaps between high- and low-turnout counties in Indiana."}
+<!-- ── Indiana ───────────────────────────────────────────────────────── -->
+<div id="state-in" class="state-panel">
+
+<div class="state-map-row">
+<div class="state-map-col">
+
+```{r in-map, fig.width=7, fig.height=8, out.width="100%"}
+knitr::include_graphics("figures/turnout_maps/indianaturnout.png")
+```
+
+<p class="state-caption">Voter turnout rate by county in Indiana, 2024 General Election. Turnout ranged from 38.5% to 77.9%.</p>
+</div>
+<div class="state-text-col">
+
+Indiana features a longer tail at the low end of the turnout distribution compared to the high-turnout counties. LaGrange County (39%) is over 10% lower than the second-lowest turnout county, and the state as a whole features a cluster of counties between the 54–60% range. County-level turnout varied from 38.5% to 77.9%, with the highest quintile averaging 16.8 percentage points more than the lowest — the widest within-state gap of all five states.
+
+</div>
+</div>
+
+<div class="state-dumbbell">
+
+```{r in-gap, fig.width=6, fig.height=4, out.width="55%", fig.align="center"}
 knitr::include_graphics("figures/state_gap_plots/top_gaps_indiana.jpg")
 ```
 
+<p class="state-caption">Largest demographic gaps between high- and low-turnout counties in Indiana.</p>
+
 The largest demographic gap between low and high-turnout counties was in educational attainment: low-turnout counties averaged 6.4 percentage points more residents with no high school education, while high-turnout counties averaged 3.9 percentage points more with a bachelor's degree. Racial composition also differed substantially — low-turnout counties had 3.3 percentage points more Black residents on average, compared to high-turnout counties averaging 7.2 percentage points more white residents. Place of origin was also a prominent difference, with low-turnout counties averaging 6.1 percentage points more residents of in-state origin, while high-turnout counties averaged 8 percentage points more residents born out of state. Other notable differences include high-turnout counties averaging more households with computers and internet (2.5 and 2.8 percentage points higher, respectively), and low-turnout counties averaging 2.3 percentage points more residents with limited English proficiency and 2.1 percentage points more with a disability.
 
-### Michigan
+</div>
+</div>
 
-```{r mi-gap, out.width="70%", fig.align="center", fig.cap="Largest demographic gaps between high- and low-turnout counties in Michigan."}
+<!-- ── Michigan ──────────────────────────────────────────────────────── -->
+<div id="state-mi" class="state-panel">
+
+<div class="state-map-row">
+<div class="state-map-col">
+
+```{r mi-map, fig.width=7, fig.height=8, out.width="100%"}
+knitr::include_graphics("figures/turnout_maps/michiganturnout.png")
+```
+
+<p class="state-caption">Voter turnout rate by county in Michigan, 2024 General Election. Turnout ranged from 57.7% to 93.2%.</p>
+</div>
+<div class="state-text-col">
+
+Michigan has a high floor for low turnout, with only six counties below 65%. Two counties — Leelanau (93%) and Keweenaw (90%) — exceeded 90% turnout, and the distribution features a cluster of counties between 80–86%. Overall, turnout ranged from 57.7% to 93.2%, with the highest quintile averaging 18.7 percentage points above the lowest. Michigan ranked third nationally in eligible voter turnout in 2024, a result the Michigan Department of State attributed directly to expanded access policies passed under Proposal 2022-2.
+
+</div>
+</div>
+
+<div class="state-dumbbell">
+
+```{r mi-gap, fig.width=6, fig.height=4, out.width="55%", fig.align="center"}
 knitr::include_graphics("figures/state_gap_plots/top_gaps_michigan.jpg")
 ```
 
+<p class="state-caption">Largest demographic gaps between high- and low-turnout counties in Michigan.</p>
+
 Educational attainment was the largest demographic gap between low and high-turnout counties, with low-turnout counties averaging 8.4 percentage points more residents with only a high school degree and 3.7 percentage points more with no high school degree. High-turnout counties averaged 7.2 percentage points more residents with a bachelor's degree and 5.9 percentage points more with a graduate degree. Racial composition was also prevalent — high-turnout counties averaged 7.2 percentage points more white residents, while low-turnout counties averaged 4.5 percentage points more Black residents and 1.1 percentage points more American Indian/Alaska Native residents. High-turnout counties also had higher shares of households with internet (3.6 pp higher) and computers (2.5 pp higher).
 
-### Ohio
+</div>
+</div>
 
-```{r oh-gap, out.width="70%", fig.align="center", fig.cap="Largest demographic gaps between high- and low-turnout counties in Ohio."}
+<!-- ── Ohio ──────────────────────────────────────────────────────────── -->
+<div id="state-oh" class="state-panel">
+
+<div class="state-map-row">
+<div class="state-map-col">
+
+```{r oh-map, fig.width=7, fig.height=8, out.width="100%"}
+knitr::include_graphics("figures/turnout_maps/ohioturnout.png")
+```
+
+<p class="state-caption">Voter turnout rate by county in Ohio, 2024 General Election. Turnout ranged from 40.8% to 84.3%.</p>
+</div>
+<div class="state-text-col">
+
+While most of Ohio sits in a mid-turnout range compared to national averages, it features extremes in variation — with Holmes County recording by far the lowest turnout, over 10 percentage points below the second lowest. Overall, turnout ranged from 40.8% to 84.3%, with the highest quintile averaging 17.6 percentage points above the lowest.
+
+</div>
+</div>
+
+<div class="state-dumbbell">
+
+```{r oh-gap, fig.width=6, fig.height=4, out.width="55%", fig.align="center"}
 knitr::include_graphics("figures/state_gap_plots/top_gaps_ohio.jpg")
 ```
 
+<p class="state-caption">Largest demographic gaps between high- and low-turnout counties in Ohio.</p>
+
 Educational attainment was the largest demographic gap, with low-turnout counties averaging 7.3 percentage points more residents with no high school degree and 7.2 percentage points more with only a high school degree. High-turnout counties averaged 7.6 percentage points more residents with a bachelor's degree, 4.2 percentage points more with a graduate degree, and 2.7 percentage points more with some college. Technology access was also a significant differentiator — high-turnout counties averaged 7.2 percentage points more households with internet and 5.3 percentage points more with a computer, a gap nearly as large as the education gap. Disability was an additional difference, with low-turnout counties averaging 4.3 percentage points more residents with a disability.
 
-### Wisconsin
+</div>
+</div>
 
-```{r wi-gap, out.width="70%", fig.align="center", fig.cap="Largest demographic gaps between high- and low-turnout counties in Wisconsin."}
+<!-- ── Wisconsin ─────────────────────────────────────────────────────── -->
+<div id="state-wi" class="state-panel">
+
+<div class="state-map-row">
+<div class="state-map-col">
+
+```{r wi-map, fig.width=7, fig.height=8, out.width="100%"}
+knitr::include_graphics("figures/turnout_maps/wisconsinturnout.png")
+```
+
+<p class="state-caption">Voter turnout rate by county in Wisconsin, 2024 General Election. Turnout ranged from 53.6% to 87.5%.</p>
+</div>
+<div class="state-text-col">
+
+Wisconsin features many counties clustered between 70–76%. There is only one county below 64% — Menominee County (54%) — and Waukesha County stands as something of an outlier at the top with 88%. County-level turnout ranged from 53.6% to 87.5%, with a difference of just 13.5 percentage points between the average of the lowest and highest quintile counties — suggesting a more compressed distribution and more modest differences among counties on average.
+
+</div>
+</div>
+
+<div class="state-dumbbell">
+
+```{r wi-gap, fig.width=6, fig.height=4, out.width="55%", fig.align="center"}
 knitr::include_graphics("figures/state_gap_plots/top_gaps_wisconsin.jpg")
 ```
 
+<p class="state-caption">Largest demographic gaps between high- and low-turnout counties in Wisconsin.</p>
+
 The largest demographic difference between low and high-turnout counties was in education: low-turnout counties averaged 9 percentage points more residents with only a high school degree and 4 percentage points more with no high school degree, while high-turnout counties averaged 8.2 percentage points more residents with a bachelor's degree and 4.6 percentage points more with a graduate degree. Household technology access was also a prevalent gap, with high-turnout counties averaging 4.9 percentage points more households with internet and 3.5 percentage points more with a computer. In terms of racial demographics, low-turnout counties averaged 6.2 percentage points more American Indian/Alaska Native residents and 1.8 percentage points more Black residents, while high-turnout counties averaged 8.2 percentage points more white residents.
 
----
+</div>
+</div>
 
-<span class="section-label">Cross-State Patterns</span>
+<script>
+function showState(state, btn) {
+  document.querySelectorAll('.state-panel').forEach(function(p) { p.style.display = 'none'; });
+  document.querySelectorAll('.state-tab').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('state-' + state).style.display = 'block';
+  btn.classList.add('active');
+}
+</script>
+
+---
 
 ## What the Descriptive Analysis Found
 
@@ -212,8 +350,6 @@ Descriptive analysis identifies <em>what</em> demographic patterns are associate
 </div>
 
 ---
-
-<span class="section-label">What Comes Next</span>
 
 ## From Description to Prediction
 

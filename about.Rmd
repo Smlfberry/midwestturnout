@@ -28,7 +28,7 @@ The work builds on practicum research conducted with the **Chicago Lawyers' Comm
 
 **Case selection** follows a purposive residual-based logic drawing on Model 4: two counties from the top of the residual distribution (over-performers, one extreme and one moderate), two near zero (as-expected baselines), and two from the bottom (under-performers, one extreme and one moderate). The extreme + moderate pairing in each tail lets the analysis show that patterns hold beyond just the very furthest tails. Two counties with substantial incarcerated populations (Noble OH, Gratiot MI) were excluded from selection because their CVAP-counted prison populations distort the turnout-rate denominator.
 
-**Qualitative analysis** draws on [list sources — local news archives, election commission reports, organizational documents, etc.].
+**Qualitative analysis** draws on secondary sources including DataUSA county profiles, local government economic development websites, the Naval Surface Warfare Center Crane Division (NSWC Crane) official site, U.S. Bureau of Labor Statistics data, state nonprofit directories, and regional news archives.
 
 ---
 
@@ -48,23 +48,22 @@ The work builds on practicum research conducted with the **Chicago Lawyers' Comm
 
 All data processing and analysis were conducted in **R** using the `tidyverse`, `tidycensus`, `broom`, and `kableExtra` packages. Interactive visualizations use `shiny`, `plotly`, and `shinylive`.
 
-Full replication code is available on [GitHub →](https://github.com/[your-repo]).
+Full replication code is available on [GitHub →](https://github.com/Smlfberry/midwestturnout).
+
+A full README with reproduction instructions, file structure, and package requirements is available in the repository.
+
+**Qualitative case study sources:**
+
+- DataUSA county profiles ([datausa.io](https://datausa.io))
+- Jasper County Economic Development Resources ([jaspercountyillinois.gov](https://www.jaspercountyillinois.gov))
+- Stacker — Jasper County IL GDP analysis ([stacker.com](https://stacker.com))
+- Naval Surface Warfare Center Crane Division ([navsea.navy.mil](https://www.navsea.navy.mil))
+- Tax Exempt World — Gogebic County nonprofit directory ([taxexemptworld.com](https://www.taxexemptworld.com))
+- Michigan Advance — Gogebic County political history ([michiganadvance.com](https://michiganadvance.com))
+- U.S. Bureau of Labor Statistics ([bls.gov](https://www.bls.gov))
 
 ---
 
-<span class="section-label">About the Researcher</span>
-
-## [Your Name]
-
-[Your Name] is a master's student in the [Program] at the University of Chicago, graduating in [Month Year]. Their research focuses on voter participation, electoral inequality, and quantitative methods in public policy. 
-
-Prior to graduate school, [he/she/they] worked on [brief note about campaign experience or California background]. During their master's program, they conducted practicum research with the Chicago Lawyers' Committee for Civil Rights, leading quantitative analysis of county-level voter turnout patterns across the Midwest.
-
-**Contact:** [your-email@uchicago.edu]  
-**GitHub:** [github.com/your-handle]  
-**LinkedIn:** [linkedin.com/in/your-profile]
-
----
 
 <span class="section-label">Acknowledgments</span>
 

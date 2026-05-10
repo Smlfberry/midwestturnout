@@ -3,13 +3,13 @@ title: "Midwest Voter Turnout Study"
 output_dir: "docs"
 
 navbar:
-  title: "Midwest Voter Turnout"
+  title: "What Demographics Can — and Can't — Explain"
   left:
     - text: "Overview"
       href: index.html
     - text: "Background"
       href: descriptive.html
-    - text: "The Model"
+    - text: "Methodology"
       href: model.html
     - text: "Case Studies"
       href: case-studies.html

@@ -32,9 +32,9 @@ df_pct <- readRDS(canonical_path)
 
 <span class="kicker">Quantitative Analysis · Midwest · 2024 General Election</span>
 
-# Who Votes — and Why Some Counties Beat the Odds
+# What Demographics Can — and Can't — Explain
 
-<p class="dek">A predictive model of county-level voter turnout across five Midwest states reveals systematic patterns of under- and over-performance. Six counties — selected from the top, middle, and bottom of the residual distribution — anchor a mixed-methods investigation into the structural and civic factors that shape participation.</p>
+<p class="dek">A predictive model of county-level turnout across five Midwest states identifies counties that vote significantly above or below their demographic expectations. Six cases anchor a mixed-methods investigation into what the data alone cannot capture.</p>
 
 <p class="byline">
 Sam Berry &nbsp;·&nbsp; University of Chicago &nbsp;·&nbsp; 2026<br>
@@ -122,19 +122,11 @@ ggplot() +
   ggrepel::geom_label_repel(
     data = case_centroids,
     aes(x = centroid_lng, y = centroid_lat, label = county),
-    family = "plex_serif",
-    fontface = "bold",
-    size = 3.7,
-    color = "#1F1F1F",
-    fill = scales::alpha("white", 0.92),
-    label.size = 0,
-    box.padding = 0.7,
-    point.padding = 0.3,
-    min.segment.length = 0,
-    segment.color = "#5A544C",
-    segment.linewidth = 0.3,
     max.overlaps = Inf,
-    seed = 42
+    size = 3,
+    box.padding = 0.5,
+    segment.color = "gray50",
+    segment.size = 0.3
   ) +
   # Discrete diverging palette: deep plum → cream → deep amber (7 bins)
   scale_fill_manual(
@@ -252,7 +244,7 @@ ggplot(df_hero, aes(x = predicted4, y = turnout_rate)) +
       y = c(0.30, 1.00, 1.00)
     ),
     aes(x = x, y = y),
-    fill = "#2C4A6E", alpha = 0.04, inherit.aes = FALSE
+    fill = "#FAECE7", alpha = 0.5, inherit.aes = FALSE
   ) +
   geom_polygon(
     data = data.frame(
@@ -260,7 +252,7 @@ ggplot(df_hero, aes(x = predicted4, y = turnout_rate)) +
       y = c(0.30, 0.30, 1.00)
     ),
     aes(x = x, y = y),
-    fill = "#C45F4A", alpha = 0.04, inherit.aes = FALSE
+    fill = "#EEEDFE", alpha = 0.5, inherit.aes = FALSE
   ) +
 
   # Reference line (perfect prediction)
@@ -309,7 +301,7 @@ ggplot(df_hero, aes(x = predicted4, y = turnout_rate)) +
     x = 0.40, y = 0.93,
     label = "Over-performers",
     family = "plex_serif", fontface = "italic",
-    size = 5, color = "#2C4A6E",
+    size = 5, color = "#D85A30",
     hjust = 0
   ) +
   annotate(
@@ -327,7 +319,7 @@ ggplot(df_hero, aes(x = predicted4, y = turnout_rate)) +
     x = 0.78, y = 0.42,
     label = "Under-performers",
     family = "plex_serif", fontface = "italic",
-    size = 5, color = "#C45F4A",
+    size = 5, color = "#7F77DD",
     hjust = 0
   ) +
   annotate(

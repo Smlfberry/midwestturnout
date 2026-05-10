@@ -1,264 +1,289 @@
 ---
-title: "synthesis"
+title: "Synthesis"
 output:
   html_document:
     theme: flatly
     css: custom.css
     highlight: null
-    toc: true
-    toc_depth: 2
----
-
----
-title: "Synthesis & Implications"
-output:
-  html_document:
-    theme: null
-    css: custom.css
-    highlight: null
-    toc: true
-    toc_depth: 2
+    toc: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
-                      fig.width = 8, fig.height = 5, dpi = 150)
-library(tidyverse)
-library(tidycensus)
-library(knitr)
-library(kableExtra)
-
-df_pct <- readRDS("data/df_pct.rds")
-
-poverty_data <- get_acs(
-  geography = "county",
-  variables = c(poverty = "B17001_002", total = "B17001_001"),
-  year = 2024, survey = "acs5"
-)
-poverty_pct <- poverty_data %>%
-  select(GEOID, variable, estimate) %>%
-  pivot_wider(names_from = variable, values_from = estimate) %>%
-  mutate(pct_poverty = poverty / total * 100)
-
-df_pct <- df_pct %>%
-  left_join(poverty_pct %>% select(GEOID, pct_poverty),
-            by = c("geoid" = "GEOID"))
-
-model1 <- lm(
-  turnout_rate ~
-    pct_bachelors +
-    pct_households_internet +
-    pct_limited_english +
-    pct_disability_total +
-    pct_poverty,
-  data = df_pct
-)
-
-model2 <- lm(
-  turnout_rate ~
-    pct_bachelors +
-    pct_no_hs +
-    pct_black +
-    pct_households_internet +
-    pct_limited_english +
-    pct_disability_total +
-    pct_poverty,
-  data = df_pct
-)
-
-df_pct$predicted  <- predict(model1)
-df_pct$residual   <- df_pct$turnout_rate - df_pct$predicted
-df_pct$predicted2 <- predict(model2)
-df_pct$residual2  <- df_pct$turnout_rate - df_pct$predicted2
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
-<span class="section-label">Synthesis</span>
+<style>
+/* ── Phase section headers ────────────────────────────────────────── */
+.phase-header {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #176D5F;
+  margin: 2.6rem 0 0.15rem 0;
+  line-height: 1.2;
+}
+.phase-subtitle {
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 1.05rem;
+  color: #8E877D;
+  margin: 0 0 1.2rem 0;
+  font-style: italic;
+}
 
-## What This Project Set Out to Answer
+/* ── Phase overview cards ─────────────────────────────────────────── */
+.phase-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.1rem;
+  margin: 1.8rem 0 2.4rem 0;
+}
+.phase-card {
+  border-top: 3px solid #176D5F;
+  background: #F7F8F8;
+  border-radius: 4px;
+  padding: 1.6rem 1.7rem 1.8rem 1.7rem;
+}
+.phase-card .phase-kicker {
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #176D5F;
+  margin: 0 0 0.3rem 0;
+}
+.phase-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #2C2A26;
+  line-height: 1.2;
+  margin: 0 0 0.85rem 0;
+}
+.phase-card p {
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 1.5rem;
+  color: #5A544C;
+  line-height: 1.72;
+  margin: 0;
+}
 
-This project began with a straightforward observation from the CLC descriptive analysis: Wisconsin and Michigan consistently showed higher county-level turnout and smaller within-state gaps than Indiana, Illinois, and Ohio — even after accounting for demographic differences. The descriptive analysis could document this pattern but could not explain it. The predictive modeling phase was designed to ask a more precise question: *beyond what demographics predict, what explains why some counties over- or under-perform?*
+/* ── Case study cards ─────────────────────────────────────────────── */
+.case-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.1rem;
+  margin: 1.6rem 0 1.4rem 0;
+}
+.case-card {
+  background: #FAFAF8;
+  border-radius: 4px;
+  padding: 1.1rem 1.7rem 1.8rem 1.7rem;
+  border-top: 3px solid #ccc;
+}
+.case-card.over  { border-top-color: #1D9E75; }
+.case-card.under { border-top-color: #D85A30; }
+.case-card.mid   { border-top-color: #888780; }
+.case-tier {
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 0.3rem 0;
+}
+.case-card.over  .case-tier { color: #1D9E75; }
+.case-card.under .case-tier { color: #D85A30; }
+.case-card.mid   .case-tier { color: #888780; }
+.case-meta {
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 1.2rem;
+  color: #8E877D;
+  margin-bottom: 1.1rem;
+}
+.case-card p {
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 1.45rem;
+  color: #4A443D;
+  line-height: 1.78;
+  margin: 0;
+}
+.case-lede {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #2C2A26;
+  line-height: 1.15;
+  margin: 0 0 0.7rem 0;
+}
 
-The answer that emerges across both the quantitative modeling and the qualitative case analysis points to two primary factors: **model specification** and **state institutional access environments**.
+/* ── Pull-quote callout ───────────────────────────────────────────── */
+.pull-quote {
+  border-left: 4px solid #176D5F;
+  background: #EEF7F4;
+  padding: 1.1rem 1.4rem;
+  margin: 1.8rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.pull-quote p {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #176D5F;
+  line-height: 1.55;
+  margin: 0;
+}
 
----
+/* ── Validation note ──────────────────────────────────────────────── */
+.validation-note {
+  background: #F4F2EC;
+  border-radius: 4px;
+  padding: 1rem 1.3rem;
+  margin: 0.2rem 0 1.4rem 0;
+  font-family: 'IBM Plex Sans', Arial, sans-serif;
+  font-size: 0.95rem;
+  color: #5A544C;
+  line-height: 1.65;
+}
+</style>
 
-<span class="section-label">Finding 1</span>
+# What Three Phases of Analysis Reveal
 
-## Model Specification Matters — But Doesn't Explain Everything
+This project moved through three phases: a descriptive analysis of county-level turnout patterns across five Midwestern states, a predictive modeling phase that quantified the demographic and structural predictors of turnout, and a qualitative case study phase that investigated what the model cannot explain. Each phase answers a different question. Together, they build a layered account of why voter participation varies so sharply across Midwest counties — and why no single explanation is sufficient.
 
-Model 1 used five structural predictors drawn from the CLC descriptive findings: bachelor's degree attainment, internet access, limited English proficiency, disability status, and poverty. It explained approximately 43% of variance in county-level turnout rates (Adjusted R² = 0.434).
-
-A natural critique of this specification — motivated by the CLC descriptive findings themselves — was that race and lower-tail educational attainment were prominent correlates of turnout variation but absent from the model. Model 2 added percent Black population and percent with no high school diploma. The results were meaningful:
-
-```{r model-comparison}
-tibble(
-  Model = c("Model 1", "Model 2"),
-  Predictors = c("Bachelor's, Internet, LEP, Disability, Poverty",
-                 "+ % No HS Diploma, + % Black"),
-  `Adj. R²` = c(round(summary(model1)$adj.r.squared, 3),
-                round(summary(model2)$adj.r.squared, 3)),
-  RMSE = c(round(sqrt(mean(resid(model1)^2)), 4),
-           round(sqrt(mean(resid(model2)^2)), 4))
-) %>%
-  kable(align = c("l","l","r","r")) %>%
-  kable_styling(bootstrap_options = c("striped","hover"),
-                full_width = TRUE, font_size = 13)
-```
-
-Adjusted R² improved from 0.434 to 0.536 — a meaningful gain. Both added predictors were highly significant: lower-tail education (β = -0.011, p < .001) and Black population share (β = -0.002, p < .001) independently suppress turnout beyond what the original five predictors captured.
-
-The most important case-level result: **Brown County IL's residual collapsed from -16.4pp to +1.5pp in Model 2**. Brown was not genuinely anomalous — Model 1 was underspecified for its demographic profile. Its severe lower-tail educational disadvantage and unusually high Black population share for a rural county of its size were suppressing turnout in ways the bachelor's variable alone could not capture.
-
-<div class="callout finding">
-<strong>Finding 1</strong>
-A more fully specified model resolves Brown County's apparent anomaly — confirming that race and lower-tail educational attainment are independent predictors of turnout suppression. This has direct methodological implications: future county-level turnout models should include both tails of the education distribution and racial composition alongside resource-based structural variables.
+<div class="phase-grid">
+<div class="phase-card">
+<div class="phase-kicker">Phase One</div>
+<div class="phase-title">Descriptive analysis</div>
+<p>Where do turnout gaps exist, and which demographics track with them across five states?</p>
+</div>
+<div class="phase-card">
+<div class="phase-kicker">Phase Two</div>
+<div class="phase-title">Predictive model</div>
+<p>Given a county's structural profile, what turnout rate should we expect? What remains unexplained?</p>
+</div>
+<div class="phase-card">
+<div class="phase-kicker">Phase Three</div>
+<div class="phase-title">Case studies</div>
+<p>Why do six counties defy their demographic predictions — and what does that reveal about local civic life?</p>
+</div>
 </div>
 
 ---
 
-<span class="section-label">Finding 2</span>
+<p class="phase-header">Phase One</p>
+<p class="phase-subtitle">The Descriptive Picture: Where Gaps Exist</p>
 
-## State Institutional Environment Explains Persistent Residuals
+The CLC descriptive analysis established the basic landscape. Across all five states, county-level turnout in the 2024 presidential election varied dramatically — from below 40% in some Indiana counties to above 85% in parts of Wisconsin and Michigan. The within-state gaps were substantial in every state: the highest-quintile counties outpaced the lowest by roughly 14 to 19 percentage points depending on the state.
 
-Brown County's resolution by Model 2 makes the persistence of the other case county residuals more analytically significant — not less. Even in the better-specified model, four of the five remaining case counties retain substantial residuals:
+The demographic correlates of these gaps were consistent across states. Educational attainment was the strongest and most uniform differentiator: low-turnout counties had substantially higher shares of residents with no high school diploma and only a high school degree, while high-turnout counties had much higher shares of college and graduate degree holders. Racial composition was also a persistent gap — low-turnout counties consistently had higher shares of Black residents and, in Wisconsin, American Indian and Alaska Native residents. Internet and computer access, disability status, and place of origin rounded out a picture of overlapping structural disadvantage concentrated in low-turnout areas.
 
-```{r residual-comparison}
-case_results <- df_pct %>%
-  filter(
-    (county == "Montmorency" & state_name == "Michigan") |
-    (county == "Trempealeau" & state_name == "Wisconsin") |
-    (county == "Brown"       & state_name == "Illinois") |
-    (county == "Vanderburgh" & state_name == "Indiana") |
-    (county == "Clinton"     & state_name == "Ohio") |
-    (county == "DeKalb"      & state_name == "Illinois")
-  ) %>%
-  mutate(
-    tier = case_when(
-      county %in% c("Montmorency", "Trempealeau") ~ "Over-Performer",
-      county %in% c("Clinton", "DeKalb")           ~ "As-Expected",
-      TRUE                                          ~ "Under-Performer"
-    ),
-    across(c(turnout_rate, predicted, residual, predicted2, residual2),
-           ~ round(.x * 100, 1))
-  ) %>%
-  select(County = county, State = state_name, Tier = tier,
-         `Actual (%)` = turnout_rate,
-         `Model 1 Residual (pp)` = residual,
-         `Model 2 Residual (pp)` = residual2) %>%
-  arrange(desc(`Model 1 Residual (pp)`))
+These patterns are descriptive, not causal. But they establish where the participation gaps are and who bears them — and they motivated the predictors included in the modeling phase.
 
-case_results %>%
-  kable(align = c("l","l","l","r","r","r")) %>%
-  kable_styling(bootstrap_options = c("striped","hover"),
-                full_width = TRUE, font_size = 13) %>%
-  row_spec(which(case_results$Tier == "Over-Performer"), background = "#eef5f1") %>%
-  row_spec(which(case_results$Tier == "Under-Performer"), background = "#fdf2f1")
-```
+---
 
-Vanderburgh County IN remains at -11.8pp in Model 2. Montmorency MI remains at +13.1pp. Trempealeau WI remains at +9.2pp. These are not demographic artifacts — they are real unexplained variation that tracks systematically with state institutional environments.
+<p class="phase-header">Phase Two</p>
+<p class="phase-subtitle">The Model: Quantifying Structural Predictions</p>
 
-**The state-level pattern is the clearest evidence.** Looking across the full residual distribution, Wisconsin and Michigan counties dominate the top — while Indiana counties dominate the bottom. Six of the ten largest negative residuals belong to Indiana counties. This clustering cannot be explained by county-level demographics alone.
+The predictive modeling phase asked a more precise question: given a county's demographic and structural profile, what turnout rate would we expect? Four nested OLS specifications were estimated, each adding predictors to the previous. The preferred specification — Model 4 — includes twelve predictors covering education, race and ethnicity, age structure, internet access, poverty, and disability, plus state fixed effects. It explains approximately 86% of the variation in county-level turnout (Adjusted R² = 0.855, RMSE = 3.19 pp).
 
-```{r state-residual-boxplot, fig.cap="Distribution of model residuals by state. Positive residuals indicate over-performance relative to structural predictions; negative residuals indicate under-performance. Model 1 residuals shown.", fig.height=4}
-df_pct %>%
-  mutate(state_name = fct_reorder(state_name, residual, .fun = median)) %>%
-  ggplot(aes(x = state_name, y = residual * 100, fill = state_name)) +
-  geom_boxplot(alpha = 0.7, outlier.size = 1.5, outlier.alpha = 0.5) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "#888580", linewidth = 0.6) +
-  scale_fill_manual(values = c(
-    "Wisconsin"  = "#2e7d52",
-    "Michigan"   = "#4a9a70",
-    "Ohio"       = "#888580",
-    "Illinois"   = "#c07050",
-    "Indiana"    = "#c0392b"
-  ), guide = "none") +
-  labs(x = NULL, y = "Residual (percentage points)",
-       caption = "States ordered by median residual. Green = over-performing states; red = under-performing states.") +
-  theme_minimal(base_family = "sans", base_size = 12) +
-  theme(panel.grid.minor = element_blank(),
-        plot.caption = element_text(size = 9, color = "#888580"),
-        plot.background = element_rect(fill = "white", color = NA))
-```
+The single largest fit improvement came from adding state fixed effects (Model 2 → Model 3: adjusted R² rose from 0.54 to 0.81). This confirms that state-level institutional context — registration rules, ballot access, early voting availability, voter ID requirements — absorbs a substantial share of the variance that demographics alone cannot explain. Adding age structure and expanded race variables in Model 4 yielded a further gain to 0.86, meaningful but smaller.
 
-The institutional access contrast between the states is stark:
+Among the individual predictors, the strongest effects in Model 4 were lower-tail education (a 10-point increase in % no high school diploma is associated with a −6.6 pp change in turnout), young adult population (% age 18–24: −6.5 pp per 10-point increase), and poverty (% below poverty line: −3.4 pp). Higher education was the strongest positive predictor (% bachelor's or higher: +5.3 pp). Racial composition showed significant independent effects for % Black (−2.1 pp) and % American Indian/Alaska Native (−2.1 pp), while % Hispanic and % Limited English Proficiency attenuated to non-significance in the full model, likely because state context absorbs shared variance.
 
-| State | Same-Day Reg | No-Excuse Absentee | Early Voting | Photo ID | Median Residual |
-|-------|-------------|-------------------|--------------|----------|-----------------|
-| Wisconsin | ✓ | ✓ | ✓ | Strict | Positive |
-| Michigan | ✓ | ✓ | ✓ (9 days min) | Strict | Positive |
-| Ohio | ✗ | ✓ | ✓ | Non-strict | Near zero |
-| Illinois | ✗ | ✓ | ✓ | None | Negative |
-| Indiana | ✗ | ✗ | Limited | Strict | Most negative |
+The model's residuals — the gap between each county's actual and predicted turnout — are the primary analytic output. A well-calibrated model produces residuals approximately normally distributed around zero, and Model 4's distribution is close to that. The counties at the tails — those that persistently over- or underperform their demographic predictions — are the most analytically interesting, and were the basis for case study selection.
 
-The pattern is not perfectly linear — Illinois has relatively permissive ID requirements yet still shows negative median residuals, suggesting other factors are at work. But the Indiana/Wisconsin contrast is sharp and consistent: Indiana's combination of strict photo ID, no same-day registration, and no no-excuse absentee produces the most suppressed residual distribution of any state, while Wisconsin and Michigan's permissive access environments produce the most elevated.
+---
 
-<div class="callout finding">
-<strong>Finding 2</strong>
-State institutional access environments explain a meaningful portion of the residual variation that demographic models cannot capture. Counties in permissive states (WI, MI) systematically over-perform their structural predictions; counties in restrictive states (IN) systematically under-perform. This pattern persists across both model specifications and is most clearly illustrated by the Trempealeau/Vanderburgh contrast — a rural lower-income Wisconsin county over-performs while an urban Indiana county under-performs, despite the model predicting similar turnout for both.
+<p class="phase-header">Phase Three</p>
+<p class="phase-subtitle">The Case Studies: What the Model Cannot See</p>
+
+Six counties were selected from the Model 4 residual distribution to investigate what drives the gaps the model cannot explain: two over-performers, two as-expected, and two under-performers. The qualitative research draws on secondary sources, such as local economic data, organizational documentation, county history, and local reporting.
+
+Taken together, the case studies reveal less about what exact factors explain the turnout difference and more about what the model fundamentally cannot see. Two counties — Martin and Gogebic — have plausible mechanisms that are grounded in documented, local conditions: a federal workforce that reshapes who lives in the county and possibly motivates turnout, and a historical decline of union influence and mobilizing infrastructure during political realignment.
+
+Two counties — Jasper and Lawrence — remain much more unexplained despite representing the extreme residuals in the dataset in either direction.
+
+Jasper and Lawrence are both small, rural, Republican, and have high home ownership, making their divergence the most analytically intriguing result. The model treats them as structurally similar. One votes 11 percentage points above prediction; the other 6.6 below. The possibility of social embeddedness — where smaller communities generate norms of voting pressure through social visibility and the increased perceived consequence of individual votes — is a theoretically compelling explanation for Jasper. But if that mechanism were primarily about small community size and partisan cohesion, Lawrence should look similar — which it doesn't. As such, this divergence suggests that social embeddedness alone is insufficient and that something else is at play in Jasper that is absent in Lawrence. One tentative explanation is the local civic and economic infrastructure: Jasper County Economic Development Inc. (JEDI), established in 2012, signals some degree of community coordination that may extend beyond economic development and influence broader civic engagement. Still, this remains speculative, and the available secondary sources are unable to confirm it.
+
+The comparison between Martin and Rock Island offers a parallel point about what the model does and doesn't capture in counties with federal installations. Martin's federal workforce — which employs high-skill STEM and engineering roles at NSWC Crane — could generate higher civic participation than the county's standard demographics would predict. Research suggests government and professional employees participate at higher rates than their demographic characteristics alone would predict, meaning the model's demographic lens may underestimate Martin's likely turnout. Rock Island also contains a major federal installation — the Rock Island Arsenal — but here the federal workforce serves as one part of a more diverse economy rather than dominating it. The model predicts Rock Island almost exactly, suggesting that when no single federal employer concentrates an unusually civically engaged workforce, standard demographic predictors perform well.
+
+<div class="case-grid">
+
+<div class="case-card over">
+<div class="case-tier">Over-Performer</div>
+<div class="case-lede">Cohesion in small, rural communities may drive turnout above structural expectations</div>
+<div class="case-meta">Jasper County, IL &middot; +11.4 pp &middot; rank 437 of 437</div>
+<p>No identifiable GOTV organizations or formal mobilization infrastructure. Overperformance appears to reflect the dense informal civic environment the literature links to elevated rural turnout — social visibility of voting, normative pressure through community and religious networks, and the amplified perceived consequence of individual votes in small electorates. Partisan cohesion and GDP growth of roughly 29% between 2018 and 2022 reinforce a picture of high internal community coordination.</p>
+</div>
+
+<div class="case-card over">
+<div class="case-tier">Over-Performer</div>
+<div class="case-lede">Major federal employers can generate civic participation beyond what demographics predict</div>
+<div class="case-meta">Martin County, IN &middot; +8.7 pp &middot; rank 434 of 437</div>
+<p>Home to NSWC Crane, which employs roughly 6,500 federal workers and contractors in a county of fewer than 10,000 residents. The model sees a rural Indiana county; the workforce more closely resembles a federal research community. Research consistently finds that government and professional employees participate at higher rates than their demographic characteristics alone would predict — Martin's overperformance appears to reflect this occupational civic culture rather than any active mobilization effort.</p>
+</div>
+
+<div class="case-card under">
+<div class="case-tier">Under-Performer</div>
+<div class="case-lede">Structural potential can go unactivated without local organizational infrastructure</div>
+<div class="case-meta">Lawrence County, IL &middot; &minus;6.6 pp &middot; rank 7 of 437</div>
+<p>Shares several characteristics with high-turnout rural counties — high homeownership, strong Republican identification, small population — yet falls well below predicted turnout. The contrast with Jasper suggests that structural characteristics alone are insufficient. Something in the local civic environment that would channel latent potential into participation appears to be absent or inactive, though secondary sources do not clearly identify what.</p>
+</div>
+
+<div class="case-card under">
+<div class="case-tier">Under-Performer</div>
+<div class="case-lede">Political realignment may outpace rebuilding of mobilizing institutions</div>
+<div class="case-meta">Gogebic County, MI &middot; &minus;9.4 pp &middot; rank 3 of 437</div>
+<p>Historically a union-organized, consistently Democratic county. As it shifted Republican over the past three election cycles, the union infrastructure that once structured political participation appears to have weakened without equivalent civic organizations emerging in its place. Roughly half of households fall below or near the poverty line, turnout declined approximately 6.5 percentage points between 2020 and 2024, and there is limited visible organizational infrastructure occupying the mobilization function unions once held.</p>
+</div>
+
+</div>
+
+<div class="validation-note">
+<strong>Validation cases —</strong> Rock Island, IL and Rusk, WI both returned near-zero residuals. Rock Island's result in a diverse urban-edge county confirms the model performs well beyond purely rural contexts. Rusk's result in a structurally typical rural county confirms it performs cleanly when no unusual civic or compositional factors are present.
 </div>
 
 ---
 
-<span class="section-label">Finding 3</span>
+## What This Means
 
-## The Trempealeau/Vanderburgh Contrast Is the Core Argument
+The three phases point toward a consistent conclusion: demographic and structural variables are necessary but not sufficient to explain county-level turnout variation. The descriptive analysis showed where gaps exist. The model quantified the structural baseline. The case studies revealed that what separates counties at the tails is often something the model fundamentally cannot measure — the density and health of local civic infrastructure.
 
-The most analytically compelling comparison in the dataset is between Trempealeau County WI and Vanderburgh County IN. Both are structurally disadvantaged in different ways — Trempealeau is rural, lower-income, and lower-education; Vanderburgh is urban with a diverse population in a restrictive state. Yet their residuals point in opposite directions by roughly equal magnitudes.
+<div class="pull-quote">
+<p>Structural conditions set the floor. Whether a county reaches its structural potential appears to depend heavily on local organizational and social factors the ACS cannot measure.</p>
+</div>
 
-Trempealeau suggests that **permissive voting access policies can compensate for structural disadvantage** — a rural, lower-income, Republican-leaning county achieves 75% turnout because Wisconsin's institutional environment lifts the floor for all counties regardless of demographics.
+This has broader implications for how turnout inequality should be understood. Education, poverty, age structure, and state institutional environment shape what is possible. But whether a county reaches that potential appears to depend on local organizational and social factors — informal community networks, major institutional anchors, the presence or absence of active mobilization infrastructure. Gogebic and Lawrence both had structural conditions that should have produced higher turnout. Neither did. The difference lies in something surveys cannot capture.
 
-Vanderburgh suggests that **restrictive policies suppress turnout even where structural conditions are favorable** — an urban county whose demographics predict higher participation consistently under-performs because Indiana's compounding barriers (strict ID, no SDR, no no-excuse absentee) depress participation in ways that demographics cannot explain.
-
-This contrast holds even after Model 2's improved specification. It is not a demographic artifact — it is an institutional story.
+For organizations working on voting rights and civic participation, this suggests that demographic targeting alone — focusing on counties with low structural capacity — may miss counties where structural potential exists but is chronically underactivated. Identifying those counties requires exactly the kind of mixed-methods approach this project employed: quantitative baselines to locate the anomalies, qualitative research to explain them.
 
 ---
-
-<span class="section-label">Limitations</span>
 
 ## What This Analysis Cannot Claim
 
-This analysis is observational and cross-sectional. The institutional access argument is supported by pattern evidence across counties and states, but causal identification is not possible from these data. Several important limitations apply:
+This analysis is observational and cross-sectional. The relationships identified between predictors and turnout are associations, not causal effects. Several specific limitations apply.
 
-**State fixed effects were deliberately omitted.** Including state dummies would absorb the institutional variation this analysis seeks to examine qualitatively. This is a principled analytical choice, not an oversight — but it means state-level confounders beyond voting laws (political culture, party infrastructure, historical patterns) cannot be separated from the institutional access effect.
+**State fixed effects absorb unmeasured state-level variation.** The model controls for state context but cannot separate the specific contribution of voting access laws from other state-level factors like political culture, party infrastructure, and historical patterns. The institutional access argument is supported by the pattern evidence but cannot be causally identified from these data.
 
-**Age is not in the model.** Age is one of the strongest individual-level predictors of turnout and was not available in the county-level format used for other predictors. Montmorency County's median age of 56 likely contributes to its over-performance in ways the model cannot capture. Future specifications should include median age or percent 65+ as a predictor.
+**Age structure is partially captured but imperfect.** Model 4 includes % age 18–24 and % age 65+, which together address known age-turnout relationships. However, full median age or a more granular age distribution would likely improve predictions further, particularly in older rural counties.
 
-**Small county instability.** Brown County's N of approximately 6,000 means the turnout rate is sensitive to small vote count changes. The large Model 1 residual may partly reflect noise in addition to genuine demographic specification issues.
+**The qualitative analysis relies on secondary sources.** County narratives draw on publicly available documents, economic data, news archives, and organizational reports — not primary fieldwork or interviews. The explanatory factors identified are theoretically motivated hypotheses, not confirmed causal mechanisms.
 
-**The qual analysis is secondary source only.** County narratives draw on publicly available documents, news archives, and organizational reports — not primary fieldwork or interviews. The explanatory factors identified are theoretically motivated hypotheses, not confirmed causal mechanisms.
-
----
-
-<span class="section-label">Implications</span>
-
-## What This Means for CLC
-
-These findings have direct implications for the CLC's Midwest expansion strategy:
-
-**Prioritize Indiana.** The concentration of large negative residuals in Indiana — six of the bottom ten — combined with the state's restrictive institutional environment suggests that Indiana counties face suppression beyond what demographics predict. This is exactly the kind of pattern that should inform CLC's litigation, advocacy, and voter protection priorities. Vanderburgh/Evansville is a natural starting point given its size, documented low turnout, and existing local GOTV infrastructure through the Evansville NewsLab.
-
-**Institutional advocacy is as important as community organizing.** The Trempealeau finding suggests that permissive access policies lift turnout even in structurally disadvantaged communities. This supports CLC's focus on policy advocacy — same-day registration, no-excuse absentee, and early voting expansion in Indiana and Illinois would likely produce meaningful turnout gains independent of community-level interventions.
-
-**Brown County points to a data gap.** The collapse of Brown's residual in Model 2 reveals that lower-tail education and racial composition matter independently. CLC's future data collection and analysis should include these variables alongside the resource-based predictors to better identify genuinely underserved communities.
-
-**Wisconsin and Michigan are models, not targets.** The strong over-performance of WI and MI counties suggests these states' institutional frameworks — particularly Michigan's Proposal 2022-2 — represent policy templates worth advocating for in Indiana and Illinois.
+**Single election cycle.** This analysis covers the 2024 presidential general election only. Whether the residual patterns identified reflect stable structural features or election-specific dynamics cannot be determined without panel data across multiple cycles.
 
 ---
-
-<span class="section-label">Future Research</span>
 
 ## Next Steps
 
 Several directions would strengthen and extend this analysis:
 
-- **Add age structure** (median age or % 65+) to the predictive model to address the likely underprediction in older rural counties
-- **Panel analysis** across multiple election cycles to assess whether residual patterns are stable or election-specific
 - **Primary source qualitative research** — interviews with local election officials, nonprofit staff, and community organizers in the six case counties would allow the hypotheses developed here to be tested more rigorously
-- **Cost of Voting Index integration** — incorporating a validated state-level voting access score as a continuous predictor would allow more precise estimation of the institutional access effect
-- **Precinct-level analysis** within under-performing counties to identify whether suppression is geographically concentrated within counties
+- **Panel analysis** across multiple election cycles to assess whether residual patterns are stable or election-specific
+- **Civic infrastructure measurement** — incorporating organizational density data (nonprofit registrations, union membership rates, religious organization counts) as predictors would allow the informal social capital hypothesis to be tested quantitatively
 
 ---
 
 <div class="site-footer">
-Analysis conducted in R. Data: ACS 2024 5-Year Estimates; CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI); Michigan Department of State 2024 Election Report; NCSL Voting Laws database; Hajnal, Lajevardi & Nielson (2017); Barber & Holbein (2022). Prepared in partial fulfillment of capstone requirements, University of Chicago Crown Family School of Social Work, Policy, and Practice.
+Analysis conducted in R. Data: ACS 2024 5-Year Estimates; CVAP Special Tabulation; State Election Commissions (IL, IN, OH, WI, MI). Prepared in partial fulfillment of capstone requirements, University of Chicago Crown Family School of Social Work, Policy, and Practice.
 </div>
